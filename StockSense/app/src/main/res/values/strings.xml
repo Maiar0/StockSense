@@ -1,0 +1,48 @@
+<resources>
+    <!-- App Name -->
+    <string name="app_name">StockSense</string>
+
+    <!-- Navigation Bar Buttons -->
+    <string name="nav_button1_text">GRID</string>
+    <string name="nav_button2_text">LIST</string>
+    <string name="nav_button3_text">ADD</string>
+
+    <!-- Login Screen -->
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="login_button_text">Login</string>
+    <string name="register_button_text">Register</string>
+    <string name="invalid_login">Invalid username or password</string>
+    <string name="registration_successful">Registration successful!</string>
+    <string name="sms_permission_required">SMS Permission Required</string>
+    <string name="enter_phone_number">Enter Phone Number</string>
+    <string name="sms_permission_granted">SMS Permission Granted</string>
+    <string name="sms_permission_denied">SMS Permission Denied</string>
+    <string name="sms_permission_needed">SMS Permission Needed</string>
+    <string name="sms_permission_rationale">This app needs SMS permission to send notifications about low inventory levels.</string>
+
+    <!-- Inventory Grid View -->
+    <string name="item_id">Item ID</string>
+    <string name="item_name">Item Name</string>
+    <string name="item_quantity">Quantity</string>
+    <string name="item_location">Location</string>
+    <string name="item_alert_level">Alert Level</string>
+    <string name="delete_button_text">Delete</string>
+    <string name="create_new_item">Create New Item</string>
+    <string name="item_name_input_hint">Item Name</string>
+    <string name="item_quantity_input_hint">Quantity</string>
+    <string name="item_location_input_hint">Location</string>
+    <string name="item_alert_level_input_hint">Alert Level</string>
+    <string name="create_button_text">Create</string>
+    <string name="cancel_button_text">Cancel</string>
+    <string name="item_created_successfully">Item created successfully</string>
+
+    <!-- Item Details -->
+    <string name="save_button_text">Save</string>
+    <string name="item_deleted_successfully">Item deleted successfully</string>
+    <string name="confirm_delete_title">Confirm Delete</string>
+    <string name="confirm_delete_message">Are you sure you want to delete this item?</string>
+    <string name="confirm_button_text">Confirm</string>
+    <!--<string name="cancel_button_text">Cancel</string>-->
+</resources>
