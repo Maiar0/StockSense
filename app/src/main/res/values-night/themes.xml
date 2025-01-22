@@ -1,0 +1,25 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme for Night mode. -->
+    <style name="Theme.StockSense" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/blue_200</item>
+        <item name="colorPrimaryVariant">@color/blue_700</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/amber_200</item>
+        <item name="colorSecondaryVariant">@color/amber_700</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Background colors -->
+        <item name="android:colorBackground">@color/grey_900</item>
+        <item name="android:colorForeground">@color/grey_50</item>
+        <!-- Surface colors -->
+        <item name="colorSurface">@color/grey_800</item>
+        <item name="colorOnSurface">@color/white</item>
+        <!-- Error colors -->
+        <item name="colorError">@color/red_700</item>
+        <item name="colorOnError">@color/white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
+</resources>
