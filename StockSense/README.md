@@ -1,2 +1,0 @@
-# StockSense
- Inventory Applications
