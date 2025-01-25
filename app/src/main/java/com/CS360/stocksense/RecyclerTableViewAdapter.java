@@ -38,11 +38,11 @@ public class RecyclerTableViewAdapter extends RecyclerView.Adapter<RecyclerView.
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_HEADER) {
             // Inflate header layout
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_database_view_header, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.table_view_header, parent, false);
             return new HeaderViewHolder(view);
         } else {
             // Inflate item layout
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_database_view, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.table_view_object, parent, false);
             return new ItemViewHolder(view);
         }
     }
@@ -55,7 +55,7 @@ public class RecyclerTableViewAdapter extends RecyclerView.Adapter<RecyclerView.
             // Bind data to item view
             ItemViewHolder itemHolder = (ItemViewHolder) holder;
             Item item = itemsList.get(position - 1); // Adjust for header
-            itemHolder.itemId.setText(String.valueOf(item.getId()));
+            itemHolder.itemId.setText(String.valueOf(item.getItem_id()));
             itemHolder.itemName.setText(item.getItemName());
             itemHolder.itemQuantity.setText(String.valueOf(item.getQuantity()));
             itemHolder.itemLocation.setText(item.getLocation());
@@ -65,7 +65,7 @@ public class RecyclerTableViewAdapter extends RecyclerView.Adapter<RecyclerView.
             itemHolder.itemView.setOnClickListener(v -> {
                 // Launch ItemDetailsActivity with item details
                 Intent intent = new Intent(holder.itemView.getContext(), ItemDetailsActivity.class);
-                intent.putExtra("item_id", item.getId());
+                intent.putExtra("item_id", item.getItem_id());
                 intent.putExtra("source_activity", "ListView");
                 holder.itemView.getContext().startActivity(intent);
             });

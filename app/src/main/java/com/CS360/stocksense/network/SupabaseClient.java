@@ -2,6 +2,7 @@ package com.CS360.stocksense.network;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import okhttp3.OkHttpClient;
 
 public class SupabaseClient {
     private static final String BASE_URL = "https://hvqrsutsvovnizmipksd.supabase.co/rest/v1/";

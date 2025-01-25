@@ -1,6 +1,11 @@
 package com.CS360.stocksense;
 
+import static com.CS360.stocksense.MainActivity.PREFERENCES_FILE;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -10,32 +15,40 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 
+import com.CS360.stocksense.Supabase.DataCallback;
+import com.CS360.stocksense.Supabase.DataManager;
+import com.CS360.stocksense.models.Item;
+
 public class ItemDetailsActivity extends AppCompatActivity {
 
     private TextView itemHeader;
     private EditText itemQuantity, itemLocation, itemAlertLevel;
     private Button saveButton, deleteButton;
     private int itemId;
-    private String sourceActivity;
+    private String organizationName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_details);
 
-        itemHeader = findViewById(R.id.item_header);
-        itemQuantity = findViewById(R.id.item_quantity);
-        itemLocation = findViewById(R.id.item_location);
-        saveButton = findViewById(R.id.save_button);
-        deleteButton = findViewById(R.id.delete_button);
-        itemAlertLevel = findViewById(R.id.item_alert_level);
+        itemHeader = findViewById(R.id.item_details_header);
+        itemQuantity = findViewById(R.id.item_details_quantity);
+        itemLocation = findViewById(R.id.item_details_location);
+        saveButton = findViewById(R.id.button_edit_item);
+        deleteButton = findViewById(R.id.button_delete_item);
+        itemAlertLevel = findViewById(R.id.item_details_alert_level);
 
-        sourceActivity = getIntent().getStringExtra("source_activity");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        itemId = getIntent().getIntExtra("item_id", -1);
+        SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+        organizationName = preferences.getString("KEY_ORGANIZATION", null);
+        itemId = getIntent().getIntExtra("selected_item", -1);
+
+        Log.d("OnInstantiate", "ItemDetailsView " + "Organization: " + organizationName + " ItemId: " + itemId);
+
         if (itemId != -1) {
-            loadItemDetails(itemId); // Load item details if itemId is valid
+            loadItemDetails(organizationName, itemId); // Load item details if itemId is valid
         }
 
         saveButton.setOnClickListener(v -> onSaveButtonClick());
@@ -45,31 +58,35 @@ public class ItemDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         Intent intent;
-        if ("ListView".equals(sourceActivity)) {
-            intent = new Intent(this, TableViewActivity.class);
-        } else {
-            intent = new Intent(this, GridViewActivity.class);
-        }
+        intent = new Intent(this, SearchViewActivity.class);
+        intent.putExtra("selected_database", getIntent().getStringExtra("selected_database"));
         NavUtils.navigateUpTo(this, intent);
         return true;
     }
 
-    private void loadItemDetails(int itemId) {
-        //TODO:: implement
-        /*new Thread(() -> {
-            currentItem = db.itemsDao().getItemById(itemId); // Fetch item by id
-            runOnUiThread(() -> {
-                if (currentItem != null) {
-                    itemHeader.setText(currentItem.getItemName());
-                    itemQuantity.setText(String.valueOf(currentItem.getQuantity()));
-                    itemLocation.setText(currentItem.getLocation());
-                    itemAlertLevel.setText(String.valueOf(currentItem.getAlertLevel()));
-                } else {
-                    showToast("Item not found");
-                    finish();
-                }
-            });
-        }).start();*/
+    private void loadItemDetails(String organizationName, int itemId) {
+        DataManager dataManager = new DataManager();
+
+        dataManager.fetchSingleItem(organizationName, itemId, new DataCallback<Item>() {
+            @Override
+            public void onSuccess(Item item) {
+                runOnUiThread(() -> {
+                    // Display the fetched item details
+                    itemHeader.setText(item.getItemName());
+                    itemQuantity.setText(String.valueOf(item.getQuantity()));
+                    itemLocation.setText(item.getLocation());
+                    itemAlertLevel.setText(String.valueOf(item.getAlertLevel()));
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(ItemDetailsActivity.this, "Error loading item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("ItemDetailsActivity", "Error: " + e.getMessage(), e);
+                });
+            }
+        });
     }
 
     private void onSaveButtonClick() {

@@ -1,66 +1,83 @@
 package com.CS360.stocksense;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NavUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.CS360.stocksense.Supabase.DataCallback;
 import com.CS360.stocksense.Supabase.DataManager;
+import com.CS360.stocksense.models.DatabaseSelection;
 import com.CS360.stocksense.models.Item;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class GridViewActivity extends MainActivity {
+public class GridViewActivity extends SearchViewActivity {
 
     private RecyclerView recyclerView;
     private RecyclerGridViewAdapter adapter;
+    private String databaseId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grid_view);
+        initNav(getString(R.string.nav_button1_grid), getString(R.string.nav_button2_grid), getString(R.string.nav_button3_search));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         recyclerView = findViewById(R.id.recycler_grid_view);
 
-        findViewById(R.id.nav_button2).setOnClickListener(v -> onNavButton2Click());
-        findViewById(R.id.nav_button3).setOnClickListener(v -> onNavButton3Click());
-        Log.d("OnInstantiate", "GridView ");
+        Log.d("OnInstantiate", "GridView " + organizationName + ' ' + databaseId);
 
-        loadData(); // Load data from the database
+        databaseId = getIntent().getStringExtra("selected_database");
     }
-
     @Override
-    protected void onPause() {
-        super.onPause();
-        new Thread(() -> {
-            List<Item> currentItems = adapter.getItemsList();
-            for (Item item : currentItems) {
-                //TODO:: // Update items in the database
-            }
-        }).start();
+    public boolean onSupportNavigateUp() {
+        Intent intent = new Intent(this, DbSelectionViewActivity.class);
+        NavUtils.navigateUpTo(this, intent);
+        return true;
+    }
+    protected void onNavButton1Click(){
+        super.onNavButton1Click();
+        Log.d("DbSelectionView", "Nav 1 Clicked");
+        Intent intent = new Intent(this, SearchViewActivity.class);
+        intent.putExtra("selected_database", databaseId);
+        startActivity(intent);
+    }
+    @Override
+    protected void onNavButton2Click(){
+        super.onNavButton1Click();
+        Log.d("DbSelectionView", "Nav 2 Clicked");
+
+    }
+    @Override
+    protected void onNavButton3Click(){
+        super.onNavButton1Click();
+        Log.d("DbSelectionView", "Nav 3 Clicked");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadData(); // Reload data when resuming activity
+        initData();
     }
 
     @Override
-    protected void onNewItemCreated() {
-        super.onNewItemCreated();
-        loadData(); // Reload data when a new item is created
-    }
-
-    private void loadData() {
+    public void initData() {
         DataManager dataManager = new DataManager();
 
-        dataManager.loadItems(new DataCallback<List<Item>>() {
+        dataManager.fetchDatabase(organizationName, databaseId, new DataCallback<List<Item>>() {
             @Override
             public void onSuccess(List<Item> items) {
                 runOnUiThread(() -> {
@@ -82,7 +99,6 @@ public class GridViewActivity extends MainActivity {
             }
         });
     }
-
 
     private List<Item> sortData(List<Item> itemsList) {
         Collections.sort(itemsList, Comparator.comparing(Item::getItemName)); // Sort items by name

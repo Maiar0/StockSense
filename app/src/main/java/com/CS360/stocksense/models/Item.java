@@ -1,7 +1,7 @@
 package com.CS360.stocksense.models;
 
 public class Item {
-    private Integer id; // Supabase-generated ID
+    private String item_id; //
     private String item_name;
     private int quantity;
     private String location;
@@ -11,12 +11,12 @@ public class Item {
     private String database_name;
 
     // Getters and setters
-    public Integer getId() {
-        return id;
+    public String getItem_id() {
+        return item_id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setItem_id(String item_id) {
+        this.item_id = item_id;
     }
 
     public String getItemName() {
@@ -58,7 +58,7 @@ public class Item {
     public void setOrganizationName(String organization_name) {
         this.organization_name = organization_name;
     }
-    public String getDatabasenName(){return database_name;}
+    public String getDatabaseName(){return database_name;}
     public void setDatabaseName(String database_name){
         this.database_name = database_name;
     }
@@ -67,5 +67,10 @@ public class Item {
     }
     public void setDatabaseId(String database_id) {
         this.database_id = database_id;
+    }
+    public String print(){
+        String data = "";
+        data = item_id + " : " + item_name + " : " + quantity + " : " + location + " : " + alert_level;
+        return data;
     }
 }

@@ -79,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToNextActivity() {
-        Intent intent = new Intent(LoginActivity.this, DbSelectionView.class); // Replace with your target activity
+        Intent intent = new Intent(LoginActivity.this, DbSelectionViewActivity.class); // Replace with your target activity
         startActivity(intent);
         finish();
     }

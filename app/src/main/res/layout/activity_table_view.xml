@@ -13,5 +13,5 @@
         android:layout_weight="1"
         android:padding="8dp"/>
 
-    <include layout="@layout/bottom_nav_menu"/>
+    <include layout="@layout/nav_buttons_object"/>
 </LinearLayout>

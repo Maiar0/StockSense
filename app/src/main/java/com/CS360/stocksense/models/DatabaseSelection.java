@@ -1,27 +1,27 @@
 package com.CS360.stocksense.models;
 
 public class DatabaseSelection {
-    private String databaseId;
-    private String databaseName;
+    private String database_id;
+    private String database_name;
 
-    public DatabaseSelection(String databaseId, String databaseName) {
-        this.databaseId = databaseId;
-        this.databaseName = databaseName;
+    public DatabaseSelection(String database_id, String database_name) {
+        this.database_id = database_id;
+        this.database_name = database_name;
     }
 
     public String getId() {
-        return databaseId;
+        return database_id;
     }
 
     public void setId(String databaseId) {
-        this.databaseId = databaseId;
+        this.database_id = databaseId;
     }
 
     public String getName() {
-        return databaseName;
+        return database_name;
     }
 
     public void setName(String databaseName) {
-        this.databaseName = databaseName;
+        this.database_name = databaseName;
     }
 }

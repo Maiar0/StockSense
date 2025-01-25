@@ -33,11 +33,7 @@ public class TableViewActivity extends MainActivity {
         loadData(); // Load data from the database
     }
 
-    @Override
-    protected void onNewItemCreated() {
-        super.onNewItemCreated();
-        loadData(); // Reload data when a new item is created
-    }
+
 
     private void loadData() {
         DataManager dataManager = new DataManager();

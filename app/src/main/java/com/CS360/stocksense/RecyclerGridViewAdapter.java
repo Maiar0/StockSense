@@ -16,7 +16,7 @@ import java.util.List;
 public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridViewAdapter.ViewHolder> {
 
     private List<Item> itemsList; // List of items to display
-    private int itemid;
+    private String itemid;
     private Context context; // Context for launching activities
 
     public RecyclerGridViewAdapter(List<Item> itemsList, Context context) {
@@ -28,7 +28,7 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Inflate the item layout and create the ViewHolder
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recycler_grid_view, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_view_object, parent, false);
         return new ViewHolder(view);
     }
 
@@ -36,7 +36,7 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Bind data to the ViewHolder
         Item item = itemsList.get(position);
-        itemid = item.getId();
+        itemid = item.getItem_id();
         holder.itemName.setText(item.getItemName());
         holder.itemQuantity.setText("Q: " + item.getQuantity());
         holder.itemLocation.setText(item.getLocation());
@@ -54,7 +54,7 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
         holder.itemView.setOnClickListener(v -> {
             // Launch ItemDetailsActivity with the item details
             Intent intent = new Intent(context, ItemDetailsActivity.class);
-            intent.putExtra("item_id", item.getId());
+            intent.putExtra("item_id", item.getItem_id());
             intent.putExtra("source_activity", "GridView");
             context.startActivity(intent);
         });

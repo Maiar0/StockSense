@@ -5,16 +5,18 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Header displaying item name and ID -->
     <TextView
-        android:id="@+id/item_header"
+        android:id="@+id/item_details_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="[ID] [Name]"
+        android:text="Item Details"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
 
+    <!-- Quantity Field -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,18 +29,18 @@
             android:layout_weight="1"
             android:text="Quantity:"
             android:textSize="18sp"
-            android:layout_marginEnd="8dp"/>
+            android:layout_marginEnd="8dp" />
 
         <EditText
-            android:id="@+id/item_quantity"
+            android:id="@+id/item_details_quantity"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:hint="@string/item_quantity"
-            android:inputType="number"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:hint="0" />
     </LinearLayout>
 
+    <!-- Location Field -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -51,17 +53,18 @@
             android:layout_weight="1"
             android:text="Location:"
             android:textSize="18sp"
-            android:layout_marginEnd="8dp"/>
+            android:layout_marginEnd="8dp" />
 
         <EditText
-            android:id="@+id/item_location"
+            android:id="@+id/item_details_location"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:hint="@string/item_location"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:hint="Enter Location" />
     </LinearLayout>
 
+    <!-- Alert Level Field -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -74,18 +77,18 @@
             android:layout_weight="1"
             android:text="Alert Level:"
             android:textSize="18sp"
-            android:layout_marginEnd="8dp"/>
+            android:layout_marginEnd="8dp" />
 
         <EditText
-            android:id="@+id/item_alert_level"
+            android:id="@+id/item_details_alert_level"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:hint="Alert Level"
-            android:inputType="number"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:hint="N/A" />
     </LinearLayout>
 
+    <!-- Action Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -93,21 +96,22 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/save_button"
+            android:id="@+id/button_edit_item"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/save_button_text"
+            android:text="Edit"
             android:textSize="18sp"
-            android:layout_margin="8dp"/>
+            android:layout_margin="8dp" />
 
         <Button
-            android:id="@+id/delete_button"
+            android:id="@+id/button_delete_item"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/delete_button_text"
+            android:text="Delete"
             android:textSize="18sp"
-            android:layout_margin="8dp"/>
+            android:layout_margin="8dp" />
     </LinearLayout>
+
 </LinearLayout>

@@ -3,9 +3,21 @@
     <string name="app_name">StockSense</string>
 
     <!-- Navigation Bar Buttons -->
-    <string name="nav_button1_text">GRID</string>
-    <string name="nav_button2_text">LIST</string>
-    <string name="nav_button3_text">ADD</string>
+    <!-- Main-->
+    <string name="nav_button1_main">GRID</string>
+    <string name="nav_button2_main">LIST</string>
+    <string name="nav_button3_main">ADD</string>
+    <!-- DbSelection-->
+    <string name="nav_button1_dbselection">CREATE</string>
+    <string name="nav_button2_dbselection">DELETE</string>
+    <string name="nav_button3_dbselection">IMPORT</string>
+    <!-- SearchView-->
+    <string name="nav_button1_search">GRID</string>
+    <string name="nav_button2_search">DELETE</string>
+    <string name="nav_button3_search">EXPORT</string>
+    <!-- GridView-->
+    <string name="nav_button1_grid">SEARCH</string>
+    <string name="nav_button2_grid">CREATE</string>
 
     <!-- Login Screen -->
     <string name="organization_hint">Enter Organization Name</string>
