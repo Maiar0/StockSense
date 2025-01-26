@@ -4,7 +4,6 @@ import com.CS360.stocksense.models.Item;
 import com.CS360.stocksense.models.DatabaseSelection;
 
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -17,72 +16,9 @@ import retrofit2.http.PUT;
 import retrofit2.http.Query;
 
 public interface SupabaseApi {
-    @GET("items")
-    Call<List<Item>> getItems(
-            @Header("apikey") String apiKey,
-            @Header("Authorization") String authToken
-    );
 
-    @POST("items")
-    Call<Void> addItem(
-            @Header("apikey") String apiKey,
-            @Header("Authorization") String authToken,
-            @Body Item newItem
-    );
-
-    @GET("items")
-    Call<List<Item>> getAllItems(
-            @Header("apikey") String apiKey,
-            @Header("Authorization") String authToken
-    );
-
-    @GET("items")
-    Call<List<DatabaseSelection>> fetchOrganization(
-            @Header("apikey") String apiKey,
-            @Header("Authorization") String authToken,
-            @Query("organization_name") String organizationFilter,
-            @Query("select") String select
-    );
-
-    @GET("items")
-    Call<List<Item>> fetchItems(
-            @Header("apikey") String apiKey,
-            @Header("Authorization") String authToken,
-            @Query("organization_name") String organizationFilter,
-            @Query("database_id") String databaseFilter
-    );
-
-    @GET("items")
-    Call<List<Item>> fetchItem(
-            @Header("apikey") String apiKey,
-            @Header("Authorization") String authToken,
-            @Query("organization_name") String organizationFilter,
-            @Query("item_id") String itemFilter
-    );
-    @POST("items")
-    @Headers({
-            "Content-Type: application/json",
-            "Prefer: return=representation"   // Request the created record in the response
-    })
-    Call<List<Item>> createDatabase(
-            @Header("apikey") String apiKey,
-            @Header("Authorization") String authToken,
-            @Body Map<String, String> newDatabase
-    );
-    @DELETE("items")
-    Call<Void> deleteDatabase(
-            @Header("apikey") String apiKey,
-            @Header("Authorization") String authToken,
-            @Query("database_id") String databaseId
-    );
-    @POST("items")
-    Call<Void> insertItems(
-            @Header("apikey") String apiKey,
-            @Header("Authorization") String authToken,
-            @Body List<Item> items
-    );
     //---------------------------------------------------------------------------------------------//
-    // Create Items
+    // Create
     @POST("items")
     @Headers({
             "Content-Type: application/json",
@@ -94,17 +30,31 @@ public interface SupabaseApi {
             @Body List<Item> items
     );
 
-    // Read Item
+    // Read
     @GET("items")
-    Call<List<Item>> readItem(
+    Call<List<Item>> fetchItem(
             @Header("apikey") String apiKey,
             @Header("Authorization") String authToken,
             @Query("organization_name") String organizationName,
             @Query("item_id") String itemId,
             @Query("database_id") String databaseId
     );
+    @GET("items")
+    Call<List<Item>> fetchDatabase(
+            @Header("apikey") String apiKey,
+            @Header("Authorization") String authToken,
+            @Query("organization_name") String organizationFilter,
+            @Query("database_id") String databaseFilter
+    );
+    @GET("items")
+    Call<List<DatabaseSelection>> fetchOrganization(
+            @Header("apikey") String apiKey,
+            @Header("Authorization") String authToken,
+            @Query("organization_name") String organizationFilter,
+            @Query("select") String select
+    );
 
-    // Update Item
+    // Update
     @PUT("items")
     @Headers({
             "Content-Type: application/json",
@@ -126,6 +76,12 @@ public interface SupabaseApi {
             @Header("Authorization") String authToken,
             @Query("organization_name") String organizationName,
             @Query("item_id") String itemId,
+            @Query("database_id") String databaseId
+    );
+    @DELETE("items")
+    Call<Void> deleteDatabase(
+            @Header("apikey") String apiKey,
+            @Header("Authorization") String authToken,
             @Query("database_id") String databaseId
     );
 

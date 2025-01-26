@@ -24,8 +24,9 @@ public class ItemDetailsActivity extends AppCompatActivity {
     private TextView itemHeader;
     private EditText itemQuantity, itemLocation, itemAlertLevel;
     private Button saveButton, deleteButton;
-    private int itemId;
+    private String itemId;
     private String organizationName;
+    private String databaseId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +44,12 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
         organizationName = preferences.getString("KEY_ORGANIZATION", null);
-        itemId = getIntent().getIntExtra("selected_item", -1);
+        itemId = getIntent().getStringExtra("selected_item");
+        databaseId = getIntent().getStringExtra("selected_database");
 
         Log.d("OnInstantiate", "ItemDetailsView " + "Organization: " + organizationName + " ItemId: " + itemId);
 
-        if (itemId != -1) {
+        if (!itemId.isEmpty()) {
             loadItemDetails(organizationName, itemId); // Load item details if itemId is valid
         }
 
@@ -64,10 +66,10 @@ public class ItemDetailsActivity extends AppCompatActivity {
         return true;
     }
 
-    private void loadItemDetails(String organizationName, int itemId) {
+    private void loadItemDetails(String organizationName, String itemId) {
         DataManager dataManager = new DataManager();
 
-        dataManager.fetchSingleItem(organizationName, itemId, new DataCallback<Item>() {
+        dataManager.fetchSingleItem(organizationName, itemId, databaseId, new DataCallback<Item>() {
             @Override
             public void onSuccess(Item item) {
                 runOnUiThread(() -> {

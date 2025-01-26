@@ -2,7 +2,6 @@ package com.CS360.stocksense.Supabase;
 
 import android.util.Log;
 
-import com.CS360.stocksense.Utils.Utils;
 import com.CS360.stocksense.models.Item;
 import com.CS360.stocksense.models.DatabaseSelection;
 import com.CS360.stocksense.network.SupabaseApi;
@@ -26,39 +25,7 @@ public class SupabaseRepository {
     public SupabaseRepository() {
         api = SupabaseClient.getInstance().create(SupabaseApi.class);
     }
-
-    // Fetch all items
-    public void fetchItems(DataCallback<List<Item>> callback) {
-        Log.d("SupabaseRepository", "Starting fetchItems()...");
-
-        api.getItems(apiKey, authToken).enqueue(new Callback<List<Item>>() {
-            @Override
-            public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
-                Log.d("SupabaseRepository", "Finalized URL: " + call.request().url());
-                if (response.isSuccessful() && response.body() != null) {
-                    // Log successful fetch
-                    Log.d("SupabaseRepository", "Data fetched successfully: " + response.body().toString());
-
-                    callback.onSuccess(response.body());
-                } else {
-                    // Log server error
-                    Log.e("SupabaseRepository", "Error fetching items: " + response.message());
-                    Log.e("SupabaseRepository", "Response Code: " + response.code());
-                    callback.onError(new Exception("Error fetching items: " + response.message()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Item>> call, Throwable t) {
-                // Log network failure
-                Log.e("SupabaseRepository", "Network error occurred: " + t.getMessage(), t);
-                callback.onError(new Exception("Network error: " + t.getMessage(), t));
-            }
-        });
-
-        Log.d("SupabaseRepository", "fetchItems() request sent.");
-    }
-
+    // Read
     public void fetchOrganization(String organizationName, DataCallback<List<DatabaseSelection>> callback) {
         api.fetchOrganization(apiKey, authToken, "eq." + organizationName, "database_id,database_name").enqueue(new Callback<List<DatabaseSelection>>() {
             @Override
@@ -93,7 +60,7 @@ public class SupabaseRepository {
     public void fetchDatabase(String organizationName, String databaseId, DataCallback<List<Item>> callback) {
         Log.d("SupabaseRepository", "Fetching items for organization: " + organizationName + ", database: " + databaseId);
 
-        api.fetchItems(
+        api.fetchDatabase(
                 apiKey,
                 authToken,
                 "eq." + organizationName, // Apply filter for organization_name
@@ -119,68 +86,7 @@ public class SupabaseRepository {
             }
         });
     }
-    public void fetchSingleItem(String organizationName, int itemId, DataCallback<Item> callback) {
-        Log.d("SupabaseRepository", "Fetching item for Organization: " + organizationName + ", ItemID: " + itemId);
 
-        api.fetchItem(
-                apiKey,
-                authToken,
-                "eq." + organizationName, // Filter for organization
-                "eq." + itemId            // Filter for item ID
-        ).enqueue(new Callback<List<Item>>() {
-            @Override
-            public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
-                // Log the finalized URL
-                Log.d("SupabaseRepository", "Finalized URL: " + call.request().url());
-
-                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
-                    Log.d("SupabaseRepository", "Item fetched successfully: " + response.body().get(0).toString());
-                    callback.onSuccess(response.body().get(0)); // Return the first item
-                } else {
-                    Log.e("SupabaseRepository", "Error fetching item: " + response.message());
-                    callback.onError(new Exception("Error fetching item: " + response.message()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Item>> call, Throwable t) {
-                Log.e("SupabaseRepository", "Network error: " + t.getMessage(), t);
-                callback.onError(new Exception("Network error: " + t.getMessage(), t));
-            }
-        });
-    }
-
-    public void createNewDatabase(String databaseName, String organizationName, DataCallback<Item> callback) {
-        Map<String, String> newDatabase = new HashMap<>();
-        newDatabase.put("database_name", databaseName);
-        newDatabase.put("organization_name", organizationName);
-        newDatabase.put("database_id", Utils.generateDatabaseId());
-
-        Log.d("SupabaseRepository", "Payload: " + newDatabase.toString());
-
-        api.createDatabase(apiKey, authToken, newDatabase).enqueue(new Callback<List<Item>>() {
-            @Override
-            public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
-                Log.d("SupabaseRepository", "Finalized URL: " + call.request().url());
-
-                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
-                    Log.d("SupabaseRepository", "Database created successfully: " + response.body().get(0).toString());
-                    callback.onSuccess(response.body().get(0));
-                } else {
-                    Log.e("SupabaseRepository", "Error creating database: " + response.message());
-                    Log.e("SupabaseRepository", "Response code: " + response.code());
-                    Log.e("SupabaseRepository", "Error body: " + response.errorBody().toString());
-                    callback.onError(new Exception("Error creating database: " + response.message()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Item>> call, Throwable t) {
-                Log.e("SupabaseRepository", "Network error: " + t.getMessage(), t);
-                callback.onError(new Exception("Network error: " + t.getMessage(), t));
-            }
-        });
-    }
     public void deleteDatabase(String databaseId, DataCallback<Void> callback) {
         api.deleteDatabase(apiKey, authToken, "eq." + databaseId).enqueue(new Callback<Void>() {
 
@@ -193,62 +99,44 @@ public class SupabaseRepository {
                 }
             }
 
-
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 callback.onError(new Exception("Network error: " + t.getMessage()));
             }
         });
     }
-    public void insertItems(List<Item> items, DataCallback<Void> callback) {
-        api.insertItems(apiKey, authToken, items).enqueue(new Callback<Void>() {
+
+    // Create
+    public void createItem(String organizationName, List<Item> items, String databaseId, DataCallback<List<Item>> callback) {
+        // Attach organization_name and database_id to each item
+        for (Item item : items) {
+            item.setOrganizationName(organizationName);
+            item.setDatabaseId(databaseId);
+        }
+
+        Gson gson = new Gson();
+        String payloadJson = gson.toJson(items);
+        Log.d("SupabaseRepository", "Payload: " + payloadJson);
+        api.createItems(apiKey, authToken, items).enqueue(new Callback<List<Item>>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(null);
+            public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
                 } else {
-                    callback.onError(new Exception("Error inserting items: " + response.message()));
+                    callback.onError(new Exception("Error creating items: " + response.message()));
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<List<Item>> call, Throwable t) {
                 callback.onError(new Exception("Network error: " + t.getMessage()));
             }
         });
     }
-//--------------------------------------------------------------------------------------------------------------------//
-// Create Items
-public void createItem(String organizationName, List<Item> items, String databaseId, DataCallback<List<Item>> callback) {
-    // Attach organization_name and database_id to each item
-    for (Item item : items) {
-        item.setOrganizationName(organizationName);
-        item.setDatabaseId(databaseId);
-    }
-
-    Gson gson = new Gson();
-    String payloadJson = gson.toJson(items);
-    Log.d("SupabaseRepository", "Payload: " + payloadJson);
-    api.createItems(apiKey, authToken, items).enqueue(new Callback<List<Item>>() {
-        @Override
-        public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
-            if (response.isSuccessful() && response.body() != null) {
-                callback.onSuccess(response.body());
-            } else {
-                callback.onError(new Exception("Error creating items: " + response.message()));
-            }
-        }
-
-        @Override
-        public void onFailure(Call<List<Item>> call, Throwable t) {
-            callback.onError(new Exception("Network error: " + t.getMessage()));
-        }
-    });
-}
 
     // Read Single Item
     public void readItem(String organizationName, String itemId, String databaseId, DataCallback<Item> callback) {
-        api.readItem(apiKey, authToken, "eq." + organizationName, itemId, "eq." + databaseId).enqueue(new Callback<List<Item>>() {
+        api.fetchItem(apiKey, authToken, "eq." + organizationName, itemId, "eq." + databaseId).enqueue(new Callback<List<Item>>() {
             @Override
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {

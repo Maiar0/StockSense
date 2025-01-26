@@ -17,6 +17,7 @@ public class TableViewActivity extends MainActivity {
 
     private RecyclerView recyclerView;
     private RecyclerTableViewAdapter adapter;
+    private String databaseId;
 
 
 
@@ -27,34 +28,51 @@ public class TableViewActivity extends MainActivity {
 
         recyclerView = findViewById(R.id.recycler_table_view);
 
-        findViewById(R.id.nav_button1).setOnClickListener(v -> handleNavigationButtonClickLeft());
-        findViewById(R.id.nav_button3).setOnClickListener(v -> handleNavigationButtonClickRight());
-        Log.d("OnInstantiate", "TableView ");
-        loadData(); // Load data from the database
+        initializeNavigationBar("o","o","o");
+
+        databaseId = getIntent().getStringExtra("selected_database");
+        Log.d("TableViewActivity", "Organization " + loggedInOrganization);
+        initializeData();
     }
 
 
 
-    private void loadData() {
+    /**
+     * Fetches data from the database and populates the RecyclerView.
+     */
+    @Override
+    public void initializeData() {
         DataManager dataManager = new DataManager();
 
-        dataManager.loadItems(new DataCallback<List<Item>>() {
+        dataManager.fetchDatabase(loggedInOrganization, databaseId, new DataCallback<List<Item>>() {
             @Override
             public void onSuccess(List<Item> items) {
                 runOnUiThread(() -> {
-                    adapter = new RecyclerTableViewAdapter(items, item -> showDeleteConfirmationDialog(item));
-                    recyclerView.setLayoutManager(new LinearLayoutManager(TableViewActivity.this));
-                    recyclerView.setAdapter(adapter);
+                    fetchedItems = items;
+                    Log.d("TableViewActivity", "Fetched " + fetchedItems.size() + " items.");
+                    populateRecyclerView(fetchedItems);
                 });
             }
 
             @Override
             public void onError(Exception e) {
                 runOnUiThread(() -> {
-                    Toast.makeText(TableViewActivity.this, "Error loading items: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    showToast("Error loading database: " + e.getMessage());
+                    Log.e("TableViewActivity", "Error: " + e.getMessage(), e);
                 });
             }
         });
+    }
+
+    /**
+     * Populates the RecyclerView with the given list of items.
+     *
+     * @param items List of Item objects to display.
+     */
+    private void populateRecyclerView(List<Item> items) {
+        adapter = new RecyclerTableViewAdapter(items, this::showDeleteConfirmationDialog);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
     }
 
 

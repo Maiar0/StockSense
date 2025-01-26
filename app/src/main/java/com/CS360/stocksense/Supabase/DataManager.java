@@ -15,20 +15,6 @@ public class DataManager {
         repository = new SupabaseRepository();
     }
 
-    // Synchronous method to fetch items
-    public void loadItems(DataCallback<List<Item>> callback) {
-        repository.fetchItems(new DataCallback<List<Item>>() {
-            @Override
-            public void onSuccess(List<Item> result) {
-                callback.onSuccess(result);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                callback.onError(e);
-            }
-        });
-    }
     //Used to populate Database recycler
     public void fetchOrganization(String organizationName, DataCallback<List<DatabaseSelection>> callback) {
         repository.fetchOrganization(organizationName, new DataCallback<List<DatabaseSelection>>() {
@@ -57,42 +43,11 @@ public class DataManager {
             }
         });
     }
-    public void fetchSingleItem(String organizationName, int itemId, DataCallback<Item> callback) {
-        repository.fetchSingleItem(organizationName, itemId, new DataCallback<Item>() {
-            @Override
-            public void onSuccess(Item result) {
-                callback.onSuccess(result); // Forward the item to the caller
-            }
 
-            @Override
-            public void onError(Exception e) {
-                callback.onError(e); // Forward the error to the caller
-            }
-        });
-    }
-    public void createDatabase(String databaseName, String organizationName, DataCallback<Item> callback) {
-        repository.createNewDatabase(databaseName, organizationName, new DataCallback<Item>() {
-            @Override
-            public void onSuccess(Item result) {
-                callback.onSuccess(result); // Pass the created database back to the caller
-            }
-
-            @Override
-            public void onError(Exception e) {
-                callback.onError(e); // Pass the error back to the caller
-            }
-        });
-    }
     public void deleteDatabase(String databaseId, DataCallback<Void> callback) {
         SupabaseRepository repository = new SupabaseRepository();
         repository.deleteDatabase(databaseId, callback);
     }
-    public void insertItems(List<Item> items, DataCallback<Void> callback) {
-        SupabaseRepository repository = new SupabaseRepository();
-        repository.insertItems(items, callback);
-    }
-    //-----------------------------------------------------------------------------------------------//
-    // Fetch a single item by ID
     public void fetchSingleItem(String organizationName, String itemId, String databaseId, DataCallback<Item> callback) {
         repository.readItem(organizationName, itemId, databaseId, new DataCallback<Item>() {
             @Override

@@ -28,6 +28,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DbSelectionViewActivity extends MainActivity {
@@ -115,19 +116,27 @@ public class DbSelectionViewActivity extends MainActivity {
     }
 
     private void createDatabase(String databaseName) {
-
         if (loggedInOrganization == null) {
-            Toast.makeText(this, "Error: No organization name found. Please log in again.", Toast.LENGTH_SHORT).show();
+            showToast( "Error: No organization name found. Please log in again.");
             return;
         }
 
+        // Create an Item for the Database to hold
+        Item newDatabaseItem = new Item();
+        newDatabaseItem.setDatabaseName(databaseName);
+        newDatabaseItem.setOrganizationName(loggedInOrganization);
+        newDatabaseItem.setDatabaseId(generateDatabaseId());
+
+        List<Item> items = new ArrayList<>();
+        items.add(newDatabaseItem);
+
         DataManager dataManager = new DataManager();
-        dataManager.createDatabase(databaseName, loggedInOrganization, new DataCallback<Item>() {
+        dataManager.createItems(loggedInOrganization, items, newDatabaseItem.getDatabaseId(), new DataCallback<List<Item>>() {
             @Override
-            public void onSuccess(Item createdDatabase) {
+            public void onSuccess(List<Item> createdItems) {
                 runOnUiThread(() -> {
-                    Toast.makeText(DbSelectionViewActivity.this, "Database created: " + createdDatabase.getDatabaseName(), Toast.LENGTH_SHORT).show();
-                    initializeData(); // Refresh database list
+                    Toast.makeText(DbSelectionViewActivity.this, "Database created successfully: " + databaseName, Toast.LENGTH_SHORT).show();
+                    initializeData(); // Refresh the database list
                 });
             }
 
@@ -140,6 +149,7 @@ public class DbSelectionViewActivity extends MainActivity {
             }
         });
     }
+
 
     private void openFilePicker() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
