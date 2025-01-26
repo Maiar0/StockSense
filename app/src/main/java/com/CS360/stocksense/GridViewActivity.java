@@ -3,27 +3,22 @@ package com.CS360.stocksense;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NavUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.CS360.stocksense.Supabase.DataCallback;
 import com.CS360.stocksense.Supabase.DataManager;
-import com.CS360.stocksense.models.DatabaseSelection;
 import com.CS360.stocksense.models.Item;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class GridViewActivity extends SearchViewActivity {
+public class GridViewActivity extends MainActivity {
 
     private RecyclerView recyclerView;
     private RecyclerGridViewAdapter adapter;
@@ -33,14 +28,15 @@ public class GridViewActivity extends SearchViewActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grid_view);
-        initNav(getString(R.string.nav_button1_grid), getString(R.string.nav_button2_grid), getString(R.string.nav_button3_search));
+        initializeNavigationBar(getString(R.string.nav_button1_grid), getString(R.string.nav_button2_grid), getString(R.string.nav_button3_search));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         recyclerView = findViewById(R.id.recycler_grid_view);
 
-        Log.d("OnInstantiate", "GridView " + organizationName + ' ' + databaseId);
+        Log.d("GridViewActivity", "Organization " + loggedInOrganization );
 
         databaseId = getIntent().getStringExtra("selected_database");
+        initializeData();
     }
     @Override
     public boolean onSupportNavigateUp() {
@@ -48,58 +44,62 @@ public class GridViewActivity extends SearchViewActivity {
         NavUtils.navigateUpTo(this, intent);
         return true;
     }
-    protected void onNavButton1Click(){
-        super.onNavButton1Click();
-        Log.d("DbSelectionView", "Nav 1 Clicked");
+    @Override
+    protected void handleNavigationButtonClickLeft(){
         Intent intent = new Intent(this, SearchViewActivity.class);
         intent.putExtra("selected_database", databaseId);
         startActivity(intent);
     }
     @Override
-    protected void onNavButton2Click(){
-        super.onNavButton1Click();
-        Log.d("DbSelectionView", "Nav 2 Clicked");
-
+    protected void handleNavigationButtonClickCenter(){
+        //TODO:: Implement Item creation
     }
     @Override
-    protected void onNavButton3Click(){
-        super.onNavButton1Click();
-        Log.d("DbSelectionView", "Nav 3 Clicked");
+    protected void handleNavigationButtonClickRight(){
+        exportDatabaseToCSV();
     }
-
     @Override
-    protected void onResume() {
-        super.onResume();
-        initData();
-    }
-
-    @Override
-    public void initData() {
+    protected void initializeData() {
         DataManager dataManager = new DataManager();
 
-        dataManager.fetchDatabase(organizationName, databaseId, new DataCallback<List<Item>>() {
+        dataManager.fetchDatabase(loggedInOrganization, databaseId, new DataCallback<List<Item>>() {
             @Override
             public void onSuccess(List<Item> items) {
                 runOnUiThread(() -> {
-                    if (adapter == null) {
-                        adapter = new RecyclerGridViewAdapter(items, GridViewActivity.this);
-                        recyclerView.setLayoutManager(new GridLayoutManager(GridViewActivity.this, 2));
-                        recyclerView.setAdapter(adapter);
-                    } else {
-                        adapter.updateData(items);
-                    }
+                    fetchedItems = items;
+                    Log.d("GridViewActivity", "Fetched " + fetchedItems.size() + " items.");
+                    populateRecyclerView(fetchedItems);
                 });
             }
 
             @Override
             public void onError(Exception e) {
                 runOnUiThread(() -> {
-                    Toast.makeText(GridViewActivity.this, "Error loading items: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    showToast("Error loading database: " + e.getMessage());
+                    Log.e("GridViewActivity", "Error: " + e.getMessage(), e);
                 });
             }
         });
     }
+    /**
+     * Populates the RecyclerView with the given list of items.
+     *
+     * @param items List of Item objects to display.
+     */
+    private void populateRecyclerView(List<Item> items) {
+        adapter = new RecyclerGridViewAdapter(items, this);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Grid layout with 2 columns
+        recyclerView.setAdapter(adapter);
+    }
+    private void onItemSelected(Item item) {
+        Toast.makeText(this, "Selected item: " + item.getItemName(), Toast.LENGTH_SHORT).show();
 
+        Intent intent = new Intent(this, ItemDetailsActivity.class);
+        intent.putExtra("selected_item", item.getItem_id());
+        intent.putExtra("selected_database", databaseId);
+        startActivity(intent);
+    }
+    //TODO:: Implement Sort Algorithmic
     private List<Item> sortData(List<Item> itemsList) {
         Collections.sort(itemsList, Comparator.comparing(Item::getItemName)); // Sort items by name
         return itemsList;

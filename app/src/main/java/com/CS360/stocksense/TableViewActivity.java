@@ -27,8 +27,8 @@ public class TableViewActivity extends MainActivity {
 
         recyclerView = findViewById(R.id.recycler_table_view);
 
-        findViewById(R.id.nav_button1).setOnClickListener(v -> onNavButton1Click());
-        findViewById(R.id.nav_button3).setOnClickListener(v -> onNavButton3Click());
+        findViewById(R.id.nav_button1).setOnClickListener(v -> handleNavigationButtonClickLeft());
+        findViewById(R.id.nav_button3).setOnClickListener(v -> handleNavigationButtonClickRight());
         Log.d("OnInstantiate", "TableView ");
         loadData(); // Load data from the database
     }
@@ -69,10 +69,5 @@ public class TableViewActivity extends MainActivity {
 
     private void deleteItem(Item item) {
         //TODO Implement Method
-    }
-
-    private void showToast(String message) {
-        Toast toast = Toast.makeText(TableViewActivity.this, message, Toast.LENGTH_SHORT);
-        toast.show();
     }
 }

@@ -1,12 +1,16 @@
+/**
+ * MainActivity serves as the parent class for all view-based activities.
+ * It provides shared functionality such as navigation bar initialization,
+ * shared preferences handling, and basic data management.
+ */
 package com.CS360.stocksense;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -14,54 +18,77 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.CS360.stocksense.Supabase.DataCallback;
 import com.CS360.stocksense.Supabase.DataManager;
+import com.CS360.stocksense.Utils.CSVUtils;
 import com.CS360.stocksense.models.DatabaseSelection;
 import com.CS360.stocksense.models.Item;
-import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.IOException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
 
-    public static final String PREFERENCES_FILE = "com.CS360.stocksense.PREFERENCES_FILE";
-    public String organizationName;
-    public List<Item> items;
-    public List<DatabaseSelection> databases;
+    protected static final String PREFERENCES_FILE = "com.CS360.stocksense.PREFERENCES_FILE";
+    protected String loggedInOrganization;
+    protected List<Item> fetchedItems;
+    protected List<DatabaseSelection> availableDatabases;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Navigation Bar
-        initNav("nav1","nav2","nav3");
+        initializeNavigationBar("nav1","nav2","nav3");
 
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-        organizationName = preferences.getString("KEY_ORGANIZATION", null);
+        loggedInOrganization = preferences.getString("KEY_ORGANIZATION", null);
 
-        Log.d("OnInstantiate", "MainAcitivty " + organizationName);
+        Log.d("MainActivityLifecycle", "Organization " + loggedInOrganization);
 
-        initData();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initializeData();
     }
 
-    protected void onNavButton1Click() {
+    /**
+     * Handles clicks on navigation buttons. Child activities can override this to implement
+     * specific navigation behavior.
+     *
+     */
+    protected void handleNavigationButtonClickLeft() {
+        // This method can be overridden in child activities
+    }
+    /**
+     * Handles clicks on navigation buttons. Child activities can override this to implement
+     * specific navigation behavior.
+     *
+     */
+    protected void handleNavigationButtonClickCenter() {
+        // This method can be overridden in child activities
+    }
+    /**
+     * Handles clicks on navigation buttons. Child activities can override this to implement
+     * specific navigation behavior.
+     *
+     */
+    protected void handleNavigationButtonClickRight() {
         // This method can be overridden in child activities
     }
 
-    protected void onNavButton2Click() {
-        // This method can be overridden in child activities
-    }
-
-    protected void onNavButton3Click() {
-        // This method can be overridden in child activities
-    }
-    protected void initNav(String nav1, String nav2, String nav3){
+    /**
+     * Initializes the navigation bar with the given button titles.
+     *
+     * @param nav1, nav2, nav3
+     */
+    protected void initializeNavigationBar(String nav1, String nav2, String nav3){
         Button navButton1 = findViewById(R.id.nav_button1);
         Button navButton2 = findViewById(R.id.nav_button2);
         Button navButton3 = findViewById(R.id.nav_button3);
 
-        navButton1.setOnClickListener(v -> onNavButton1Click()); // Set click listener for button 1
-        navButton2.setOnClickListener(v -> onNavButton2Click()); // Set click listener for button 2
-        navButton3.setOnClickListener(v -> onNavButton3Click()); // Set click listener for button 3
+        navButton1.setOnClickListener(v -> handleNavigationButtonClickLeft()); // Set click listener for button 1
+        navButton2.setOnClickListener(v -> handleNavigationButtonClickCenter()); // Set click listener for button 2
+        navButton3.setOnClickListener(v -> handleNavigationButtonClickRight()); // Set click listener for button 3
 
         runOnUiThread(() -> {
             navButton1.setText(nav1);
@@ -70,30 +97,33 @@ public class MainActivity extends AppCompatActivity {
         });
         Log.d("MainActivity", "navButton1 text: " + navButton1.getText().toString());
     }
-    public void initData() {
+    /**
+     * Initializes data required for the activity.
+     * This method can be overridden by child activities for specific data needs.
+     */
+    protected void initializeData() {
         DataManager dataManager = new DataManager();
 
         // Fetch organization name from shared preferences
-        if (organizationName == null || organizationName.isEmpty()) {
+        if (loggedInOrganization == null || loggedInOrganization.isEmpty()) {
             return;
         }
 
-        // Load Databases
-        dataManager.fetchOrganization(organizationName, new DataCallback<List<DatabaseSelection>>() {
+        dataManager.fetchOrganization(loggedInOrganization, new DataCallback<List<DatabaseSelection>>() {
             @Override
             public void onSuccess(List<DatabaseSelection> result) {
-                databases = result; // Populate the databases list
-                Log.d("InitData", "Databases loaded successfully. Total: " + databases.size());
+                availableDatabases = result; // Populate the databases list
+                Log.d("InitData", "Databases loaded successfully. Total: " + availableDatabases.size());
 
-                // Fetch items for each database
-                for (DatabaseSelection db : databases) {
-                    dataManager.fetchDatabase(organizationName, db.getId(), new DataCallback<List<Item>>() {
+                // Fetch databases for the logged-in organization
+                for (DatabaseSelection db : availableDatabases) {
+                    dataManager.fetchDatabase(loggedInOrganization, db.getId(), new DataCallback<List<Item>>() {
                         @Override
                         public void onSuccess(List<Item> result) {
-                            if (items == null) {
-                                items = result; // Initialize the items list
+                            if (fetchedItems == null) {
+                                fetchedItems = result; // Initialize the items list
                             } else {
-                                items.addAll(result); // Append items
+                                fetchedItems.addAll(result); // Append items
                             }
                             Log.d("InitData", "Items loaded for database: " + db.getName());
                         }
@@ -112,5 +142,124 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    /* Displays a dynamic dialog for user input.
+    *
+    * This method allows customization of the dialog's title, input field hint, positive button text,
+    * and the action performed when the positive button is clicked. It can be reused for various
+    * operations by passing the appropriate parameters.
+    *
+    * @param title             The title of the dialog.
+    * @param hint              The placeholder text for the input field.
+    * @param positiveButtonText The text displayed on the positive action button (e.g., "Create", "Delete").
+    * @param actionListener    A callback interface to define the action performed with the user's input.
+    */
+    protected void showInputDialog(String title, String hint, String positiveButtonText, DialogActionListener actionListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title);
 
+        // Add an input field for user input
+        EditText input = new EditText(this);
+        input.setHint(hint);
+        builder.setView(input);
+
+        // Set up the positive button with a dynamic listener
+        builder.setPositiveButton(positiveButtonText, (dialog, which) -> {
+            String inputValue = input.getText().toString().trim();
+            if (!inputValue.isEmpty()) {
+                actionListener.onAction(inputValue); // Trigger the provided action
+            } else {
+                Toast.makeText(this, "Input cannot be empty", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Set up the negative button
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+
+        // Show the dialog
+        builder.show();
+    }
+
+    /**
+     * Interface for handling dialog actions.
+     *
+     * This interface is used to define the behavior when the positive button in the dialog
+     * is clicked and valid input is provided by the user.
+     */
+    protected interface DialogActionListener {
+        /**
+         * Defines the action to be performed using the input provided by the user.
+         *
+         * @param input The input provided by the user in the dialog.
+         */
+        void onAction(String input);
+    }
+    /**
+     * Exports the current database items to a CSV file.
+     *
+     * This method generates a CSV file containing the data from the current list of items (`items`)
+     * and saves it to the external files directory of the device. If the list is empty or null,
+     * it displays an appropriate message to the user.
+     *
+     * The file is named `database_export.csv` and is saved in the app's external files directory.
+     * The user is notified of the success or failure of the export operation via a Toast message.
+     *
+     * Precondition:
+     * - The `items` list must be populated with valid data before calling this method.
+     *
+     * Postcondition:
+     * - If successful, a CSV file is created and saved to the external files directory.
+     * - If an error occurs (e.g., I/O failure), the user is notified, and an error is logged.
+     *
+     * Example Usage:
+     * - Call this method when the user clicks a "Export to CSV" button.
+     *
+     * Error Handling:
+     * - If `items` is null or empty, a Toast message notifies the user that there is no data to export.
+     * - IOException is caught, and an error message is displayed.
+     */
+    protected void exportDatabaseToCSV() {
+        if (fetchedItems == null || fetchedItems.isEmpty()) {
+            Toast.makeText(this, "No data to export", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Define the file path in the Downloads directory
+        String fileName = "Database_" + fetchedItems.get(0).getDatabaseId();
+        String filePath = getExternalFilesDir(null) + "/" + fileName;
+
+        try {//TODO:: Fix Export Location
+            // Use CSVUtils to write data to the file
+            CSVUtils.exportToCSV(filePath, fetchedItems);
+
+            showToast( "Database exported to: " + filePath);
+            Log.d("ExportDatabase", "Exported to " + filePath);
+        } catch (IOException e) {
+            showToast("Failed to export database: " + e.getMessage());
+            Log.e("ExportDatabase", "Error exporting database", e);
+        }
+    }
+    protected void deleteItemById(String itemId, String databaseId) {
+        DataManager dataManager = new DataManager();
+
+        dataManager.deleteItem(loggedInOrganization, itemId, databaseId, new DataCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                runOnUiThread(() -> {
+                    showToast("Item deleted successfully");
+                    initializeData(); // Refresh the list
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                runOnUiThread(() -> {
+                    showToast("Failed to delete item: " + e.getMessage());
+                    Log.e("SearchViewActivity", "Error deleting item", e);
+                });
+            }
+        });
+    }
+    protected void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 }
