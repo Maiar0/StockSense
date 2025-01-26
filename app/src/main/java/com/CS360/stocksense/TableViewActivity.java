@@ -2,11 +2,12 @@ package com.CS360.stocksense;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.CS360.stocksense.RecyclerAdapters.RecyclerTableViewAdapter;
 import com.CS360.stocksense.Supabase.DataCallback;
 import com.CS360.stocksense.Supabase.DataManager;
 import com.CS360.stocksense.models.Item;

@@ -1,7 +1,3 @@
-/**
- * DbSelectionViewActivity allows users to view, create, delete, and import databases.
- * It inherits shared navigation and data management functionality from MainActivity.
- */
 package com.CS360.stocksense;
 
 import static com.CS360.stocksense.Utils.Utils.generateDatabaseId;
@@ -18,6 +14,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NavUtils;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.CS360.stocksense.RecyclerAdapters.RecyclerDbSelectionAdapter;
 import com.CS360.stocksense.Supabase.DataManager;
 import com.CS360.stocksense.Supabase.DataCallback;
 import com.CS360.stocksense.Utils.CSVUtils;
@@ -30,7 +28,42 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * DbSelectionViewActivity
+ *
+ * This activity provides a user interface for managing databases in the StockSense application.
+ * It allows users to view, create, delete, and import databases through a RecyclerView interface.
+ *
+ * Inherits:
+ * - Navigation functionality and shared UI components from `MainActivity`.
+ *
+ * Features:
+ * - Displays a list of available databases in a vertical RecyclerView.
+ * - Supports creating new databases by prompting the user for a database name.
+ * - Enables importing databases from a CSV file.
+ * - Allows deleting a database by specifying its ID.
+ * - Handles navigation to the `SearchViewActivity` when a database is selected.
+ *
+ * Key Methods:
+ * - `initializeData()`: Fetches the list of databases and populates the RecyclerView.
+ * - `populateRecyclerView(List<DatabaseSelection>)`: Updates the UI with the fetched database data.
+ * - `createDatabase(String)`: Creates a new database and refreshes the view.
+ * - `deleteDatabaseById(String)`: Deletes a specified database by ID and updates the view.
+ * - `importDatabase(Uri, String)`: Imports a database from a CSV file and adds it to the list.
+ * - `onDatabaseSelected(DatabaseSelection)`: Handles navigation when a database is selected.
+ *
+ * Example Usage:
+ * - When a user logs into their organization, this activity is invoked to display
+ *   and manage databases associated with their account.
+ *
+ * Notes:
+ * - The activity leverages `DataManager` for all backend interactions.
+ * - Error handling is included for network operations, file I/O, and user inputs.
+ *
+ * @author Dennis Ward II
+ * @version 1.0
+ * @since 01/20/2025
+ */
 public class DbSelectionViewActivity extends MainActivity {
 
     private RecyclerView recyclerView;

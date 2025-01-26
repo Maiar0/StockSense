@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.CS360.stocksense.RecyclerAdapters.RecyclerSearchViewAdapter;
 import com.CS360.stocksense.Supabase.DataCallback;
 import com.CS360.stocksense.Supabase.DataManager;
 import com.CS360.stocksense.models.Item;

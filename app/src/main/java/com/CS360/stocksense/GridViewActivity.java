@@ -7,9 +7,9 @@ import android.widget.Toast;
 
 import androidx.core.app.NavUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.CS360.stocksense.RecyclerAdapters.RecyclerGridViewAdapter;
 import com.CS360.stocksense.Supabase.DataCallback;
 import com.CS360.stocksense.Supabase.DataManager;
 import com.CS360.stocksense.models.Item;
@@ -17,7 +17,34 @@ import com.CS360.stocksense.models.Item;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
+/**
+ * GridViewActivity
+ *
+ * This activity provides a grid-based view to display items fetched from a specific database in the StockSense application.
+ * It extends `MainActivity` to leverage shared navigation and functionality.
+ *
+ * Features:
+ * - Displays a grid layout of items using a RecyclerView.
+ * - Fetches data from a database and populates the RecyclerView.
+ * - Includes navigation buttons for transitioning between activities and exporting data to CSV.
+ *
+ * Responsibilities:
+ * - Fetches and displays items specific to the selected database.
+ * - Provides navigation to other activities (e.g., SearchViewActivity, DbSelectionViewActivity).
+ * - Handles user interactions such as item selection and export operations.
+ *
+ * Example Usage:
+ * - Invoked when the user selects a database to view its items in a grid format.
+ *
+ * Notes:
+ * - Uses `DataManager` to fetch data from the backend.
+ * - RecyclerView layout is configured as a 2-column grid.
+ * - Pending functionalities include item creation and advanced sorting.
+ *
+ * @author Dennis Ward II
+ * @version 1.0
+ * @since 01/20/2025
+ */
 public class GridViewActivity extends MainActivity {
 
     private RecyclerView recyclerView;
@@ -91,6 +118,7 @@ public class GridViewActivity extends MainActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Grid layout with 2 columns
         recyclerView.setAdapter(adapter);
     }
+    //TODO:: Remove or Use?
     private void onItemSelected(Item item) {
         Toast.makeText(this, "Selected item: " + item.getItemName(), Toast.LENGTH_SHORT).show();
 
