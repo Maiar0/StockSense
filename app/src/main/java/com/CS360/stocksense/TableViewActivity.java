@@ -13,7 +13,39 @@ import com.CS360.stocksense.Supabase.DataManager;
 import com.CS360.stocksense.models.Item;
 
 import java.util.List;
-
+/**
+ * TableViewActivity
+ *
+ * This activity was designed to provide a table-based view for displaying items
+ * from a specific database in the StockSense application. It extends `MainActivity`
+ * to leverage shared navigation and data management features.
+ *
+ * Current Status:
+ * - This activity is currently unused and may be removed in future updates if it is
+ *   deemed unnecessary for the application.
+ *
+ * Intended Features:
+ * - Fetch data from a selected database using `DataManager` and display it in a RecyclerView.
+ * - Support operations like item deletion and confirmation dialogs.
+ *
+ * Key Methods:
+ * - `initializeData()`: Fetches items from the database and prepares them for display.
+ * - `populateRecyclerView(List<Item>)`: Populates the RecyclerView with fetched items.
+ * - `showDeleteConfirmationDialog(Item)`: Displays a confirmation dialog for deleting an item.
+ *
+ * Notes:
+ * - The activity is configured to use `RecyclerTableViewAdapter` for displaying data.
+ * - Navigation and shared functionality are inherited from `MainActivity`.
+ * - Future consideration should be given to its removal if no further use cases are identified.
+ *
+ * Dependencies:
+ * - `DataManager` for backend interactions.
+ * - `RecyclerTableViewAdapter` for handling RecyclerView item rendering.
+ * @deprecated
+ * @author Dennis Ward II
+ * @version 1.0
+ * @since 01/20/2025
+ */
 public class TableViewActivity extends MainActivity {
 
     private RecyclerView recyclerView;

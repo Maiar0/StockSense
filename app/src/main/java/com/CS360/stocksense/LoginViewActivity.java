@@ -18,7 +18,37 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
+/**
+ * LoginViewActivity
+ *
+ * This activity represents the login screen of the StockSense application. It handles
+ * user input for organization details, validates the input, checks for network connectivity,
+ * and navigates to the next activity upon successful login.
+ *
+ * Key Features:
+ * - Allows users to enter their organization name.
+ * - Saves and retrieves the organization name using SharedPreferences for convenience.
+ * - Validates user input and ensures a valid network connection before proceeding.
+ * - Navigates to the `DbSelectionViewActivity` upon successful login.
+ *
+ * Responsibilities:
+ * - Manages UI interactions for the login screen.
+ * - Validates user input for the organization name.
+ * - Ensures network availability before progressing further.
+ * - Provides user feedback through toast messages for errors such as invalid input or network issues.
+ *
+ * Notes:
+ * - The activity relies on SharedPreferences to store and retrieve the organization name.
+ * - Network connectivity is checked using the `ConnectivityManager` system service.
+ * - Future extensions could include user authentication or additional input validation.
+ *
+ * Example Usage:
+ * - The application launches this activity as the entry point for users to log in to their organization.
+ *
+ * @author Dennis Ward II
+ * @version 1.0
+ * @since 01/20/2025
+ */
 public class LoginViewActivity extends AppCompatActivity {
 
     private EditText organizationNameInput;

@@ -1,8 +1,3 @@
-/**
- * MainActivity serves as the parent class for all view-based activities.
- * It provides shared functionality such as navigation bar initialization,
- * shared preferences handling, and basic data management.
- */
 package com.CS360.stocksense;
 
 import android.content.Context;
@@ -24,7 +19,44 @@ import com.CS360.stocksense.models.Item;
 
 import java.io.IOException;
 import java.util.List;
-
+/**
+ * MainActivity
+ *
+ * Serves as the base activity for the StockSense application, providing shared functionality
+ * and features that are inherited by its child activities. This class includes core behaviors
+ * such as navigation handling, shared data management, and reusable utility methods.
+ *
+ * Key Features:
+ * - Shared Navigation Bar: Provides navigation buttons that child activities can configure and handle.
+ * - Data Management: Fetches and manages organization-related data, including databases and items.
+ * - Reusable Utility Methods: Includes common methods such as showing input dialogs, exporting data
+ *   to CSV, and deleting items.
+ *
+ * Responsibilities:
+ * - Acts as a parent class for child activities like `DbSelectionViewActivity`, `SearchViewActivity`, etc.
+ * - Manages the logged-in organization and associated data (e.g., items and databases).
+ * - Provides shared lifecycle methods like `initializeData` for data fetching.
+ * - Exposes protected methods for child activities to implement custom behavior, such as navigation
+ *   and UI actions.
+ *
+ * Notes:
+ * - The class uses `SharedPreferences` to store and retrieve the logged-in organization's details.
+ * - Navigation buttons are dynamically configured and can be customized by child activities.
+ * - Handles asynchronous data fetching and error handling through callbacks.
+ *
+ * Example Usage:
+ * - Extend `MainActivity` in a child activity to inherit navigation and data management features.
+ * - Override `handleNavigationButtonClickLeft()` to define custom behavior for the left navigation button.
+ *
+ * Dependencies:
+ * - `DataManager` for backend interactions.
+ * - `CSVUtils` for exporting data to CSV files.
+ * - `SharedPreferences` for persisting user session data.
+ *
+ * @author Dennis Ward II
+ * @version 1.0
+ * @since 01/20/2025
+ */
 public class MainActivity extends AppCompatActivity {
 
 
@@ -50,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         initializeData();
     }
-
     /**
      * Handles clicks on navigation buttons. Child activities can override this to implement
      * specific navigation behavior.
@@ -75,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
     protected void handleNavigationButtonClickRight() {
         // This method can be overridden in child activities
     }
-
     /**
      * Initializes the navigation bar with the given button titles.
      *

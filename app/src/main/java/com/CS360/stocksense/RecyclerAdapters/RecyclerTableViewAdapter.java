@@ -14,7 +14,39 @@ import com.CS360.stocksense.R;
 import com.CS360.stocksense.models.Item;
 
 import java.util.List;
-
+/**
+ * RecyclerTableViewAdapter
+ *
+ * This adapter is used for managing and displaying a list of items in a table-like format
+ * with a header and rows using a RecyclerView. It supports operations such as item deletion
+ * and launching a detailed view for individual items.
+ *
+ * Current Status:
+ * - This adapter is tied to `TableViewActivity`, which is currently deprecated and likely
+ *   to be removed in future updates. Consider migrating relevant functionality to other
+ *   active components if needed.
+ *
+ * Features:
+ * - Displays a header row at the top of the RecyclerView.
+ * - Shows item details such as ID, name, quantity, and location in a tabular layout.
+ * - Provides a delete button for removing items from the list.
+ * - Supports navigation to `ItemDetailsActivity` for viewing detailed item information.
+ *
+ * Notes:
+ * - Includes view types for header and data rows.
+ * - Implements a click listener interface for delete actions.
+ * - Adjustments for the header row are handled in methods like `getItemViewType` and `getItemCount`.
+ *
+ * Dependencies:
+ * - `TableViewActivity` (Deprecated).
+ * - `ItemDetailsActivity` for item-specific navigation.
+ * - Layout resources: `table_view_header.xml` and `table_view_object.xml`.
+ *
+ * @deprecated This adapter is linked to a deprecated activity and may be removed or replaced.
+ * @author Dennis Ward II
+ * @version 1.0
+ * @since 01/20/2025
+ */
 public class RecyclerTableViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_HEADER = 0; // View type for header

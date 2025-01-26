@@ -194,4 +194,13 @@ public class Item {
                 ", database_name='" + database_name + '\'' +
                 '}';
     }
+    // TODO:: add check for negative value.
+    /**
+     *  Allows for increment or decrement of quantity
+     *
+     * @param change The value to change quantity by.
+     */
+    public void updateQuantity(int change) {
+        this.quantity += change;
+    }
 }
