@@ -8,6 +8,9 @@ import androidx.core.app.NavUtils;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -17,7 +20,11 @@ import com.CS360.stocksense.Supabase.DataCallback;
 import com.CS360.stocksense.Supabase.DataManager;
 import com.CS360.stocksense.models.Item;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 /**
  * SearchViewActivity
  *
@@ -64,6 +71,8 @@ public class SearchViewActivity extends MainActivity {
     private RecyclerSearchViewAdapter adapter;
     private EditText searchBox;
     private String databaseId;
+    private Map<String, Item> itemIdMap = new HashMap<>();
+    private Map<String, Item> itemNameMap = new HashMap<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,6 +84,20 @@ public class SearchViewActivity extends MainActivity {
         // Initialize RecyclerView and EditText
         recyclerView = findViewById(R.id.recycler_search_results);
         searchBox = findViewById(R.id.search_box);
+
+        searchBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Searches on handler, so we do not search unnecessarily.(300 ms)
+                new Handler().postDelayed(() -> filterItems(s.toString().trim()), 300);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         databaseId = getIntent().getStringExtra("selected_database");
         Log.d("SearchViewActivity", "Organization " + loggedInOrganization);
@@ -117,6 +140,7 @@ public class SearchViewActivity extends MainActivity {
                     fetchedItems = items;
                     Log.d("SearchViewActivity", "Fetched " + fetchedItems.size() + " items.");
                     populateRecyclerView(fetchedItems);
+                    initializeHashMaps();
                 });
             }
 
@@ -130,6 +154,22 @@ public class SearchViewActivity extends MainActivity {
         });
     }
     /**
+     * Initializes HashMaps for fast lookups of items by ID and name.
+     *
+     * This method populates two HashMaps:
+     * - `itemIdMap`: Maps item IDs to `Item` objects for quick retrieval.
+     * - `itemNameMap`: Maps lowercase item names to `Item` objects for case-insensitive name-based searches.
+     *
+     * This improves search performance by avoiding repeated list iterations.
+     */
+    private void initializeHashMaps(){
+        for (Item item : fetchedItems) {
+            itemIdMap.put(item.getItem_id(), item);
+            itemNameMap.put(item.getItemName().toLowerCase(), item);
+        }
+    }
+
+    /**
      * Populates the RecyclerView with the given list of items.
      *
      * @param items List of Item objects to display.
@@ -139,6 +179,14 @@ public class SearchViewActivity extends MainActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
+    /**
+     * Handles item selection from the RecyclerView.
+     *
+     * Displays a toast message with the selected item's name and navigates the user
+     * to `ItemDetailsActivity` for more information.
+     *
+     * @param item The selected `Item` object.
+     */
     private void onItemSelected(Item item) {
         Toast.makeText(this, "Selected item: " + item.getItemName(), Toast.LENGTH_SHORT).show();
 
@@ -147,4 +195,34 @@ public class SearchViewActivity extends MainActivity {
         intent.putExtra("selected_database", databaseId);
         startActivity(intent);
     }
+    /**
+     * Filters items based on the user's search query.
+     *
+     * - If the query matches an item ID exactly, it is retrieved from `itemIdMap`.
+     * - If the query partially matches an item name, matching items are retrieved from `itemNameMap`.
+     * - If the query is empty, the full list of fetched items is displayed.
+     *
+     * @param query The user's search input.
+     */
+    private void filterItems(String query) {
+        if (query.isEmpty()) {
+            populateRecyclerView(fetchedItems);
+            return;
+        }
+
+        List<Item> filteredList = new ArrayList<>();
+
+        if (itemIdMap.containsKey(query)) {
+            filteredList.add(itemIdMap.get(query)); // Exact match on ID
+        } else {
+            for (String key : itemNameMap.keySet()) {
+                if (key.contains(query.toLowerCase())) { // Partial match on name
+                    filteredList.add(itemNameMap.get(key));
+                }
+            }
+        }
+
+        populateRecyclerView(filteredList);
+    }
+
 }

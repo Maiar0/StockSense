@@ -14,22 +14,15 @@
 
         <EditText
             android:id="@+id/search_box"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:hint="Search items..."
             android:inputType="text"
             android:padding="8dp"
             android:background="@android:drawable/edit_text"
             android:drawablePadding="8dp" />
 
-        <Button
-            android:id="@+id/search_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Search"
-            android:padding="8dp"
-            android:layout_marginStart="8dp" />
+
     </LinearLayout>
 
     <!-- RecyclerView for Items -->
