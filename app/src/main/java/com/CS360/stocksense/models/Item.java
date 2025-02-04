@@ -2,6 +2,8 @@ package com.CS360.stocksense.models;
 
 import androidx.annotation.NonNull;
 
+import java.io.Serializable;
+
 /**
  * Represents an item in the StockSense database.
  *
@@ -31,7 +33,7 @@ import androidx.annotation.NonNull;
  * @since 01/20/2025
  */
 
-public class Item {
+public class Item implements Serializable {
     private String item_id;
     private String item_name;
     private int quantity;
@@ -40,6 +42,7 @@ public class Item {
     private String organization_name;
     private String database_id;
     private String database_name;
+
 
     /**
      * Gets the item's unique ID.
@@ -88,10 +91,9 @@ public class Item {
      * @throws IllegalArgumentException if the quantity is negative.
      */
     public void setQuantity(int quantity) {
-        if (quantity < 0) {
-            throw new IllegalArgumentException("Quantity cannot be negative.");
+        if (quantity >= 0) {
+            this.quantity = quantity;
         }
-        this.quantity = quantity;
     }
     /**
      * Gets the item's location.
@@ -124,10 +126,9 @@ public class Item {
      * @throws IllegalArgumentException if the alert level is negative.
      */
     public void setAlertLevel(int alert_level) {
-        if (alert_level < 0) {
-            throw new IllegalArgumentException("Alert level cannot be negative.");
+        if (alert_level >= 0) {
+            this.alert_level = alert_level;
         }
-        this.alert_level = alert_level;
     }
     /**
      * Gets the organization's name associated with the item.
@@ -194,13 +195,15 @@ public class Item {
                 ", database_name='" + database_name + '\'' +
                 '}';
     }
-    // TODO:: add check for negative value.
     /**
      *  Allows for increment or decrement of quantity
      *
      * @param change The value to change quantity by.
      */
     public void updateQuantity(int change) {
-        this.quantity += change;
+        change += quantity;
+        if(change >= 0) {
+            this.quantity = change;
+        }
     }
 }

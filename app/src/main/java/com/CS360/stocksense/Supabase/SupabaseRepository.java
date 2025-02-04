@@ -138,9 +138,10 @@ public class SupabaseRepository {
 
     // Read Single Item
     public void readItem(String organizationName, String itemId, String databaseId, DataCallback<Item> callback) {
-        api.fetchItem(apiKey, authToken, "eq." + organizationName, itemId, "eq." + databaseId).enqueue(new Callback<List<Item>>() {
+        api.fetchItem(apiKey, authToken, "eq." + organizationName, "eq." + itemId, "eq." + databaseId).enqueue(new Callback<List<Item>>() {
             @Override
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
+                Log.d("SupabaseRepository", "Raw Response: " + response.raw());
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
                     callback.onSuccess(response.body().get(0)); // Return the first matched item
                 } else {
@@ -157,9 +158,10 @@ public class SupabaseRepository {
 
     // Update Item
     public void updateItem(String organizationName, Item item, String databaseId, DataCallback<List<Item>> callback) {
-        api.updateItem(apiKey, authToken, "eq." + organizationName, item.getItem_id(), "eq." + databaseId, item).enqueue(new Callback<List<Item>>() {
+        api.updateItem(apiKey, authToken, "eq." + organizationName, "eq." + item.getItem_id(), "eq." + databaseId, item).enqueue(new Callback<List<Item>>() {
             @Override
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
+                Log.d("SupabaseRepository", "Raw Response: " + response.raw());
                 if (response.isSuccessful() && response.body() != null) {
                     callback.onSuccess(response.body());
                 } else {
@@ -222,8 +224,6 @@ public class SupabaseRepository {
             }
         });
     }
-
-
 
     public void validateUser(String username, String hashedPassword, DataCallback<Boolean> callback) {
         LoginRequest loginRequest = new LoginRequest(username, hashedPassword);

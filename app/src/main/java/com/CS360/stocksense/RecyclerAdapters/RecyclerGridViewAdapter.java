@@ -40,17 +40,17 @@ import java.util.List;
  */
 public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridViewAdapter.ViewHolder> {
 
-    private List<Item> itemsList; // List of items to display
-    private Context context; // Context for launching activities
+    private List<Item> itemsList;
+    private RecyclerSearchViewAdapter.OnItemSelectListener listener;
     /**
      * Constructor for the adapter.
      *
      * @param itemsList List of Item objects to display.
-     * @param context   Context for launching activities.
+     * @param listener   Context for launching activities.
      */
-    public RecyclerGridViewAdapter(List<Item> itemsList, Context context) {
+    public RecyclerGridViewAdapter(List<Item> itemsList, RecyclerSearchViewAdapter.OnItemSelectListener listener) {
         this.itemsList = itemsList;
-        this.context = context;
+        this.listener = listener;
     }
 
     @NonNull
@@ -81,28 +81,17 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
             notifyItemChanged(position); // Notify adapter of item change
         });
 
-        // Navigate to item details on item click
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, ItemDetailsActivity.class);
-            intent.putExtra("item_id", item.getItem_id());
-            intent.putExtra("source_activity", "GridView");
-            context.startActivity(intent);
-        });
+        // Set a click listener to notify the listener when an item is selected
+        holder.itemView.setOnClickListener(v -> listener.onItemSelected(item));
+    }
+    public interface OnItemSelectListener {
+        void onItemSelected(Item item);
     }
     @Override
     public int getItemCount() {
         return itemsList.size();
     }
-    // TODO:: No usage.
-    /**
-     * Updates the adapter's dataset and refreshes the RecyclerView.
-     *
-     * @param newItemsList The new list of items to display.
-     */
-    public void updateData(List<Item> newItemsList) {
-        this.itemsList = newItemsList;
-        notifyDataSetChanged();
-    }
+
     /**
      * ViewHolder for individual grid items.
      * Holds references to the item's details and action buttons.
@@ -119,14 +108,5 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
             incrementButton = itemView.findViewById(R.id.increment_button);
             decrementButton = itemView.findViewById(R.id.decrement_button);
         }
-    }
-    // TODO:: No usage.
-    /**
-     * Returns the list of items currently displayed by the adapter.
-     *
-     * @return List of Item objects.
-     */
-    public List<Item> getItemsList() {
-        return itemsList; // Return the list of items
     }
 }

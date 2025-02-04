@@ -79,15 +79,7 @@ public class RecyclerDbSelectionAdapter extends RecyclerView.Adapter<RecyclerDbS
             databaseId = itemView.findViewById(R.id.database_id);
         }
     }
-    //TODO:: Decide if this will be removed.
-    /**
-     * Returns the current list of database selections.
-     *
-     * @return List of DatabaseSelection objects.
-     */
-    public List<DatabaseSelection> getDatabaseList() {
-        return databases; // Return the list of databases
-    }
+
     /**
      * Interface for handling click events on database items.
      */

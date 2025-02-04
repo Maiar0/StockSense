@@ -2,9 +2,13 @@ package com.CS360.stocksense;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NavUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,8 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.CS360.stocksense.RecyclerAdapters.RecyclerGridViewAdapter;
 import com.CS360.stocksense.Supabase.DataCallback;
 import com.CS360.stocksense.Supabase.DataManager;
+import com.CS360.stocksense.Supabase.SupabaseRepository;
 import com.CS360.stocksense.models.Item;
+import com.CS360.stocksense.models.Organization;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -79,7 +86,7 @@ public class GridViewActivity extends MainActivity {
     }
     @Override
     protected void handleNavigationButtonClickCenter(){
-        //TODO:: Implement Item creation
+        showCreateItemDialog();
     }
     @Override
     protected void handleNavigationButtonClickRight(){
@@ -114,11 +121,102 @@ public class GridViewActivity extends MainActivity {
      * @param items List of Item objects to display.
      */
     private void populateRecyclerView(List<Item> items) {
-        adapter = new RecyclerGridViewAdapter(items, this);
+        adapter = new RecyclerGridViewAdapter(items, this::onItemSelected);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Grid layout with 2 columns
         recyclerView.setAdapter(adapter);
     }
-    //TODO:: Remove or Use?
+    private void showCreateItemDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Create Item");
+
+        // Layout for input fields
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(20, 20, 20, 20);
+
+        // Set input fields
+        EditText itemName_input = new EditText(this);
+        itemName_input.setHint("Enter Item Name");
+        itemName_input.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(itemName_input);
+
+        EditText ItemId_input = new EditText(this);
+        ItemId_input.setHint("Enter item Id");
+        ItemId_input.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(ItemId_input);
+
+        EditText quantity_input = new EditText(this);
+        quantity_input.setHint("Enter Quantity");
+        quantity_input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        layout.addView(quantity_input);
+
+        EditText location_input = new EditText(this);
+        location_input.setHint("Enter Location");
+        location_input.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(location_input);
+
+        EditText alertLevel_input = new EditText(this);
+        alertLevel_input.setHint("Enter Alert level");
+        alertLevel_input.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(alertLevel_input);
+
+        builder.setView(layout);
+
+        // Set dialog buttons
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String itemName = itemName_input.getText().toString().trim();
+            String itemId = ItemId_input.getText().toString().trim();
+            String quantity = quantity_input.getText().toString().trim();//this a number
+            String location = location_input.getText().toString().trim();
+            String alertLevel = alertLevel_input.getText().toString().trim();
+
+            if (itemName.isEmpty() || itemId.isEmpty() || quantity.isEmpty() || location.isEmpty() || alertLevel.isEmpty()) {
+                showToast("All fields are required.");
+                return;
+            }
+
+            Item item = new Item();
+            item.setItem_id(itemId);
+            item.setItemName(itemName);
+            item.setQuantity(Integer.parseInt(quantity));
+            item.setLocation(location);
+            item.setAlertLevel(Integer.parseInt(alertLevel));
+            createItem(item);
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        // Show the dialog
+        builder.show();
+    }
+    private void createItem(Item item){
+        SupabaseRepository repository = new SupabaseRepository();
+
+        List<Item> itemList = new ArrayList<>();
+        itemList.add(item);
+
+        repository.createItem(loggedInOrganization, itemList, databaseId, new DataCallback<List<Item>>() {
+            @Override
+            public void onSuccess(List<Item> createdItems) {
+                Log.d("CreateItem", "Item successfully created: " + createdItems);
+                showToast("Item created successfully!");
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("CreateItem", "Error creating item: " + e.getMessage());
+                showToast("Failed to create item: " + e.getMessage());
+            }
+        });
+    }
+    /**
+     * Handles item selection from the RecyclerView.
+     *
+     * Displays a toast message with the selected item's name and navigates the user
+     * to `ItemDetailsActivity` for more information.
+     *
+     * @param item The selected `Item` object.
+     */
     private void onItemSelected(Item item) {
         Toast.makeText(this, "Selected item: " + item.getItemName(), Toast.LENGTH_SHORT).show();
 
@@ -126,10 +224,5 @@ public class GridViewActivity extends MainActivity {
         intent.putExtra("selected_item", item.getItem_id());
         intent.putExtra("selected_database", databaseId);
         startActivity(intent);
-    }
-    //TODO:: Implement Sort Algorithmic
-    private List<Item> sortData(List<Item> itemsList) {
-        Collections.sort(itemsList, Comparator.comparing(Item::getItemName)); // Sort items by name
-        return itemsList;
     }
 }

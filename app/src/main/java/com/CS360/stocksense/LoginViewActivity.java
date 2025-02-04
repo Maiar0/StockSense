@@ -232,25 +232,7 @@ public class LoginViewActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginViewActivity.this, DbSelectionViewActivity.class); // Replace with your target activity
         startActivity(intent);
     }
-    /**
-     * Checks if network connectivity is available.
-     *TODO:: Decided if we need this
-     * @return True if network is available, false otherwise.
-     */
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            Network activeNetwork = connectivityManager.getActiveNetwork();
-            if (activeNetwork != null) {
-                NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
-                return networkCapabilities != null &&
-                        (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                                networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-                                networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
-            }
-        }
-        return false;
-    }
+
     /**
      * Displays a toast message on the screen.
      *

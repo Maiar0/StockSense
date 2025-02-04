@@ -74,26 +74,7 @@ public class RecyclerSearchViewAdapter extends RecyclerView.Adapter<RecyclerSear
     public int getItemCount() {
         return filteredItemsList.size();
     }
-    /**
-     * Filters the list of items based on a user query.
-     *
-     * @param query The search query entered by the user.
-     */
-    public void filter(String query) {
-        filteredItemsList.clear();
 
-        if (query.isEmpty()) {
-            filteredItemsList.addAll(itemsList); // Show all items if query is empty
-        } else {
-            for (Item item : itemsList) {
-                if (item.getItemName().toLowerCase().contains(query.toLowerCase())) {
-                    filteredItemsList.add(item);
-                }
-            }
-        }
-
-        notifyDataSetChanged(); // Notify adapter to refresh RecyclerView
-    }
     /**
      * ViewHolder for individual items in the RecyclerView.
      * Holds references to the item's details.

@@ -77,20 +77,6 @@ public class DataManager {
         });
     }
 
-    // Update an item
-    public void updateItem(String organizationName, Item item, String databaseId, DataCallback<List<Item>> callback) {
-        repository.updateItem(organizationName, item, databaseId, new DataCallback<List<Item>>() {
-            @Override
-            public void onSuccess(List<Item> result) {
-                callback.onSuccess(result); // Forward the updated item back to the caller
-            }
-
-            @Override
-            public void onError(Exception e) {
-                callback.onError(e); // Forward the error to the caller
-            }
-        });
-    }
 
     // Delete an item
     public void deleteItem(String organizationName, String itemId, String databaseId, DataCallback<Void> callback) {
@@ -106,8 +92,4 @@ public class DataManager {
             }
         });
     }
-
-
-
-
 }

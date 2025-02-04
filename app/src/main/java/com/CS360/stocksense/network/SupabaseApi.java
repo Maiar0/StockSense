@@ -13,6 +13,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Query;
@@ -110,10 +111,10 @@ public interface SupabaseApi {
      * @param item The updated item object.
      * @return A Call object with a list of updated items returned by the server.
      */
-    @PUT("items")
+    @PATCH("items")
     @Headers({
             "Content-Type: application/json",
-            "Prefer: return=representation" // Request to return updated records
+            "Prefer: return=representation"
     })
     Call<List<Item>> updateItem(
             @Header("apikey") String apiKey,
