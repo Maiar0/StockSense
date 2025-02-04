@@ -6,6 +6,7 @@
     android:padding="16dp"
     tools:context=".LoginViewActivity">
 
+    <!-- Organization Name Input -->
     <EditText
         android:id="@+id/organization_name"
         android:layout_width="match_parent"
@@ -14,11 +15,26 @@
         android:importantForAccessibility="yes"
         android:inputType="textPersonName" />
 
-
-    <Button
-        android:id="@+id/start_button"
+    <!-- Password Input -->
+    <EditText
+        android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/start_button_text" />
+        android:hint="@string/password_hint"
+        android:importantForAccessibility="yes"
+        android:inputType="textPassword" />
+
+    <!-- Login Button -->
+    <Button
+        android:id="@+id/login_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login_button_text" />
+    <!-- Register Button -->
+    <Button
+        android:id="@+id/register_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/register_button_text" />
 
 </LinearLayout>

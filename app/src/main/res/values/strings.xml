@@ -21,7 +21,10 @@
 
     <!-- Login Screen -->
     <string name="organization_hint">Enter Organization Name</string>
-    <string name="start_button_text">Start</string>
+    <string name="username_hint">Enter Username</string>
+    <string name="password_hint">Enter password</string>
+    <string name="login_button_text">Login</string>
+    <string name="register_button_text">Register</string>
     <string name="invalid_login">Must Enter Organization Name</string>
     <string name="no_network">No Internet Connection!</string>
 

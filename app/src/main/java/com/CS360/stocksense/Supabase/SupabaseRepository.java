@@ -3,6 +3,8 @@ package com.CS360.stocksense.Supabase;
 import android.util.Log;
 
 import com.CS360.stocksense.models.Item;
+import com.CS360.stocksense.models.LoginRequest;
+import com.CS360.stocksense.models.Organization;
 import com.CS360.stocksense.models.DatabaseSelection;
 import com.CS360.stocksense.network.SupabaseApi;
 import com.CS360.stocksense.network.SupabaseClient;
@@ -190,18 +192,60 @@ public class SupabaseRepository {
                 callback.onError(new Exception("Network error: " + t.getMessage()));
             }
         });
+    }
+    /**
+     * Registers a new user in Supabase.
+     *
+     * @param organization The user object containing username, password, and organizations.
+     * @param callback The callback for success or failure.
+     */
+    public void registerUser(Organization organization, DataCallback<Organization> callback) {
+        api.registerUser(apiKey, authToken, organization).enqueue(new Callback<List<Organization>>() {
+            @Override
+            public void onResponse(Call<List<Organization>> call, Response<List<Organization>> response) {
+                Log.d("SupabaseRepository", "Response Code: " + response.code());
+                Log.d("SupabaseRepository", "Raw Response: " + response.raw());
 
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    Organization createdOrganization = response.body().get(0); // ✅ Get the first object from the array
+                    Log.d("SupabaseRepository", "Created Organization: " + new Gson().toJson(createdOrganization));
+                    callback.onSuccess(createdOrganization);
+                } else {
+                    callback.onError(new Exception("Registration failed: " + response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Organization>> call, Throwable t) {
+                Log.e("SupabaseRepository", "Network error: " + t.getMessage());
+                callback.onError(new Exception("Network error: " + t.getMessage()));
+            }
+        });
     }
 
 
 
+    public void validateUser(String username, String hashedPassword, DataCallback<Boolean> callback) {
+        LoginRequest loginRequest = new LoginRequest(username, hashedPassword);
+        Log.d("LoginRequest", "LoginRequest: " + loginRequest.toString());
+        Log.d("LoginRequest", "Sending payload: " + new Gson().toJson(loginRequest));
 
+        api.validateUser(apiKey, authToken, loginRequest).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(true); // Login successful
+                } else {
+                    callback.onError(new Exception("Invalid username or password."));
+                }
+            }
 
-
-
-
-
-
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onError(new Exception("Network error: " + t.getMessage()));
+            }
+        });
+    }
 
 
 }

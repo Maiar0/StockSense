@@ -1,6 +1,8 @@
 package com.CS360.stocksense.network;
 
 import com.CS360.stocksense.models.Item;
+import com.CS360.stocksense.models.LoginRequest;
+import com.CS360.stocksense.models.Organization;
 import com.CS360.stocksense.models.DatabaseSelection;
 
 import java.util.List;
@@ -154,6 +156,36 @@ public interface SupabaseApi {
             @Header("apikey") String apiKey,
             @Header("Authorization") String authToken,
             @Query("database_id") String databaseId
+    );
+    /**
+     * Registers a new user in Supabase.
+     *
+     * @param apiKey The API key for authentication.
+     * @param authToken The authorization token for user authentication.
+     * @param organization The user object containing username, password, and organizations.
+     * @return A Call object for handling the API response.
+     */
+    @POST("users")
+    @Headers({
+            "Content-Type: application/json",
+            "Prefer: return=representation" // Ensures we get the created organization
+    })
+    Call<List<Organization>> registerUser(
+            @Header("apikey") String apiKey,
+            @Header("Authorization") String authToken,
+            @Body Organization organization
+    );
+
+
+    @POST("rpc/validate_user")
+    @Headers({
+            "Content-Type: application/json",
+            "Prefer: return=minimal"
+    })
+    Call<Void> validateUser(
+            @Header("apikey") String apiKey,
+            @Header("Authorization") String authToken,
+            @Body LoginRequest loginRequest
     );
 
 }

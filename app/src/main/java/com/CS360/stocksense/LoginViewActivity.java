@@ -11,13 +11,26 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.CS360.stocksense.Supabase.DataCallback;
+import com.CS360.stocksense.Supabase.SupabaseRepository;
+import com.CS360.stocksense.models.Organization;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * LoginViewActivity
  *
@@ -51,8 +64,8 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 public class LoginViewActivity extends AppCompatActivity {
 
-    private EditText organizationNameInput;
-    private Button startLoginButton;
+    private EditText organizationNameInput, passwordInput;
+    private Button loginButton, registerButton;
     private static final String PREFERENCES_FILE = "com.CS360.stocksense.PREFERENCES_FILE";
     private static final String KEY_ORGANIZATION = "KEY_ORGANIZATION";
 
@@ -61,15 +74,17 @@ public class LoginViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Initialize UI components
         organizationNameInput = findViewById(R.id.organization_name);
-        startLoginButton = findViewById(R.id.start_button);
+        passwordInput = findViewById(R.id.password);
+        loginButton = findViewById(R.id.login_button);
+        registerButton = findViewById(R.id.register_button);
 
-        startLoginButton.setOnClickListener(v -> handleLoginClick());
-
-
+        loginButton.setOnClickListener(v -> handleLoginClick());
+        registerButton.setOnClickListener(v-> showRegisterDialog());
 
         Log.d("OnInstantiate", "LoginView ");
-        populateOrganizationFieldIfSaved();
+        populateSavedCredentials();
 
     }
     /**
@@ -78,41 +93,137 @@ public class LoginViewActivity extends AppCompatActivity {
      */
     private void handleLoginClick() {
         String organization = organizationNameInput.getText().toString();
+        String password = passwordInput.getText().toString().trim();
 
-        if (organization.isEmpty()) {
-            showToast(getString(R.string.invalid_login));
+        if (organization.isEmpty() || password.isEmpty()) {
+            showToast("All fields are required.");
             return;
         }
+        // Hash the password using SHA-256
+        String hashedPassword = hashPassword(password);
+        // Validate login credentials via API
+        SupabaseRepository repository = new SupabaseRepository();
+        repository.validateUser(organization, hashedPassword, new DataCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                showToast("Login successful!");
+                saveCredentials(organization);
+                navigateToNextActivity();
+            }
 
-        saveOrganizationToPreferences(organization);
-
-        if(!isNetworkAvailable()){
-            showToast(getString(R.string.no_network));
-            return;
-        }
-
-        navigateToNextActivity();
+            @Override
+            public void onError(Exception e) {
+                showToast("Login failed: " + e.getMessage());
+            }
+        });
+        saveCredentials(organization);
     }
+    private void showRegisterDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Register New User");
+
+        // Layout for input fields
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(20, 20, 20, 20);
+
+        // Username input
+        EditText emailInput = new EditText(this);
+        emailInput.setHint("Enter E-mail");
+        emailInput.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(emailInput);
+
+        // Username input
+        EditText organizationInput = new EditText(this);
+        organizationInput.setHint("Enter Organization");
+        organizationInput.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(organizationInput);
+
+        // Password input
+        EditText passwordInput = new EditText(this);
+        passwordInput.setHint("Enter Password");
+        passwordInput.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        layout.addView(passwordInput);
+
+        builder.setView(layout);
+
+        // Set dialog buttons
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String email = emailInput.getText().toString().trim();
+            String organization = organizationInput.getText().toString().trim();
+            String password = passwordInput.getText().toString().trim();
+
+            if (organization.isEmpty() || password.isEmpty() || email.isEmpty()) {
+                showToast("All fields are required.");
+                return;
+            }
+
+            // Hash password using SHA-256
+            String hashedPassword = hashPassword(password);
+
+            // Create User object
+            Organization newOrganization = new Organization(organization, hashedPassword, email);
+            registerUser(newOrganization);
+
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        // Show the dialog
+        builder.show();
+    }
+    private void registerUser(Organization organization) {
+        SupabaseRepository repository = new SupabaseRepository();
+
+        repository.registerUser(organization, new DataCallback<Organization>() {
+            @Override
+            public void onSuccess(Organization result) {
+                showToast("User registered successfully!");
+                Log.d("RegisterUser", "User registered: " + result);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                showToast("Registration failed: " + e.getMessage());
+                Log.e("RegisterUser", "Error registering user", e);
+            }
+        });
+    }
+
     /**
-     * Saves the organization name to SharedPreferences for future use.
-     *
-     * @param organization The name of the organization to save.
+     * Saves organization, username
      */
-    private void saveOrganizationToPreferences(String organization) {
+    private void saveCredentials(String organization) {
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(KEY_ORGANIZATION, organization);
         editor.apply();
     }
+
     /**
-     * Checks if a saved organization name exists in SharedPreferences and populates the input field.
+     * Loads saved credentials (if available).
      */
-    private void populateOrganizationFieldIfSaved() {
+    private void populateSavedCredentials() {
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-            String savedOrg = preferences.getString(KEY_ORGANIZATION, null);
-            if (savedOrg != null ) {
-                organizationNameInput.setText(savedOrg);
+        String savedOrg = preferences.getString(KEY_ORGANIZATION, null);
+        if (savedOrg != null) organizationNameInput.setText(savedOrg);
+    }
+    /**
+     * Hashes a password using SHA-256.
+     */
+    private String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes());
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                hexString.append(String.format("%02x", b));
             }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            Log.e("SHA-256", "Hashing failed", e);
+            return password; // Not secure, but avoids crashes
+        }
     }
     /**
      * Navigates to the database selection screen and finishes the current activity.
@@ -120,11 +231,10 @@ public class LoginViewActivity extends AppCompatActivity {
     private void navigateToNextActivity() {
         Intent intent = new Intent(LoginViewActivity.this, DbSelectionViewActivity.class); // Replace with your target activity
         startActivity(intent);
-        finish();
     }
     /**
      * Checks if network connectivity is available.
-     *
+     *TODO:: Decided if we need this
      * @return True if network is available, false otherwise.
      */
     private boolean isNetworkAvailable() {
