@@ -209,7 +209,7 @@ public class SupabaseRepository {
                 Log.d("SupabaseRepository", "Raw Response: " + response.raw());
 
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
-                    Organization createdOrganization = response.body().get(0); // ✅ Get the first object from the array
+                    Organization createdOrganization = response.body().get(0);
                     Log.d("SupabaseRepository", "Created Organization: " + new Gson().toJson(createdOrganization));
                     callback.onSuccess(createdOrganization);
                 } else {
