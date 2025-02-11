@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
         String fileName = "Database_" + fetchedItems.get(0).getDatabaseId();
         String filePath = getExternalFilesDir(null) + "/" + fileName;
 
-        try {//TODO:: Fix Export Location
+        try {
             // Use CSVUtils to write data to the file
             CSVUtils.exportToCSV(filePath, fetchedItems);
 
