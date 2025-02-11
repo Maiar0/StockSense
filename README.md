@@ -259,9 +259,62 @@ public static void populateInitialData(Context context) {
 
 ---
 
-## Conclusion
+## **Limitations**
 
-This database structure ensures **secure user authentication, efficient inventory tracking, and low-stock alerts** via SMS notifications. The combination of Room Database and **background workers** (for alerts) provides a **robust inventory management system**.
+While StockSense provides a functional inventory management system, it has several **limitations** that should be considered for future improvements.
 
----
+### **1. Insecure Password Storage**
+- User passwords are stored **in plaintext** within the database.
+- There is **no password hashing or encryption**, making the application vulnerable to **database leaks** or unauthorized access.
+
+  **Potential Fix:** Implement secure password hashing using **BCrypt** or **Argon2** before storing credentials.
+
+### **2. Single Database Instance (No Remote Access)**
+- The app uses a **local Room database**, meaning:
+  - There is **no cloud storage** or remote access.
+  - Users **must access inventory from a single device**.
+
+  **Potential Fix:** Use **Firebase Firestore, Supabase, or a remote MySQL/PostgreSQL server** to enable multi-device synchronization.
+
+### **3. Single User System**
+- **No multi-user support**—the application only allows **one active user per installation**.
+- **No user roles or permissions**, meaning:
+  - Admins and users have the same level of access.
+  - Any logged-in user can modify inventory data.
+
+  **Potential Fix:** Implement **role-based access control (RBAC)** and support multiple users with **unique sessions**.
+
+### **4. No Network Sync or API Integration**
+- The app functions entirely **offline** with no API support.
+- Inventory updates cannot be synced across multiple devices.
+
+  **Potential Fix:** Introduce **REST API support** for **real-time updates** and **cloud storage**.
+
+### **5. No Data Backup or Export**
+- **If the database is lost or corrupted, all inventory data is gone.**
+- Users cannot **export** inventory reports.
+
+  **Potential Fix:** Implement **automatic database backup**, **export to CSV/PDF**, or **cloud sync**.
+
+### **6. No Input Validation for User Data**
+- There are **no constraints** preventing:
+  - **Weak passwords** (e.g., `"1234"`, `"password"`).
+  - **Duplicate usernames**.
+  - **Invalid phone numbers** for SMS alerts.
+
+  **Potential Fix:** Implement **input validation** and **enforce password complexity**.
+
+### **7. Limited SMS Alert System**
+- The app **relies on SMS notifications**, which:
+  - Require **SMS permission approval** from the user.
+  - **Might not work** on devices without an SMS plan.
+
+  **Potential Fix:** Introduce **push notifications** or **email alerts** as alternatives.
+
+### **8. No Real-Time Inventory Updates**
+- Inventory changes are **not updated in real-time**.
+- If multiple users access the same database, **data inconsistency** could occur.
+
+  **Potential Fix:** Implement **LiveData observers** in Room or use **real-time database syncing**.
+
 
