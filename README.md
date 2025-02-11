@@ -18,13 +18,16 @@ This enhancement introduces **improved UI navigation and workflow** within the S
      - **Create** a new database.
      - **Delete** an existing database by entering its ID.
      - **Import** a database from a CSV file.
-   - **Next Step:** Selecting a database navigates to `GridViewActivity`.
+   - **Next Step:** Selecting a database navigates to `SearchViewActivity`.
 
-3. **Grid View (`GridViewActivity`)**  
-   - Displays items from the selected database in a **grid format** using a `RecyclerView`.
-   - Users can:
-     - **Add new items** with a structured input dialog.
-     - **Export database** contents to a CSV file.
+3. **Search View (`SearchViewActivity`)**  
+   - Provides a **search bar** to filter inventory items by ID or name.
+   - Uses **hash maps** for fast lookups.
+   - Displays results dynamically in a `RecyclerView` list.
+   - **Navbar Options:**
+     - **Grid View** - Switch to grid format for viewing inventory.
+     - **Delete Item** - Remove an item from the database.
+     - **Export Database** - Export inventory data as CSV.
    - **Next Step:** Clicking an item navigates to `ItemDetailsActivity`.
 
 4. **Item Details View (`ItemDetailsActivity`)**  
@@ -32,15 +35,20 @@ This enhancement introduces **improved UI navigation and workflow** within the S
    - Users can:
      - **Modify item attributes** (name, quantity, location, alert level).
      - **Delete** an item with confirmation.
-   - **Next Step:** Saves changes and returns to `GridViewActivity`.
+   - **Next Step:** Saves changes and returns to `SearchViewActivity`.
 
-5. **Search View (`SearchViewActivity`)**  
-   - Provides a **search bar** to filter inventory items by ID or name.
-   - Uses **hash maps** for fast lookups.
-   - Displays results dynamically in a `RecyclerView` list.
+5. **Grid View (`GridViewActivity`)**  
+   - Displays items from the selected database in a **grid format** using a `RecyclerView`.
+   - Users can:
+     - **Add new items** with a structured input dialog.
+     - **Export database** contents to a CSV file.
+   - **Navbar Options:**
+     - **Search View** - Switch back to the searchable inventory list.
+     - **Create Item** - Add a new inventory item.
+     - **Export Database** - Export data as CSV.
    - **Next Step:** Clicking an item navigates to `ItemDetailsActivity`.
 
-6. **Table View (`TableViewActivity`)** *(Currently Unused)*
+6. **Table View (`TableViewActivity`)** *(Currently Unused)*  
    - Originally intended for displaying inventory in a **table-based format**.
    - Future consideration for removal.
 
@@ -72,21 +80,27 @@ This enhancement introduces **improved UI navigation and workflow** within the S
   - **Importing databases** from CSV files.
 
 #### **Navigation**
-- **On Database Selection:** Opens `GridViewActivity` with the selected database.
+- **On Database Selection:** Opens `SearchViewActivity` with the selected database.
 
 ---
 
-### **3. Grid View**
-> **File:** [`GridViewActivity.java`](app/src/main/java/com/CS360/stocksense/GridViewActivity.java)
+### **3. Search View**
+> **File:** [`SearchViewActivity.java`](app/src/main/java/com/CS360/stocksense/SearchViewActivity.java)
 
 #### **Features**
-- Displays **inventory items in a grid** using a `RecyclerView`.
-- Allows users to:
-  - **Add new inventory items**.
-  - **Export the database** as a CSV file.
+- Implements a **search bar** for real-time filtering.
+- Uses **dual hash maps** for **fast lookups** by:
+  - **Item ID**
+  - **Item Name**
+- Displays search results in a `RecyclerView`.
+
+#### **Navbar Options**
+- **Grid View** - Switch to `GridViewActivity`.
+- **Delete Item** - Prompt for an item ID to delete.
+- **Export Database** - Save inventory data as CSV.
 
 #### **Navigation**
-- **On Item Click:** Opens `ItemDetailsActivity` for item modification.
+- **On Item Click:** Opens `ItemDetailsActivity`.
 
 ---
 
@@ -100,22 +114,26 @@ This enhancement introduces **improved UI navigation and workflow** within the S
   - **Deleting the item** with confirmation.
 
 #### **Navigation**
-- **After Saving Changes:** Returns to `GridViewActivity`.
+- **After Saving Changes:** Returns to `SearchViewActivity`.
 
 ---
 
-### **5. Search View**
-> **File:** [`SearchViewActivity.java`](app/src/main/java/com/CS360/stocksense/SearchViewActivity.java)
+### **5. Grid View**
+> **File:** [`GridViewActivity.java`](app/src/main/java/com/CS360/stocksense/GridViewActivity.java)
 
 #### **Features**
-- Implements a **search bar** for real-time filtering.
-- Uses **dual hash maps** for **fast lookups** by:
-  - **Item ID**
-  - **Item Name**
-- Displays search results in a `RecyclerView`.
+- Displays **inventory items in a grid** using a `RecyclerView`.
+- Allows users to:
+  - **Add new inventory items**.
+  - **Export the database** as a CSV file.
+
+#### **Navbar Options**
+- **Search View** - Switch back to `SearchViewActivity`.
+- **Create Item** - Prompt user to add a new item.
+- **Export Database** - Save inventory data as CSV.
 
 #### **Navigation**
-- **On Item Click:** Opens `ItemDetailsActivity`.
+- **On Item Click:** Opens `ItemDetailsActivity` for item modification.
 
 ---
 
