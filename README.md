@@ -9,7 +9,7 @@ This enhancement introduces **improved UI navigation and workflow** within the S
 1. **Login View (`LoginViewActivity`)**  
    - Allows users to **enter their organization name** to log in.
    - Validates network connection and organization credentials.
-   - Stores login details using `SharedPreferences` for session persistence.
+   - Stores Organization Name using `SharedPreferences` for session persistence.
    - **Next Step:** Redirects users to `DbSelectionViewActivity`.
 
 2. **Database Selection View (`DbSelectionViewActivity`)**  
