@@ -311,10 +311,5 @@ While StockSense provides a functional inventory management system, it has sever
 
   **Potential Fix:** Introduce **push notifications** or **email alerts** as alternatives.
 
-### **8. No Real-Time Inventory Updates**
-- Inventory changes are **not updated in real-time**.
-- If multiple users access the same database, **data inconsistency** could occur.
-
-  **Potential Fix:** Implement **LiveData observers** in Room or use **real-time database syncing**.
 
 
