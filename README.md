@@ -62,7 +62,7 @@ This enhancement introduces **improved UI navigation and workflow** within the S
 #### **Features**
 - Accepts **organization name** for login.
 - Validates **network connectivity** before proceeding.
-- Stores login information using `SharedPreferences`.
+- Stores Organization information using `SharedPreferences`.
 
 #### **Navigation**
 - **On Successful Login:** Redirects to `DbSelectionViewActivity`.
