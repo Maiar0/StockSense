@@ -44,10 +44,13 @@ public class DataManager {
         });
     }
 
+<<<<<<< Updated upstream
     public void deleteDatabase(String databaseId, DataCallback<Void> callback) {
         SupabaseRepository repository = new SupabaseRepository();
         repository.deleteDatabase(databaseId, callback);
     }
+=======
+>>>>>>> Stashed changes
     public void fetchSingleItem(String organizationName, String itemId, String databaseId, DataCallback<Item> callback) {
         repository.readItem(organizationName, itemId, databaseId, new DataCallback<Item>() {
             @Override
