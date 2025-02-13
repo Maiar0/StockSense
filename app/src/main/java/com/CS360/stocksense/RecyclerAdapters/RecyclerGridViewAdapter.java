@@ -60,7 +60,7 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_view_object, parent, false);
         return new ViewHolder(view);
     }
-    // TODO:: Complete functionality for Increment and Decrement buttons. Needs to notify database of change.
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Bind data to the ViewHolder
@@ -71,30 +71,33 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
 
         // Increment item quantity on button click
         holder.incrementButton.setOnClickListener(v -> {
-            item.updateQuantity(1); // Use model method
-            notifyItemChanged(position); // Notify adapter of item change
+            item.updateQuantity(1);
+            notifyItemChanged(position);
         });
 
         // Decrement item quantity on button click
         holder.decrementButton.setOnClickListener(v -> {
-            item.updateQuantity(-1); // Use model method
-            notifyItemChanged(position); // Notify adapter of item change
+            item.updateQuantity(-1);
+            notifyItemChanged(position);
         });
 
-        // Set a click listener to notify the listener when an item is selected
+        // Handle item selection event
         holder.itemView.setOnClickListener(v -> listener.onItemSelected(item));
     }
+    /**
+     * Interface for handling item selection events in the RecyclerView.
+     */
     public interface OnItemSelectListener {
         void onItemSelected(Item item);
     }
     @Override
     public int getItemCount() {
+        // Return total number of items
         return itemsList.size();
     }
 
     /**
      * ViewHolder for individual grid items.
-     * Holds references to the item's details and action buttons.
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView itemName, itemQuantity, itemLocation; // Item details

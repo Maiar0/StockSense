@@ -4,24 +4,24 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 /**
- * Represents a user in the StockSense database.
+ * Represents an organization in the StockSense database.
  *
- * This model is used for querying and managing user data within the database.
- * It contains fields such as username, password, and organizations.
+ * This model is used for querying and managing organization data within the database.
+ * It contains fields such as organization, and password.
  *
  * Purpose:
- * - Provides a structure to encapsulate user data.
- * - Offers getters and setters for accessing and modifying user properties.
+ * - Provides a structure to encapsulate organization data.
+ * - Offers getters and setters for accessing and modifying organization properties.
  *
  * Note:
  * - Field names are designed to match the database schema for compatibility.
  *
  * Example Usage:
  * ```java
- * User user = new User();
- * user.setUsername("dennis");
- * user.setPassword("hashed_password");
- * System.out.println(user);
+ * Organization organization = new Organization();
+ * organization.setOrganization("dennis");
+ * organization.setPassword("hashed_password");
+ * System.out.println(organization);
  * ```
  *
  * @author Dennis Ward II
@@ -34,11 +34,11 @@ public class Organization {
     private String email;
 
     /**
-     * Constructor to initialize a User object.
+     * Constructor to initialize an organization object.
      *
-     * @param organization      The user's chosen username.
-     * @param password      The user's hashed password.
-     * @param email      The user's hashed password.
+     * @param organization The name of the organization.
+     * @param password The organization's hashed password.
+     * @param email The email associated with the organization.
      */
     public Organization(String organization, String password, String email) {
         this.organization = organization;
@@ -47,46 +47,41 @@ public class Organization {
     }
 
     /**
-     * Gets the username.
+     * Gets the organization name.
      *
-     * @return The username of the user.
+     * @return The name of the organization.
      */
     public String getOrganization() {
         return organization;
     }
 
     /**
-     * Sets the username.
+     * Sets the organization name.
      *
-     * @param organization The username to assign to the user.
+     * @param organization The name to assign to the organization.
      */
     public void setOrganization(String organization) {
         this.organization = organization;
     }
 
     /**
-     * Gets the user's hashed password.
+     * Gets the organization's hashed password.
      *
-     * @return The hashed password of the user.
+     * @return The hashed password of the organization.
      */
     public String getPassword() {
         return password;
     }
 
     /**
-     * Sets the user's hashed password.
+     * Sets the organization's hashed password.
      *
-     * @param password The hashed password to assign to the user.
+     * @param password The hashed password to assign to the organization.
      */
     public void setPassword(String password) {
         this.password = password;
     }
 
-    /**
-     * Returns a string representation of the user.
-     *
-     * @return A string with the user's details.
-     */
     /**
      * Gets the email associated with the organization.
      *
@@ -104,13 +99,21 @@ public class Organization {
     public void setEmail(String email) {
         this.email = email;
     }
-
+    /**
+     * Returns a string representation of the organization.
+     *
+     * This method provides a readable format of the organization's details
+     * while ensuring that sensitive information, such as the password, is not exposed.
+     *
+     * @return A formatted string containing the organization's name and email,
+     *         with the password field marked as "[PROTECTED]".
+     */
     @NonNull
     @Override
     public String toString() {
         return "Organization{" +
                 "organization='" + organization + '\'' +
-                ", password='[PROTECTED]'" + // Avoid printing actual passwords
+                ", password='[PROTECTED]'" +
                 ", email=" + email +
                 '}';
     }

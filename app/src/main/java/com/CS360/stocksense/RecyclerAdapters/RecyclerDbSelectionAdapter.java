@@ -44,30 +44,27 @@ public class RecyclerDbSelectionAdapter extends RecyclerView.Adapter<RecyclerDbS
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the layout for individual database items
+        // Inflate and return a new ViewHolder
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.db_selection_object, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        // Bind data to the ViewHolder
         DatabaseSelection database = databases.get(position);
-
-        // Set the database name and ID
         holder.databaseName.setText(database.getName());
         holder.databaseId.setText(database.getId());
-
-        // Set click listener for the item
         holder.itemView.setOnClickListener(v -> clickListener.onDatabaseClick(database));
     }
 
     @Override
     public int getItemCount() {
+        // Return total number of items
         return databases.size();
     }
     /**
      * ViewHolder for individual database items in the RecyclerView.
-     * Holds references to the database name and ID TextViews.
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView databaseName;

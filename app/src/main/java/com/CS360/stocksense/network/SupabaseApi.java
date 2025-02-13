@@ -25,6 +25,10 @@ import retrofit2.http.Query;
  *
  * Each method corresponds to an endpoint and uses Retrofit annotations
  * to specify HTTP methods, headers, and query parameters.
+ *
+ * @author Dennis Ward II
+ * @version 1.2
+ * @since 02/02/2025
  */
 public interface SupabaseApi {
 
@@ -84,7 +88,7 @@ public interface SupabaseApi {
     );
 
     /**
-     * Fetches metadata about an organization.
+     * Fetches database selections associated with an organization.
      *
      * @param apiKey The API key for authentication.
      * @param authToken The authorization token for user authentication.
@@ -163,7 +167,7 @@ public interface SupabaseApi {
      *
      * @param apiKey The API key for authentication.
      * @param authToken The authorization token for user authentication.
-     * @param organization The user object containing username, password, and organizations.
+     * @param organization The organization object containing organization_name, and password.
      * @return A Call object for handling the API response.
      */
     @POST("users")
@@ -177,7 +181,14 @@ public interface SupabaseApi {
             @Body Organization organization
     );
 
-
+    /**
+     * Validates user credentials with Supabase.
+     *
+     * @param apiKey The API key for authentication.
+     * @param authToken The authorization token for user authentication.
+     * @param loginRequest The login request containing the organization name and hashed password.
+     * @return A Call object indicating success or failure of the validation.
+     */
     @POST("rpc/validate_user")
     @Headers({
             "Content-Type: application/json",

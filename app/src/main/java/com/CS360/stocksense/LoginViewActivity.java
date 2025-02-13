@@ -118,6 +118,11 @@ public class LoginViewActivity extends AppCompatActivity {
         });
         saveCredentials(organization);
     }
+
+    /**
+     * Displays a dialog for user registration.
+     * The user provides an email, organization name, and password to create an account.
+     */
     private void showRegisterDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Register New User");
@@ -172,6 +177,12 @@ public class LoginViewActivity extends AppCompatActivity {
         // Show the dialog
         builder.show();
     }
+
+    /**
+     * Registers a new user in the system by sending their credentials to the database.
+     *
+     * @param organization The organization object containing user credentials.
+     */
     private void registerUser(Organization organization) {
         SupabaseRepository repository = new SupabaseRepository();
 
@@ -229,7 +240,7 @@ public class LoginViewActivity extends AppCompatActivity {
      * Navigates to the database selection screen and finishes the current activity.
      */
     private void navigateToNextActivity() {
-        Intent intent = new Intent(LoginViewActivity.this, DbSelectionViewActivity.class); // Replace with your target activity
+        Intent intent = new Intent(LoginViewActivity.this, DbSelectionViewActivity.class);
         startActivity(intent);
     }
 

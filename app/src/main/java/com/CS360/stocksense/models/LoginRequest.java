@@ -46,16 +46,16 @@ public class LoginRequest {
      *
      * @return The username.
      */
-    public String getOrganization_input() {
+    public String getOrganizationInput() {
         return organization_input;
     }
 
     /**
-     * Sets the username.
+     * Sets the organization name.
      *
      * @param organization_input The username to assign.
      */
-    public void setOrganization_input(String organization_input) {
+    public void setOrganizationInput(String organization_input) {
         this.organization_input = organization_input;
     }
 
@@ -87,7 +87,7 @@ public class LoginRequest {
     public String toString() {
         return "LoginRequest{" +
                 "organization='" + organization_input + '\'' +
-                ", hashed_password=[Protected]" +// Avoid printing actual passwords
+                ", hashed_password=[Protected]" +
                 '}';
     }
 }

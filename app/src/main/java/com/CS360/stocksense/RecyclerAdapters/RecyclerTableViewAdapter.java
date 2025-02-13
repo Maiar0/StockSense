@@ -90,7 +90,7 @@ public class RecyclerTableViewAdapter extends RecyclerView.Adapter<RecyclerView.
             // Bind data to item view
             ItemViewHolder itemHolder = (ItemViewHolder) holder;
             Item item = itemsList.get(position - 1); // Adjust for header
-            itemHolder.itemId.setText(String.valueOf(item.getItem_id()));
+            itemHolder.itemId.setText(String.valueOf(item.getItemId()));
             itemHolder.itemName.setText(item.getItemName());
             itemHolder.itemQuantity.setText(String.valueOf(item.getQuantity()));
             itemHolder.itemLocation.setText(item.getLocation());
@@ -100,7 +100,7 @@ public class RecyclerTableViewAdapter extends RecyclerView.Adapter<RecyclerView.
             itemHolder.itemView.setOnClickListener(v -> {
                 // Launch ItemDetailsActivity with item details
                 Intent intent = new Intent(holder.itemView.getContext(), ItemDetailsActivity.class);
-                intent.putExtra("item_id", item.getItem_id());
+                intent.putExtra("item_id", item.getItemId());
                 intent.putExtra("source_activity", "ListView");
                 holder.itemView.getContext().startActivity(intent);
             });

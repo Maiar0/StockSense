@@ -18,16 +18,43 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+/**
+ * SupabaseRepository
+ *
+ * This class serves as a data access layer for interacting with the Supabase API.
+ * It handles operations such as fetching, creating, updating, and deleting records
+ * for organizations, databases, and items.
+ *
+ * Responsibilities:
+ * - Communicates with Supabase API endpoints.
+ * - Implements asynchronous network calls using Retrofit.
+ * - Processes and returns data via callbacks.
+ *
+ * Security Note:
+ * - API keys should be stored securely in environment variables or configuration files.
+ *
+ * @author Dennis Ward II
+ * @version 1.0
+ * @since 01/20/2025
+ */
 public class SupabaseRepository {
     private final SupabaseApi api;
     private final String apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2cXJzdXRzdm92bml6bWlwa3NkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc0MjMwNjAsImV4cCI6MjA1Mjk5OTA2MH0.Dr0fvzfUNaH3AdhGhsOP11kFW5t4KFL999Oetog0wWY"; // Replace with your actual API key
     private final String authToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2cXJzdXRzdm92bml6bWlwa3NkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc0MjMwNjAsImV4cCI6MjA1Mjk5OTA2MH0.Dr0fvzfUNaH3AdhGhsOP11kFW5t4KFL999Oetog0wWY"; // Replace with your actual API token
 
+    /**
+     * Initializes the repository and connects to Supabase API.
+     */
     public SupabaseRepository() {
         api = SupabaseClient.getInstance().create(SupabaseApi.class);
     }
-    // Read
+
+    /**
+     * Fetches the list of databases for an organization.
+     *
+     * @param organizationName The name of the organization.
+     * @param callback Callback to handle the response.
+     */
     public void fetchOrganization(String organizationName, DataCallback<List<DatabaseSelection>> callback) {
         api.fetchOrganization(apiKey, authToken, "eq." + organizationName, "database_id,database_name").enqueue(new Callback<List<DatabaseSelection>>() {
             @Override
@@ -59,14 +86,21 @@ public class SupabaseRepository {
         });
     }
 
+    /**
+     * Fetches all items from a specific database.
+     *
+     * @param organizationName The name of the organization.
+     * @param databaseId The ID of the database.
+     * @param callback Callback to handle the response.
+     */
     public void fetchDatabase(String organizationName, String databaseId, DataCallback<List<Item>> callback) {
         Log.d("SupabaseRepository", "Fetching items for organization: " + organizationName + ", database: " + databaseId);
 
         api.fetchDatabase(
                 apiKey,
                 authToken,
-                "eq." + organizationName, // Apply filter for organization_name
-                "eq." + databaseId        // Apply filter for database_id
+                "eq." + organizationName,
+                "eq." + databaseId
         ).enqueue(new Callback<List<Item>>() {
             @Override
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
@@ -89,6 +123,12 @@ public class SupabaseRepository {
         });
     }
 
+    /**
+     * Deletes a database from Supabase.
+     *
+     * @param databaseId The ID of the database to delete.
+     * @param callback Callback to handle the response.
+     */
     public void deleteDatabase(String databaseId, DataCallback<Void> callback) {
         api.deleteDatabase(apiKey, authToken, "eq." + databaseId).enqueue(new Callback<Void>() {
 
@@ -108,7 +148,14 @@ public class SupabaseRepository {
         });
     }
 
-    // Create
+    /**
+     * Creates multiple items in a database.
+     *
+     * @param organizationName The name of the organization.
+     * @param items The list of items to create.
+     * @param databaseId The ID of the target database.
+     * @param callback Callback to handle the response.
+     */
     public void createItem(String organizationName, List<Item> items, String databaseId, DataCallback<List<Item>> callback) {
         // Attach organization_name and database_id to each item
         for (Item item : items) {
@@ -136,14 +183,21 @@ public class SupabaseRepository {
         });
     }
 
-    // Read Single Item
+    /**
+     * Reads a single item from the database.
+     *
+     * @param organizationName The name of the organization.
+     * @param itemId The ID of the item to retrieve.
+     * @param databaseId The ID of the database containing the item.
+     * @param callback Callback to handle the response.
+     */
     public void readItem(String organizationName, String itemId, String databaseId, DataCallback<Item> callback) {
         api.fetchItem(apiKey, authToken, "eq." + organizationName, "eq." + itemId, "eq." + databaseId).enqueue(new Callback<List<Item>>() {
             @Override
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
                 Log.d("SupabaseRepository", "Raw Response: " + response.raw());
                 if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
-                    callback.onSuccess(response.body().get(0)); // Return the first matched item
+                    callback.onSuccess(response.body().get(0));
                 } else {
                     callback.onError(new Exception("Error reading item: " + response.message()));
                 }
@@ -156,9 +210,16 @@ public class SupabaseRepository {
         });
     }
 
-    // Update Item
+    /**
+     * Updates an existing item in the database.
+     *
+     * @param organizationName The name of the organization.
+     * @param item The item to update.
+     * @param databaseId The ID of the database containing the item.
+     * @param callback Callback to handle the response.
+     */
     public void updateItem(String organizationName, Item item, String databaseId, DataCallback<List<Item>> callback) {
-        api.updateItem(apiKey, authToken, "eq." + organizationName, "eq." + item.getItem_id(), "eq." + databaseId, item).enqueue(new Callback<List<Item>>() {
+        api.updateItem(apiKey, authToken, "eq." + organizationName, "eq." + item.getItemId(), "eq." + databaseId, item).enqueue(new Callback<List<Item>>() {
             @Override
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
                 Log.d("SupabaseRepository", "Raw Response: " + response.raw());
@@ -176,7 +237,14 @@ public class SupabaseRepository {
         });
     }
 
-    // Delete Item
+    /**
+     * Deletes a specific item from the database.
+     *
+     * @param organizationName The name of the organization.
+     * @param itemId The ID of the item to delete.
+     * @param databaseId The ID of the database containing the item.
+     * @param callback Callback to handle the response.
+     */
     public void deleteItem(String organizationName, String itemId, String databaseId, DataCallback<Void> callback) {
         api.deleteItem(apiKey, authToken, "eq." + organizationName, "eq."+itemId, "eq." + databaseId).enqueue(new Callback<Void>() {
             @Override
@@ -225,6 +293,13 @@ public class SupabaseRepository {
         });
     }
 
+    /**
+     * Validates user credentials with Supabase.
+     *
+     * @param username The username to authenticate.
+     * @param hashedPassword The hashed password for authentication.
+     * @param callback Callback to handle authentication success or failure.
+     */
     public void validateUser(String username, String hashedPassword, DataCallback<Boolean> callback) {
         LoginRequest loginRequest = new LoginRequest(username, hashedPassword);
         Log.d("LoginRequest", "LoginRequest: " + loginRequest.toString());
@@ -234,7 +309,7 @@ public class SupabaseRepository {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    callback.onSuccess(true); // Login successful
+                    callback.onSuccess(true);
                 } else {
                     callback.onError(new Exception("Invalid username or password."));
                 }

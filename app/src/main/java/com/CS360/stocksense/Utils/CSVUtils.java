@@ -77,7 +77,7 @@ public class CSVUtils {
             // Write item data
             for (Item item : items) {
                 String[] data = {
-                        item.getItem_id() != null ? item.getItem_id().toString() : "",
+                        item.getItemId() != null ? item.getItemId().toString() : "",
                         item.getItemName(),
                         String.valueOf(item.getQuantity()),
                         item.getLocation(),
@@ -123,7 +123,7 @@ public class CSVUtils {
 
                 try {
                     Item item = new Item();
-                    item.setItem_id(nextLine[0]); // Item ID
+                    item.setItemId(nextLine[0]); // Item ID
                     item.setItemName(nextLine[1]); // Item Name
                     item.setQuantity(Integer.parseInt(nextLine[2])); // Quantity
                     item.setLocation(nextLine[3]); // Location

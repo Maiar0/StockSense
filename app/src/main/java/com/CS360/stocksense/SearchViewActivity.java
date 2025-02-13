@@ -106,18 +106,21 @@ public class SearchViewActivity extends MainActivity {
     }
     @Override
     public boolean onSupportNavigateUp() {
+        // Handle back navigate to Database Selection
         Intent intent = new Intent(this, DbSelectionViewActivity.class);
         NavUtils.navigateUpTo(this, intent);
         return true;
     }
     @Override
     protected void handleNavigationButtonClickLeft() {
+        // Handle navigate to grid view
         Intent intent = new Intent(this, GridViewActivity.class);
         intent.putExtra("selected_database", databaseId);
         startActivity(intent);
     }
     @Override
     protected void handleNavigationButtonClickCenter() {
+        // Navigate to delete item work flow
         showInputDialog(
                 "Delete Item",
                 "Enter Item ID",
@@ -127,6 +130,7 @@ public class SearchViewActivity extends MainActivity {
     }
     @Override
     protected void handleNavigationButtonClickRight() {
+        // Navigate to export work flow
         exportDatabaseToCSV();
     }
     @Override
@@ -164,7 +168,7 @@ public class SearchViewActivity extends MainActivity {
      */
     private void initializeHashMaps(){
         for (Item item : fetchedItems) {
-            itemIdMap.put(item.getItem_id(), item);
+            itemIdMap.put(item.getItemId(), item);
             itemNameMap.put(item.getItemName().toLowerCase(), item);
         }
     }
@@ -191,7 +195,7 @@ public class SearchViewActivity extends MainActivity {
         Toast.makeText(this, "Selected item: " + item.getItemName(), Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(this, ItemDetailsActivity.class);
-        intent.putExtra("selected_item", item.getItem_id());
+        intent.putExtra("selected_item", item.getItemId());
         intent.putExtra("selected_database", databaseId);
         startActivity(intent);
     }

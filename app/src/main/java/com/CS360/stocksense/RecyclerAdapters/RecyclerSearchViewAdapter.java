@@ -62,22 +62,22 @@ public class RecyclerSearchViewAdapter extends RecyclerView.Adapter<RecyclerSear
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Bind data from the filtered list to the ViewHolder
         Item item = filteredItemsList.get(position);
-        holder.itemId.setText("ID: " + item.getItem_id());
+        holder.itemId.setText("ID: " + item.getItemId());
         holder.itemName.setText(item.getItemName());
         holder.quantity.setText("Q: " + item.getQuantity());
 
-        // Set a click listener to notify the listener when an item is selected
+        // Handle item selection event
         holder.itemView.setOnClickListener(v -> listener.onItemSelected(item));
     }
     // Return the size of the filtered list
     @Override
     public int getItemCount() {
+        // Return size of filtered list
         return filteredItemsList.size();
     }
 
     /**
      * ViewHolder for individual items in the RecyclerView.
-     * Holds references to the item's details.
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView itemId, itemName, quantity;
@@ -91,7 +91,7 @@ public class RecyclerSearchViewAdapter extends RecyclerView.Adapter<RecyclerSear
     }
 
     /**
-     * Interface for handling item selection events.
+     * Interface for handling item selection events in search results.
      */
     public interface OnItemSelectListener {
         void onItemSelected(Item item);

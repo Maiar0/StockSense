@@ -16,11 +16,30 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 
 import com.CS360.stocksense.Supabase.DataCallback;
-import com.CS360.stocksense.Supabase.DataManager;
 import com.CS360.stocksense.Supabase.SupabaseRepository;
 import com.CS360.stocksense.models.Item;
 
 import java.util.List;
+/**
+ * ItemDetailsActivity
+ *
+ * This activity displays detailed information about a selected item and allows users to edit or delete it.
+ * Users can modify item attributes such as name, quantity, location, and alert level, and update them in the database.
+ * Additionally, users can delete the item with confirmation.
+ *
+ * Features:
+ * - Displays item details retrieved from the database.
+ * - Allows users to edit and save item modifications.
+ * - Provides a delete option with a confirmation dialog.
+ *
+ * Dependencies:
+ * - Uses `SupabaseRepository` to perform database operations.
+ * - Requires `Item` model for representing item data.
+ *
+ * @author Dennis Ward II
+ * @version 1.0
+ * @since 01/20/2025
+ */
 
 public class ItemDetailsActivity extends AppCompatActivity {
 
@@ -65,6 +84,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
+        // Handle back navigate to SearchView
         Intent intent;
         intent = new Intent(this, SearchViewActivity.class);
         intent.putExtra("selected_database", getIntent().getStringExtra("selected_database"));
@@ -72,6 +92,12 @@ public class ItemDetailsActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Loads and displays item details from the database.
+     *
+     * @param organizationName The name of the organization the item belongs to.
+     * @param itemId The ID of the item to retrieve from the database.
+     */
     private void loadItemDetails(String organizationName, String itemId) {
         SupabaseRepository repository = new SupabaseRepository();
 
@@ -81,7 +107,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     // Display the fetched item details
                     itemHeader.setText(item.getItemName());
-                    itemIdInput.setText(item.getItem_id());
+                    itemIdInput.setText(item.getItemId());
                     itemName.setText(item.getItemName());
                     itemQuantity.setText(String.valueOf(item.getQuantity()));
                     itemLocation.setText(item.getLocation());
@@ -100,6 +126,12 @@ public class ItemDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Displays a confirmation dialog before executing an action.
+     *
+     * @param title The title of the dialog (e.g., "Edit" or "Delete").
+     * @param action The action to perform if the user confirms.
+     */
     private void confirmationDialog(String title, Runnable action){
         new AlertDialog.Builder(this)
                 .setTitle("Confirm " + title)
@@ -109,8 +141,12 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Handles updating an item’s details in the database.
+     * Retrieves updated values from the UI fields and sends an update request to the database.
+     */
     private void onEditButtonClick() {
-        currentItem.setItem_id(itemId);  // Use existing item ID (Not editable)
+        currentItem.setItemId(itemId);  // Use existing item ID (Not editable)
         currentItem.setItemName(itemName.getText().toString().trim());
         currentItem.setQuantity(Integer.parseInt(itemQuantity.getText().toString().trim()));
         currentItem.setLocation(itemLocation.getText().toString().trim());
@@ -139,7 +175,10 @@ public class ItemDetailsActivity extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Handles deleting an item from the database.
+     * Sends a request to remove the item and closes the activity upon success.
+     */
     private void onDeleteButtonClick() {
         SupabaseRepository repository = new SupabaseRepository();
 
@@ -162,6 +201,11 @@ public class ItemDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Displays a toast message to the user.
+     *
+     * @param message The message to display.
+     */
     private void showToast(String message) {
         Toast.makeText(ItemDetailsActivity.this, message, Toast.LENGTH_SHORT).show();
     }

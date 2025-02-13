@@ -18,11 +18,8 @@ import com.CS360.stocksense.Supabase.DataCallback;
 import com.CS360.stocksense.Supabase.DataManager;
 import com.CS360.stocksense.Supabase.SupabaseRepository;
 import com.CS360.stocksense.models.Item;
-import com.CS360.stocksense.models.Organization;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 /**
  * GridViewActivity
@@ -74,22 +71,26 @@ public class GridViewActivity extends MainActivity {
     }
     @Override
     public boolean onSupportNavigateUp() {
+        // Handle back navigation to Database Selection
         Intent intent = new Intent(this, DbSelectionViewActivity.class);
         NavUtils.navigateUpTo(this, intent);
         return true;
     }
     @Override
     protected void handleNavigationButtonClickLeft(){
+        // Navigate to SearchView
         Intent intent = new Intent(this, SearchViewActivity.class);
         intent.putExtra("selected_database", databaseId);
         startActivity(intent);
     }
     @Override
     protected void handleNavigationButtonClickCenter(){
+        // Create item work flow
         showCreateItemDialog();
     }
     @Override
     protected void handleNavigationButtonClickRight(){
+        //Export database workflow
         exportDatabaseToCSV();
     }
     @Override
@@ -125,6 +126,12 @@ public class GridViewActivity extends MainActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Grid layout with 2 columns
         recyclerView.setAdapter(adapter);
     }
+
+    /**
+     * Displays a dialog to create a new item with input fields for item details.
+     * The user enters values for item name, ID, quantity, location, and alert level.
+     * After validation, the item is created and saved in the database.
+     */
     private void showCreateItemDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Create Item");
@@ -176,7 +183,7 @@ public class GridViewActivity extends MainActivity {
             }
 
             Item item = new Item();
-            item.setItem_id(itemId);
+            item.setItemId(itemId);
             item.setItemName(itemName);
             item.setQuantity(Integer.parseInt(quantity));
             item.setLocation(location);
@@ -189,6 +196,12 @@ public class GridViewActivity extends MainActivity {
         // Show the dialog
         builder.show();
     }
+
+    /**
+     * Saves a newly created item to the database using Repository.
+     *
+     * @param item The item object containing item details to be stored.
+     */
     private void createItem(Item item){
         SupabaseRepository repository = new SupabaseRepository();
 
@@ -221,7 +234,7 @@ public class GridViewActivity extends MainActivity {
         Toast.makeText(this, "Selected item: " + item.getItemName(), Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(this, ItemDetailsActivity.class);
-        intent.putExtra("selected_item", item.getItem_id());
+        intent.putExtra("selected_item", item.getItemId());
         intent.putExtra("selected_database", databaseId);
         startActivity(intent);
     }

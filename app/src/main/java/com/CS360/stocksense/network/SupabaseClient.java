@@ -23,9 +23,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * - The base URL is hardcoded but can be modified to fit different environments (e.g., staging or production).
  * - Uses Gson for JSON parsing.
  *
- * @author [Your Name]
+ * @author Dennis Ward II
  * @version 1.0
- * @since [Date]
+ * @since 02/02/2025
  */
 public class SupabaseClient {
 

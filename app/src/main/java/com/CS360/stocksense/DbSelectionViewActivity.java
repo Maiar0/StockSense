@@ -89,12 +89,14 @@ public class DbSelectionViewActivity extends MainActivity {
     }
     @Override
     public boolean onSupportNavigateUp() {
+        // Handle back navigation to login screen
         Intent intent = new Intent(this, LoginViewActivity.class);
         NavUtils.navigateUpTo(this, intent);
         return true;
     }
     @Override
     protected void handleNavigationButtonClickLeft(){
+        // Prompt user to create a new database
         showInputDialog(
                 "Create New Database",
                 "Enter Database Name",
@@ -104,6 +106,7 @@ public class DbSelectionViewActivity extends MainActivity {
     }
     @Override
     protected void handleNavigationButtonClickCenter(){
+        // Prompt user to delete a database by ID
         showInputDialog(
                 "Delete Database",
                 "Enter Database ID",
@@ -113,6 +116,7 @@ public class DbSelectionViewActivity extends MainActivity {
     }
     @Override
     protected void handleNavigationButtonClickRight(){
+        // Open file picker for CSV import
         openFilePicker();
     }
     /**
@@ -148,6 +152,11 @@ public class DbSelectionViewActivity extends MainActivity {
         recyclerView.setAdapter(adapter);
     }
 
+    /**
+     * Creates a new database and adds it to the system.
+     *
+     * @param databaseName The name of the new database.
+     */
     private void createDatabase(String databaseName) {
         if (loggedInOrganization == null) {
             showToast( "Error: No organization name found. Please log in again.");
@@ -183,7 +192,9 @@ public class DbSelectionViewActivity extends MainActivity {
         });
     }
 
-
+    /**
+     * Opens a file picker to allow the user to select a CSV file for database import.
+     */
     private void openFilePicker() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("text/csv");
@@ -200,6 +211,12 @@ public class DbSelectionViewActivity extends MainActivity {
             }
         }
     }
+
+    /**
+     * Displays a confirmation dialog for importing a database from a CSV file.
+     *
+     * @param fileUri The URI of the selected CSV file.
+     */
     private void showImportDatabaseDialog(Uri fileUri) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter Database Name");
@@ -220,6 +237,12 @@ public class DbSelectionViewActivity extends MainActivity {
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
         builder.show();
     }
+
+    /**
+     * Deletes a database based on the provided database ID.
+     *
+     * @param databaseId The ID of the database to be deleted.
+     */
     private void deleteDatabaseById(String databaseId) {
         if (loggedInOrganization == null) {
             showToast("Error: No organization name found. Please log in again.");
@@ -245,6 +268,13 @@ public class DbSelectionViewActivity extends MainActivity {
             }
         });
     }
+
+    /**
+     * Parses and imports a database from the selected CSV file.
+     *
+     * @param fileUri The URI of the CSV file containing database data.
+     * @param dbName The database name of the new database.
+     */
     private void importDatabase(Uri fileUri, String dbName) {
         InputStream inputStream = null;
         BufferedReader reader = null;
@@ -306,6 +336,12 @@ public class DbSelectionViewActivity extends MainActivity {
             }
         }
     }
+
+    /**
+     * Handles the selection of a database and navigates to the `SearchViewActivity`.
+     *
+     * @param database The selected database.
+     */
     private void onDatabaseSelected(DatabaseSelection database) {
         // Navigate to another activity with the selected database
         Intent intent = new Intent(this, SearchViewActivity.class);

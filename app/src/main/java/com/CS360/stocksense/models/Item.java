@@ -49,7 +49,7 @@ public class Item implements Serializable {
      *
      * @return The unique ID of the item.
      */
-    public String getItem_id() {
+    public String getItemId() {
         return item_id;
     }
     /**
@@ -57,7 +57,7 @@ public class Item implements Serializable {
      *
      * @param item_id The unique ID to assign to the item.
      */
-    public void setItem_id(String item_id) {
+    public void setItemId(String item_id) {
         this.item_id = item_id;
     }
     /**
@@ -86,9 +86,8 @@ public class Item implements Serializable {
     }
     /**
      * Sets the quantity of the item. Quantity must be non-negative.
-     *
+     * Negative values will be discarded without change
      * @param quantity The quantity to assign to the item.
-     * @throws IllegalArgumentException if the quantity is negative.
      */
     public void setQuantity(int quantity) {
         if (quantity >= 0) {
@@ -121,9 +120,8 @@ public class Item implements Serializable {
     }
     /**
      * Sets the item's alert level. Alert level must be non-negative.
-     *
+     * Negative values will be discarded without change
      * @param alert_level The alert level to assign to the item.
-     * @throws IllegalArgumentException if the alert level is negative.
      */
     public void setAlertLevel(int alert_level) {
         if (alert_level >= 0) {
@@ -197,7 +195,7 @@ public class Item implements Serializable {
     }
     /**
      *  Allows for increment or decrement of quantity
-     *
+     * May reduce quantity but not below zero
      * @param change The value to change quantity by.
      */
     public void updateQuantity(int change) {

@@ -172,17 +172,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    /* Displays a dynamic dialog for user input.
-    *
-    * This method allows customization of the dialog's title, input field hint, positive button text,
-    * and the action performed when the positive button is clicked. It can be reused for various
-    * operations by passing the appropriate parameters.
-    *
-    * @param title             The title of the dialog.
-    * @param hint              The placeholder text for the input field.
-    * @param positiveButtonText The text displayed on the positive action button (e.g., "Create", "Delete").
-    * @param actionListener    A callback interface to define the action performed with the user's input.
-    */
+
+    /*
+     * Displays a dynamic dialog for user input.
+     *
+     * This method allows customization of the dialog's title, input field hint, positive button text,
+     * and the action performed when the positive button is clicked. It can be reused for various
+     * operations by passing the appropriate parameters.
+     *
+     * @param title             The title of the dialog.
+     * @param hint              The placeholder text for the input field.
+     * @param positiveButtonText The text displayed on the positive action button (e.g., "Create", "Delete").
+     * @param actionListener    A callback interface to define the action performed with the user's input.
+     */
     protected void showInputDialog(String title, String hint, String positiveButtonText, DialogActionListener actionListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(title);
@@ -268,6 +270,13 @@ public class MainActivity extends AppCompatActivity {
             Log.e("ExportDatabase", "Error exporting database", e);
         }
     }
+
+    /**
+     * Deletes an item from the database by its ID.
+     *
+     * @param itemId The unique identifier of the item to be deleted.
+     * @param databaseId The ID of the database containing the item.
+     */
     protected void deleteItemById(String itemId, String databaseId) {
         DataManager dataManager = new DataManager();
 
@@ -289,6 +298,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Displays a toast message to the user.
+     *
+     * @param message The message to display.
+     */
     protected void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
