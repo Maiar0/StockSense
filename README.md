@@ -86,6 +86,70 @@ public void deleteDatabase(String databaseId, DataCallback<Void> callback) {
 }
 ```
 
+# Enhancement Three: Supabase Database Structure
+
+This section documents the **database structure** for StockSense after transitioning to **Supabase**, replacing the previous local Room database. The new structure enables **multi-user access**, **real-time inventory management**, and **secure authentication**.
+
+---
+
+## **Database Overview**
+The Supabase database consists of two primary tables:
+
+1. **User Table (`users`)** - Manages authentication and user details.
+2. **Item Table (`items`)** - Stores inventory data, linked to organizations using `organization_name`.
+
+---
+
+## **1. User Table (`users`)**
+This table is used to store login information.
+
+| Column Name       | Type      | Description |
+|------------------|----------|-------------|
+| `id`            | UUID (PK) | Unique user ID. |
+| `email`         | Text      | User email (used for login). |
+| `password_hash` | Text      | Hashed password (automatically managed by Supabase). |
+| `organization_name` | Text | The organization the user belongs to. |
+| `created_at`    | Timestamp | User registration timestamp. |
+
+### **Key Features**
+- Supabase handles **password hashing and authentication**.
+- Each user is associated with **one organization** using `organization_name`.
+- Users log in using **email and password**.
+
+---
+
+## **2. Item Table (`items`)**
+This table stores **inventory data**, linked to organizations.
+
+| Column Name        | Type      | Description |
+|-------------------|----------|-------------|
+| `id`             | UUID (PK) | Unique item identifier. |
+| `item_name`      | Text      | Name of the inventory item. |
+| `quantity`       | Integer   | Current stock level. |
+| `location`       | Text      | Storage location of the item. |
+| `alert_level`    | Integer   | Minimum stock level before an alert is triggered. |
+| `organization_name` | Text | The organization that owns the item. |
+| `database_id`    | UUID (FK) | Links the item to a specific inventory database. |
+| `created_at`     | Timestamp | Timestamp of item creation. |
+
+### **Key Features**
+- Each item is linked to an **organization** using `organization_name`.
+- The **alert system** notifies when stock is below `alert_level`.
+- **Fast retrieval** via indexing on `organization_name` and `database_id`.
+
+---
+
+## **Future Enhancements: Role-Based Access Control (RLS) and Authorization**
+As StockSense expands, **implementing Row-Level Security (RLS) and proper authorization** will further enhance security and scalability:
+
+### **Planned Improvements:**
+- **Enforcing RLS** on `items` to ensure users can only access data within their assigned organization.
+- **Defining user roles** (e.g., Admin, Viewer) for restricted data modifications.
+- **Transitioning from `organization_name` to `organization_id`** for a more structured access model.
+- **API authentication improvements** to restrict unauthorized API calls.
+
+These improvements will enable **better access control, secure data isolation, and scalability** as the platform grows.
+
 ---
 
 ## **Conclusion**
