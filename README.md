@@ -112,7 +112,7 @@ This table is used to store login information.
 | `created_at`    | Timestamp | User registration timestamp. |
 
 ### **Key Features**
-- Supabase handles **password hashing and authentication**.
+- **password hashing and authentication**.
 - Each user is associated with **one organization** using `organization_name`.
 - Users log in using **email and password**.
 
@@ -134,7 +134,6 @@ This table stores **inventory data**, linked to organizations.
 
 ### **Key Features**
 - Each item is linked to an **organization** using `organization_name`.
-- The **alert system** notifies when stock is below `alert_level`.
 - **Fast retrieval** via indexing on `organization_name` and `database_id`.
 
 ---
