@@ -144,4 +144,138 @@ The frontend consists of several key **activities (views)**, each responsible fo
 
 ---
 
+## 🔷 Backend Structure
+
+The backend is responsible for handling **authentication, database management, and API interactions** using Supabase as the backend service.
+
+### 🔹 **DataManager** (Data Handling)
+📌 **File:** [`DataManager.java`](41)
+
+#### **Functionality:**
+- Acts as the **primary data handler** in the app.
+- Interfaces with **SupabaseRepository** to fetch, update, insert, and delete items.
+- Maintains an **in-memory cache** of items grouped by database.
+- Notifies views of data changes.
+
+#### **Key Features:**
+✔ Fetches and caches **organization items**.  
+✔ Updates **items and organization data**.  
+✔ Handles **database creation, import, and deletion**.  
+✔ Implements **local storage updates for performance optimization**.
+
+---
+
+### 🔹 **SupabaseRepository** (Supabase API Manager)
+📌 **File:** [`SupabaseRepository.java`](42)
+
+#### **Functionality:**
+- Handles **authentication, data storage, and API interactions**.
+- Stores **authentication tokens** securely in `SharedPreferences`.
+- Calls the Supabase API to **fetch, update, and delete items**.
+
+#### **Key Features:**
+✔ Manages **user authentication** (Login, Registration, Token Refresh).  
+✔ Fetches and updates **organization-related data**.  
+✔ Calls **Supabase API endpoints** for database operations.  
+✔ Securely **stores authentication tokens**.
+
+---
+
+### 🔹 **SupabaseClient** (Retrofit API Client)
+📌 **File:** [`SupabaseClient.java`](43)
+
+#### **Functionality:**
+- Provides a **singleton instance of Retrofit** configured with the Supabase API.
+- Ensures **consistent API interaction** across the application.
+
+#### **Key Features:**
+✔ Centralized **API client configuration**.  
+✔ Uses **Gson for JSON serialization**.  
+✔ Provides **a single point of API interaction**.
+
+---
+
+### 🔹 **SupabaseApi** (API Endpoints)
+📌 **File:** [`SupabaseApi.java`](44)
+
+#### **Functionality:**
+- Defines **Retrofit endpoints** for Supabase API interactions.
+- Supports **CRUD operations** on the `items` table.
+- Handles **authentication, token refresh, and user registration**.
+
+#### **Key Features:**
+✔ **Login & Registration** endpoints.  
+✔ CRUD endpoints for **items and organization data**.  
+✔ Uses `@GET`, `@POST`, `@PATCH`, and `@DELETE` annotations.  
+✔ Calls **Supabase RPC functions** for advanced operations.
+
+---
+
+### 🔹 **DataCallback** (Asynchronous Callbacks)
+📌 **File:** [`DataCallback.java`](45)
+
+#### **Functionality:**
+- Provides a **generic callback interface** for API responses.
+- Handles **success and error cases** in API calls.
+
+#### **Key Features:**
+✔ Standardized **callback handling**.  
+✔ Supports **typed responses** for flexible usage.  
+✔ Reduces **boilerplate code** in API interactions.
+
+---
+
+### 🔹 **DatabaseSelection** (Database Model)
+📌 **File:** [`DatabaseSelection.java`](46)
+
+#### **Functionality:**
+- Represents a **database selection** in the app.
+- Stores **database ID and name**.
+
+#### **Key Features:**
+✔ Encapsulates **database metadata**.  
+✔ Used for **querying and selection**.
+
+---
+
+### 🔹 **Item Model** (Inventory Data Structure)
+📌 **File:** [`Item.java`](47)
+
+#### **Functionality:**
+- Represents **an item in the database**.
+- Stores **item ID, name, quantity, location, and alert level**.
+- Maintains **organization and database references**.
+
+#### **Key Features:**
+✔ Structured **inventory management**.  
+✔ Supports **incremental quantity updates**.  
+✔ Implements **basic validation** for safe data operations.
+
+---
+
+### 🔹 **SecureLoginRequest & SecureLoginResponse** (Authentication Models)
+📌 **Files:** [`SecureLoginRequest.java`](48), [`SecureLoginResponse.java`](49)
+
+#### **Functionality:**
+- Defines **request and response models** for authentication.
+- Handles **access tokens, refresh tokens, and user metadata**.
+
+#### **Key Features:**
+✔ Secure **login request format**.  
+✔ Supports **token-based authentication**.  
+✔ Extracts **organization details from metadata**.
+
+---
+
+## 🔷 Backend Workflow Summary
+
+1⃣ **User Authentication →**  
+2⃣ **DataManager fetches organization data →**  
+3⃣ **User selects a database →**  
+4⃣ **Items are fetched, modified, or deleted →**  
+5⃣ **Changes are saved to Supabase**
+
+---
+
+
 
