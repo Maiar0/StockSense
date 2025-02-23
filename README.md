@@ -148,6 +148,34 @@ The frontend consists of several key **activities (views)**, each responsible fo
 
 The backend is responsible for handling **authentication, database management, and API interactions** using Supabase as the backend service.
 
+### 🔹 **Database Schema & Relations**
+
+The StockSense backend utilizes **Supabase PostgreSQL** with the following key tables:
+
+#### **items** (Inventory Table)
+- `id` (int4) - Primary key
+- `item_name` (varchar) - Name of the item
+- `quantity` (int4) - Current stock level
+- `location` (varchar) - Storage location
+- `alert_level` (int4) - Quantity threshold for alerts
+- `database_id` (bpchar) - Associated database
+- `database_name` (varchar) - Name of the database
+- `item_id` (varchar) - Unique identifier for item
+- `organization_id` (uuid) - Foreign key referencing `organizations.id`
+
+#### **organizations** (Company/Group Management)
+- `id` (uuid) - Primary key
+- `name` (text) - Organization name
+- `created_at` (timestamp) - Timestamp of creation
+
+#### **auth.users** (Supabase Authentication Table)
+- `id` (uuid) - User ID (Supabase-managed authentication)
+- `email` (text) - User's email
+- `organization_id` (uuid) - Foreign key linking user to `organizations`
+- `created_at` (timestamp) - User creation timestamp
+
+---
+
 ### 🔹 **DataManager** (Data Handling)
 📌 **File:** [`DataManager.java`](41)
 
@@ -181,29 +209,21 @@ The backend is responsible for handling **authentication, database management, a
 
 ---
 
-### 🔹 **SupabaseClient** (Retrofit API Client)
-📌 **File:** [`SupabaseClient.java`](43)
-
-#### **Functionality:**
-- Provides a **singleton instance of Retrofit** configured with the Supabase API.
-- Ensures **consistent API interaction** across the application.
-
-#### **Key Features:**
-✔ Centralized **API client configuration**.  
-✔ Uses **Gson for JSON serialization**.  
-✔ Provides **a single point of API interaction**.
-
----
-
-### 🔹 **SupabaseApi** (API Endpoints)
-📌 **File:** [`SupabaseApi.java`](44)
+### 🔹 **SupabaseApi** (API Endpoints & RPC Calls)
+📌 **File:** [`SupabaseApi.java`](63)
 
 #### **Functionality:**
 - Defines **Retrofit endpoints** for Supabase API interactions.
 - Supports **CRUD operations** on the `items` table.
 - Handles **authentication, token refresh, and user registration**.
+- Implements **RPC endpoints for advanced functionality**.
 
-#### **Key Features:**
+#### **Key RPC Functions:**
+✔ `update_item_quantity` - **Modifies an item's quantity** dynamically.  
+✔ `update_organization_id` - **Assigns a user to an organization**.  
+✔ `create_organization` - **Creates a new organization** and assigns a user.  
+
+#### **Other API Endpoints:**
 ✔ **Login & Registration** endpoints.  
 ✔ CRUD endpoints for **items and organization data**.  
 ✔ Uses `@GET`, `@POST`, `@PATCH`, and `@DELETE` annotations.  
@@ -211,59 +231,21 @@ The backend is responsible for handling **authentication, database management, a
 
 ---
 
-### 🔹 **DataCallback** (Asynchronous Callbacks)
-📌 **File:** [`DataCallback.java`](45)
+### 🔹 **User Authentication & Organization Management**
 
-#### **Functionality:**
-- Provides a **generic callback interface** for API responses.
-- Handles **success and error cases** in API calls.
+StockSense leverages **Supabase Auth** for managing users:
 
-#### **Key Features:**
-✔ Standardized **callback handling**.  
-✔ Supports **typed responses** for flexible usage.  
-✔ Reduces **boilerplate code** in API interactions.
+1. **Login & Registration:**
+   - Users sign up with **email and password**.
+   - `organization_id` is linked to the user metadata.
 
----
+2. **Organization Assignment:**
+   - When a user registers, they are assigned a default `organization_id`.
+   - Admins can reassign users using `update_organization_id`.
 
-### 🔹 **DatabaseSelection** (Database Model)
-📌 **File:** [`DatabaseSelection.java`](46)
-
-#### **Functionality:**
-- Represents a **database selection** in the app.
-- Stores **database ID and name**.
-
-#### **Key Features:**
-✔ Encapsulates **database metadata**.  
-✔ Used for **querying and selection**.
-
----
-
-### 🔹 **Item Model** (Inventory Data Structure)
-📌 **File:** [`Item.java`](47)
-
-#### **Functionality:**
-- Represents **an item in the database**.
-- Stores **item ID, name, quantity, location, and alert level**.
-- Maintains **organization and database references**.
-
-#### **Key Features:**
-✔ Structured **inventory management**.  
-✔ Supports **incremental quantity updates**.  
-✔ Implements **basic validation** for safe data operations.
-
----
-
-### 🔹 **SecureLoginRequest & SecureLoginResponse** (Authentication Models)
-📌 **Files:** [`SecureLoginRequest.java`](48), [`SecureLoginResponse.java`](49)
-
-#### **Functionality:**
-- Defines **request and response models** for authentication.
-- Handles **access tokens, refresh tokens, and user metadata**.
-
-#### **Key Features:**
-✔ Secure **login request format**.  
-✔ Supports **token-based authentication**.  
-✔ Extracts **organization details from metadata**.
+3. **Permissions & Security:**
+   - Users can only fetch items linked to their **organization_id**.
+   - Role-based access control (RBAC) is enforced through **Supabase RLS policies**.
 
 ---
 
@@ -276,6 +258,80 @@ The backend is responsible for handling **authentication, database management, a
 5⃣ **Changes are saved to Supabase**
 
 ---
+
+## 📌 TODOs Before Completion
+
+1️⃣ **Implement Organization Creation:**
+   - Complete `createOrganization` functionality in **SupabaseRepository.java**.
+   - Ensure users can create and assign organizations properly.
+
+2️⃣ **Client-side Sensitive Data:**
+   - Eliminate debug logs printing API keys, access tokens, or sensitive data.
+   - Clean up logs in `SupabaseRepository.java` and `SupabaseApi.java`.
+   - Ensure sensitive data is stored appropriatley. 
+
+3️⃣ **Comment All Code Files Appropriately:**
+   - Add clear and meaningful Javadoc comments to **all major classes and methods**.
+   - Ensure explanations cover **method functionality, parameters, and return values**.
+
+---
+
+## 🔒 Security Considerations
+
+Ensuring data security and protecting user information is a priority in StockSense. Below are the key security measures and best practices implemented:
+
+### 1️⃣ **Authentication & Authorization**
+- Supabase **JWT-based authentication** ensures secure user sessions.
+- **Role-Based Access Control (RBAC)** is enforced through **Row-Level Security (RLS) policies**.
+- Users can only access **items linked to their `organization_id`**.
+
+### 2️⃣ **Data Protection & Encryption**
+- **Passwords** are securely hashed using Supabase authentication mechanisms.
+- **API keys and tokens** are stored securely and never exposed in logs.
+- **All network communication** is encrypted using **HTTPS**.
+
+### 3️⃣ **Secure API Access**
+- **API keys** are stored securely in environment variables.
+- **Supabase RPC functions** handle critical actions to prevent direct database manipulation.
+- Only **authenticated requests** can modify database records.
+
+### 4️⃣ **Logging & Monitoring**
+- Debug logs **do not print sensitive data** such as API keys or access tokens.
+- **Error handling** ensures that internal errors do not expose sensitive system details.
+- **Audit logs** track authentication and key API interactions for security oversight.
+
+### 5️⃣ **Preventing SQL Injection & Data Tampering**
+- **Parameterized queries** are used for all database interactions.
+- Supabase **RLS policies** prevent unauthorized data modifications.
+- **Input validation** is enforced to ensure safe and expected values are processed.
+
+### ✅ **Next Steps in Security**
+- Regularly review **Supabase security updates and patches**.
+- Implement **multi-factor authentication (MFA)** for enhanced security.
+- Enforce **strong password policies** for all user accounts.
+
+---
+
+## 🚀 Future Development Items
+
+To enhance StockSense further, the following features are planned for future development:
+
+### 1️⃣ **User Experience Enhancements**
+- **Light Mode / Dark Mode**: Implementing a theme switcher for better accessibility.
+- **User Settings Panel**: Allowing users to customize notifications, themes, and preferences.
+
+### 2️⃣ **Admin Console**
+- **MEVN Stack Admin Console**: Developing an admin dashboard using **MongoDB, Express, Vue.js, and Node.js**.
+- **Improved Organization Management**: Enhancing role-based access with fine-grained permissions.
+
+### 3️⃣ **Expanded Organizational Role Structure**
+- Introduce **more granular roles** beyond standard users and admins.
+- Support for **custom role creation** and **permission delegation**.
+
+
+
+
+
 
 
 
