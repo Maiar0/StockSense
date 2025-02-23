@@ -1,4 +1,4 @@
-## 📌 StockSense – README
+## 📌 StockSense – README THIS BRANCH IS UNDER DEVELOPMENT STILL
 
 ### Overview
 StockSense is a mobile application designed for inventory and stock management. It allows users to manage their organization's databases, track items, and navigate through various views efficiently.
