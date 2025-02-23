@@ -16,8 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.CS360.stocksense.RecyclerAdapters.RecyclerSearchViewAdapter;
-import com.CS360.stocksense.Supabase.DataCallback;
-import com.CS360.stocksense.Supabase.DataManager;
+import com.CS360.stocksense.database.DataManager;
 import com.CS360.stocksense.models.Item;
 
 import java.util.ArrayList;
@@ -100,7 +99,6 @@ public class SearchViewActivity extends MainActivity {
         });
 
         databaseId = getIntent().getStringExtra("selected_database");
-        Log.d("SearchViewActivity", "Organization " + loggedInOrganization);
 
         initializeData();
     }
@@ -125,7 +123,7 @@ public class SearchViewActivity extends MainActivity {
                 "Delete Item",
                 "Enter Item ID",
                 "Delete",
-                input -> deleteItemById(input, databaseId) // Pass the deleteDatabaseById method as the action
+                input -> deleteItemById(databaseId,input) // Pass the deleteDatabaseById method as the action
         );
     }
     @Override
@@ -135,27 +133,15 @@ public class SearchViewActivity extends MainActivity {
     }
     @Override
     public void initializeData() {
-        DataManager dataManager = new DataManager();
-
-        dataManager.fetchDatabase(loggedInOrganization, databaseId, new DataCallback<List<Item>>() {
-            @Override
-            public void onSuccess(List<Item> items) {
-                runOnUiThread(() -> {
-                    fetchedItems = items;
-                    Log.d("SearchViewActivity", "Fetched " + fetchedItems.size() + " items.");
-                    populateRecyclerView(fetchedItems);
-                    initializeHashMaps();
-                });
-            }
-
-            @Override
-            public void onError(Exception e) {
-                runOnUiThread(() -> {
-                    showToast("Error loading database: " + e.getMessage());
-                    Log.e("SearchViewActivity", "Error: " + e.getMessage(), e);
-                });
-            }
-        });
+        List<Item> items = DataManager.getInstance(SearchViewActivity.this).getItemsByDatabaseId(databaseId);
+        if(items.isEmpty()){
+            Log.e(this.getClass().getSimpleName(), "InitData: Fetched: " + items.size() + " Adjusting to fetchedItems: " + fetchedItems.size());
+            return;
+        }
+        fetchedItems = items;
+        initializeHashMaps();
+        Log.d(this.getClass().getSimpleName(), "InitData: Fetched " + items.size() + " Items.");
+        populateRecyclerView(items);
     }
     /**
      * Initializes HashMaps for fast lookups of items by ID and name.
@@ -167,6 +153,10 @@ public class SearchViewActivity extends MainActivity {
      * This improves search performance by avoiding repeated list iterations.
      */
     private void initializeHashMaps(){
+        if(fetchedItems.isEmpty()){
+            Log.e(this.getClass().getSimpleName(), "InitHashMaps: provided list is empty fetchedItems: " + fetchedItems.size() );
+            return;
+        }
         for (Item item : fetchedItems) {
             itemIdMap.put(item.getItemId(), item);
             itemNameMap.put(item.getItemName().toLowerCase(), item);
@@ -176,12 +166,21 @@ public class SearchViewActivity extends MainActivity {
     /**
      * Populates the RecyclerView with the given list of items.
      *
-     * @param items List of Item objects to display.
      */
     private void populateRecyclerView(List<Item> items) {
-        adapter = new RecyclerSearchViewAdapter(items, this::onItemSelected);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+        if(items.isEmpty()){
+            Log.e(this.getClass().getSimpleName(), "PopulateRecyclerView: provided list is empty items: " + items.size() );
+            return;
+        }
+        if(adapter != null){
+            Log.d(this.getClass().getSimpleName(), "PopulateRecyclerView: Refreshing Data: " + items.size() );
+            adapter.updateData(items);
+        }else{
+            Log.d(this.getClass().getSimpleName(), "PopulateRecyclerView: Creating recycler: " + items.size() );
+            adapter = new RecyclerSearchViewAdapter(items, this::onItemSelected);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setAdapter(adapter);
+        }
     }
     /**
      * Handles item selection from the RecyclerView.
@@ -209,6 +208,7 @@ public class SearchViewActivity extends MainActivity {
      * @param query The user's search input.
      */
     private void filterItems(String query) {
+        Log.d(this.getClass().getSimpleName(), "filterItems ");
         if (query.isEmpty()) {
             populateRecyclerView(fetchedItems);
             return;
@@ -225,8 +225,11 @@ public class SearchViewActivity extends MainActivity {
                 }
             }
         }
-
-        populateRecyclerView(filteredList);
+        if(filteredList.isEmpty()){
+            Log.e(this.getClass().getSimpleName(), "filterItems: filteredList is empty: " + filteredList.size());
+        }else{
+            populateRecyclerView(filteredList);
+        }
     }
 
 }

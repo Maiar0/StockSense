@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.CS360.stocksense.RecyclerAdapters.RecyclerTableViewAdapter;
-import com.CS360.stocksense.Supabase.DataCallback;
-import com.CS360.stocksense.Supabase.DataManager;
 import com.CS360.stocksense.models.Item;
 
 import java.util.List;
@@ -64,7 +62,7 @@ public class TableViewActivity extends MainActivity {
         initializeNavigationBar("o","o","o");
 
         databaseId = getIntent().getStringExtra("selected_database");
-        Log.d("TableViewActivity", "Organization " + loggedInOrganization);
+        Log.d("TableViewActivity", "Organization " + organizationId);
         initializeData();
     }
 
@@ -75,26 +73,7 @@ public class TableViewActivity extends MainActivity {
      */
     @Override
     public void initializeData() {
-        DataManager dataManager = new DataManager();
-
-        dataManager.fetchDatabase(loggedInOrganization, databaseId, new DataCallback<List<Item>>() {
-            @Override
-            public void onSuccess(List<Item> items) {
-                runOnUiThread(() -> {
-                    fetchedItems = items;
-                    Log.d("TableViewActivity", "Fetched " + fetchedItems.size() + " items.");
-                    populateRecyclerView(fetchedItems);
-                });
-            }
-
-            @Override
-            public void onError(Exception e) {
-                runOnUiThread(() -> {
-                    showToast("Error loading database: " + e.getMessage());
-                    Log.e("TableViewActivity", "Error: " + e.getMessage(), e);
-                });
-            }
-        });
+        // TODO:: Init data
     }
 
     /**

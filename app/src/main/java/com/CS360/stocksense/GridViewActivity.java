@@ -14,12 +14,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.CS360.stocksense.RecyclerAdapters.RecyclerGridViewAdapter;
-import com.CS360.stocksense.Supabase.DataCallback;
-import com.CS360.stocksense.Supabase.DataManager;
-import com.CS360.stocksense.Supabase.SupabaseRepository;
+import com.CS360.stocksense.database.DataManager;
 import com.CS360.stocksense.models.Item;
 
-import java.util.ArrayList;
 import java.util.List;
 /**
  * GridViewActivity
@@ -64,7 +61,7 @@ public class GridViewActivity extends MainActivity {
 
         recyclerView = findViewById(R.id.recycler_grid_view);
 
-        Log.d("GridViewActivity", "Organization " + loggedInOrganization );
+        Log.d("GridViewActivity", "Organization " + organizationId);
 
         databaseId = getIntent().getStringExtra("selected_database");
         initializeData();
@@ -95,26 +92,10 @@ public class GridViewActivity extends MainActivity {
     }
     @Override
     protected void initializeData() {
-        DataManager dataManager = new DataManager();
-
-        dataManager.fetchDatabase(loggedInOrganization, databaseId, new DataCallback<List<Item>>() {
-            @Override
-            public void onSuccess(List<Item> items) {
-                runOnUiThread(() -> {
-                    fetchedItems = items;
-                    Log.d("GridViewActivity", "Fetched " + fetchedItems.size() + " items.");
-                    populateRecyclerView(fetchedItems);
-                });
-            }
-
-            @Override
-            public void onError(Exception e) {
-                runOnUiThread(() -> {
-                    showToast("Error loading database: " + e.getMessage());
-                    Log.e("GridViewActivity", "Error: " + e.getMessage(), e);
-                });
-            }
-        });
+        List<Item> items = DataManager.getInstance(GridViewActivity.this).getItemsByDatabaseId(databaseId);
+        fetchedItems = items;
+        Log.d("GridViewActivity", "Fetched " + items.size() + " databases.");
+        populateRecyclerView(items);
     }
     /**
      * Populates the RecyclerView with the given list of items.
@@ -122,7 +103,7 @@ public class GridViewActivity extends MainActivity {
      * @param items List of Item objects to display.
      */
     private void populateRecyclerView(List<Item> items) {
-        adapter = new RecyclerGridViewAdapter(items, this::onItemSelected);
+        adapter = new RecyclerGridViewAdapter(this, items, this::onItemSelected);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Grid layout with 2 columns
         recyclerView.setAdapter(adapter);
     }
@@ -188,7 +169,9 @@ public class GridViewActivity extends MainActivity {
             item.setQuantity(Integer.parseInt(quantity));
             item.setLocation(location);
             item.setAlertLevel(Integer.parseInt(alertLevel));
-            createItem(item);
+            item.setOrganizationId(organizationId);
+            item.setDatabaseId(databaseId);
+            DataManager.getInstance(this).insertItem(item);//Creates Item
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
@@ -197,31 +180,6 @@ public class GridViewActivity extends MainActivity {
         builder.show();
     }
 
-    /**
-     * Saves a newly created item to the database using Repository.
-     *
-     * @param item The item object containing item details to be stored.
-     */
-    private void createItem(Item item){
-        SupabaseRepository repository = new SupabaseRepository();
-
-        List<Item> itemList = new ArrayList<>();
-        itemList.add(item);
-
-        repository.createItem(loggedInOrganization, itemList, databaseId, new DataCallback<List<Item>>() {
-            @Override
-            public void onSuccess(List<Item> createdItems) {
-                Log.d("CreateItem", "Item successfully created: " + createdItems);
-                showToast("Item created successfully!");
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Log.e("CreateItem", "Error creating item: " + e.getMessage());
-                showToast("Failed to create item: " + e.getMessage());
-            }
-        });
-    }
     /**
      * Handles item selection from the RecyclerView.
      *

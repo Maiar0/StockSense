@@ -1,25 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:padding="16dp"
     android:background="?android:attr/selectableItemBackground">
 
+    <!-- Database Name -->
     <TextView
         android:id="@+id/database_name"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Database Name"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:paddingBottom="4dp" />
+        android:paddingBottom="4dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"/>
 
+    <!-- Database ID -->
     <TextView
         android:id="@+id/database_id"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Database ID"
         android:textSize="14sp"
-        android:textColor="?android:attr/textColorSecondary" />
-</LinearLayout>
+        android:textColor="?android:attr/textColorSecondary"
+        android:layout_below="@id/database_name"
+        android:layout_alignParentStart="true"/>
+
+    <!-- Button on Right Side -->
+    <Button
+        android:id="@+id/copy_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Copy ID"
+        android:padding="8dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"/>
+</RelativeLayout>

@@ -39,7 +39,7 @@ public class Item implements Serializable {
     private int quantity;
     private String location;
     private int alert_level;
-    private String organization_name;
+    private String organization_id;
     private String database_id;
     private String database_name;
 
@@ -133,16 +133,16 @@ public class Item implements Serializable {
      *
      * @return The organization name.
      */
-    public String getOrganizationName() {
-        return organization_name;
+    public String getOrganizationId() {
+        return organization_id;
     }
     /**
      * Sets the organization's name associated with the item.
      *
-     * @param organization_name The organization name to assign to the item.
+     * @param organization_id The organization name to assign to the item.
      */
-    public void setOrganizationName(String organization_name) {
-        this.organization_name = organization_name;
+    public void setOrganizationId(String organization_id) {
+        this.organization_id = organization_id;
     }
     /**
      * Gets the name of the database containing the item.
@@ -188,7 +188,7 @@ public class Item implements Serializable {
                 ", quantity=" + quantity +
                 ", location='" + location + '\'' +
                 ", alert_level=" + alert_level +
-                ", organization_name='" + organization_name + '\'' +
+                ", organization_name='" + organization_id + '\'' +
                 ", database_id='" + database_id + '\'' +
                 ", database_name='" + database_name + '\'' +
                 '}';

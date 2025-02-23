@@ -1,8 +1,12 @@
 package com.CS360.stocksense.RecyclerAdapters;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -56,6 +60,14 @@ public class RecyclerDbSelectionAdapter extends RecyclerView.Adapter<RecyclerDbS
         holder.databaseName.setText(database.getName());
         holder.databaseId.setText(database.getId());
         holder.itemView.setOnClickListener(v -> clickListener.onDatabaseClick(database));
+        holder.copyButton.setOnClickListener(v -> {
+            copyToClipboard(holder.itemView.getContext(), database.getId());
+        });
+    }
+    private void copyToClipboard(Context context, String text) {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Database ID", text);
+        clipboard.setPrimaryClip(clip);
     }
 
     @Override
@@ -69,11 +81,13 @@ public class RecyclerDbSelectionAdapter extends RecyclerView.Adapter<RecyclerDbS
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView databaseName;
         TextView databaseId;
+        Button copyButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
             databaseName = itemView.findViewById(R.id.database_name);
             databaseId = itemView.findViewById(R.id.database_id);
+            copyButton = itemView.findViewById(R.id.copy_button);
         }
     }
 
@@ -82,5 +96,10 @@ public class RecyclerDbSelectionAdapter extends RecyclerView.Adapter<RecyclerDbS
      */
     public interface OnDatabaseClickListener {
         void onDatabaseClick(DatabaseSelection database);
+    }
+    public void updateData(List<DatabaseSelection> newDatabases) {
+        this.databases.clear();
+        this.databases.addAll(newDatabases);
+        notifyDataSetChanged();
     }
 }

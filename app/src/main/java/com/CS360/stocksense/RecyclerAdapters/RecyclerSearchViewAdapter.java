@@ -1,5 +1,6 @@
 package com.CS360.stocksense.RecyclerAdapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.CS360.stocksense.R;
+import com.CS360.stocksense.models.DatabaseSelection;
 import com.CS360.stocksense.models.Item;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +48,6 @@ public class RecyclerSearchViewAdapter extends RecyclerView.Adapter<RecyclerSear
      * @param listener  Listener for handling item selection.
      */
     public RecyclerSearchViewAdapter(List<Item> itemsList, OnItemSelectListener listener) {
-        this.itemsList = itemsList;
         this.filteredItemsList = new ArrayList<>(itemsList); // Initialize with all items
         this.listener = listener;
     }
@@ -95,5 +96,10 @@ public class RecyclerSearchViewAdapter extends RecyclerView.Adapter<RecyclerSear
      */
     public interface OnItemSelectListener {
         void onItemSelected(Item item);
+    }
+    public void updateData(List<Item> newItemsList) {
+        this.filteredItemsList.clear();
+        this.filteredItemsList.addAll(newItemsList);
+        notifyDataSetChanged();
     }
 }

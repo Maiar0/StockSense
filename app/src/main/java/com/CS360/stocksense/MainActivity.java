@@ -2,7 +2,9 @@ package com.CS360.stocksense;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,12 +13,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.CS360.stocksense.Supabase.DataCallback;
-import com.CS360.stocksense.Supabase.DataManager;
+import com.CS360.stocksense.database.DataManager;
 import com.CS360.stocksense.Utils.CSVUtils;
 import com.CS360.stocksense.models.DatabaseSelection;
 import com.CS360.stocksense.models.Item;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 /**
@@ -57,11 +59,11 @@ import java.util.List;
  * @version 1.0
  * @since 01/20/2025
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DataManager.DataUpdateListener {
 
 
     protected static final String PREFERENCES_FILE = "com.CS360.stocksense.PREFERENCES_FILE";
-    protected String loggedInOrganization;
+    protected String organizationId;
     protected List<Item> fetchedItems;
     protected List<DatabaseSelection> availableDatabases;
 
@@ -70,17 +72,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeNavigationBar("nav1","nav2","nav3");
+        DataManager.setUpdateListener(this);
 
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-        loggedInOrganization = preferences.getString("KEY_ORGANIZATION", null);
+        organizationId = preferences.getString("OrganizationId", null);
 
-        Log.d("MainActivityLifecycle", "Organization " + loggedInOrganization);
+        Log.d("MainActivityLifecycle", "Organization " + organizationId);
 
     }
     @Override
+    public void onDataUpdated() {
+        runOnUiThread(() -> {
+            Log.d("DataManager", "Data updated, refreshing UI. Activity: " + this.getClass().getSimpleName() );
+            initializeData();
+        });
+    }
+    @Override
     protected void onResume() {
+
         super.onResume();
-        initializeData();
+        Log.d(this.getClass().getSimpleName(), "OnResume Called");
     }
     /**
      * Handles clicks on navigation buttons. Child activities can override this to implement
@@ -132,45 +143,7 @@ public class MainActivity extends AppCompatActivity {
      * This method can be overridden by child activities for specific data needs.
      */
     protected void initializeData() {
-        DataManager dataManager = new DataManager();
-
-        // Fetch organization name from shared preferences
-        if (loggedInOrganization == null || loggedInOrganization.isEmpty()) {
-            return;
-        }
-
-        dataManager.fetchOrganization(loggedInOrganization, new DataCallback<List<DatabaseSelection>>() {
-            @Override
-            public void onSuccess(List<DatabaseSelection> result) {
-                availableDatabases = result; // Populate the databases list
-                Log.d("InitData", "Databases loaded successfully. Total: " + availableDatabases.size());
-
-                // Fetch databases for the logged-in organization
-                for (DatabaseSelection db : availableDatabases) {
-                    dataManager.fetchDatabase(loggedInOrganization, db.getId(), new DataCallback<List<Item>>() {
-                        @Override
-                        public void onSuccess(List<Item> result) {
-                            if (fetchedItems == null) {
-                                fetchedItems = result; // Initialize the items list
-                            } else {
-                                fetchedItems.addAll(result); // Append items
-                            }
-                            Log.d("InitData", "Items loaded for database: " + db.getName());
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Log.e("InitData", "Error loading items for database: " + db.getName(), e);
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Log.e("InitData", "Error loading databases", e);
-            }
-        });
+        Log.d("InitData", "InitData");
     }
 
     /*
@@ -255,19 +228,23 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Define the file path in the Downloads directory
-        String fileName = "Database_" + fetchedItems.get(0).getDatabaseId();
-        String filePath = getExternalFilesDir(null) + "/" + fileName;
+        String fileName = "Database_" + fetchedItems.get(0).getDatabaseId() + ".csv";
 
         try {
-            // Use CSVUtils to write data to the file
-            CSVUtils.exportToCSV(filePath, fetchedItems);
-
-            showToast( "Database exported to: " + filePath);
-            Log.d("ExportDatabase", "Exported to " + filePath);
+            CSVUtils.exportToCSV(this, fileName, fetchedItems);
+            showToast("Database exported to Downloads: " + fileName);
         } catch (IOException e) {
             showToast("Failed to export database: " + e.getMessage());
             Log.e("ExportDatabase", "Error exporting database", e);
+        }
+    }
+
+    public static String getDownloadsFilePath(Context context, String fileName) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return "content://downloads/public_downloads/" + fileName; // Only usable with ContentResolver
+        } else {
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            return new File(downloadsDir, fileName).getAbsolutePath();
         }
     }
 
@@ -277,26 +254,9 @@ public class MainActivity extends AppCompatActivity {
      * @param itemId The unique identifier of the item to be deleted.
      * @param databaseId The ID of the database containing the item.
      */
-    protected void deleteItemById(String itemId, String databaseId) {
-        DataManager dataManager = new DataManager();
-
-        dataManager.deleteItem(loggedInOrganization, itemId, databaseId, new DataCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                runOnUiThread(() -> {
-                    showToast("Item deleted successfully");
-                    initializeData(); // Refresh the list
-                });
-            }
-
-            @Override
-            public void onError(Exception e) {
-                runOnUiThread(() -> {
-                    showToast("Failed to delete item: " + e.getMessage());
-                    Log.e("SearchViewActivity", "Error deleting item", e);
-                });
-            }
-        });
+    public void deleteItemById(String databaseId, String itemId) {
+        DataManager.getInstance(this).deleteItem(databaseId, itemId);
+        initializeData();
     }
 
     /**

@@ -41,13 +41,25 @@
  */
 package com.CS360.stocksense.Utils;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
+
 import com.CS360.stocksense.models.Item;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvValidationException;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,42 +68,76 @@ public class CSVUtils {
 
     /**
      * Exports a list of items to a CSV file.
-     *
-     * @param filePath The file path where the CSV file will be created.
+     * TODO I used AI to do this
+     * @param fileName The file path where the CSV file will be created.
      * @param items    The list of Item objects to export.
      * @throws IOException If an I/O error occurs while writing to the file.
      */
-    public static void exportToCSV(String filePath, List<Item> items) throws IOException {
-        if (filePath == null || filePath.isEmpty()) {
-            throw new IllegalArgumentException("File path cannot be null or empty.");
-        }
+    public static void exportToCSV(Context context, String fileName, List<Item> items) throws IOException {
         if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("Items list cannot be null or empty.");
         }
 
-        try (CSVWriter writer = new CSVWriter(new FileWriter(filePath))) {
-            // Write header
+        OutputStream outputStream = null;
+        Uri fileUri = null;
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ContentResolver contentResolver = context.getContentResolver();
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
+                contentValues.put(MediaStore.Downloads.MIME_TYPE, "text/csv");
+                contentValues.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+
+                fileUri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues);
+                if (fileUri == null) {
+                    throw new IOException("Failed to create new MediaStore entry.");
+                }
+
+                outputStream = contentResolver.openOutputStream(fileUri);
+            } else {
+                // For older Android versions
+                File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                File file = new File(downloadsDir, fileName);
+                outputStream = new FileOutputStream(file);
+            }
+
+            if (outputStream == null) {
+                throw new IOException("Failed to open output stream.");
+            }
+
+            CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream));
+
+            // Write CSV Header
             String[] header = {"ID", "Item Name", "Quantity", "Location", "Alert Level", "Organization Name", "Database ID", "Database Name"};
             writer.writeNext(header);
 
-            // Write item data
+            // Write Item Data
             for (Item item : items) {
                 String[] data = {
-                        item.getItemId() != null ? item.getItemId().toString() : "",
+                        item.getItemId(),
                         item.getItemName(),
                         String.valueOf(item.getQuantity()),
                         item.getLocation(),
                         String.valueOf(item.getAlertLevel()),
-                        item.getOrganizationName(),
+                        item.getOrganizationId(),
                         item.getDatabaseId(),
                         item.getDatabaseName()
                 };
                 writer.writeNext(data);
             }
-        } catch (IOException e) {
-            throw new IOException("Failed to export items to CSV file: " + e.getMessage(), e);
+
+            writer.close();
+
+        } catch (Exception e) {
+            throw new IOException("Failed to export items to CSV: " + e.getMessage(), e);
+        } finally {
+            if (outputStream != null) {
+                outputStream.close();
+            }
         }
     }
+
 
     /**
      * Imports a list of items from a CSV file.

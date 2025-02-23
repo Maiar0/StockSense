@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.CS360.stocksense.ItemDetailsActivity;
 import com.CS360.stocksense.R;
+import com.CS360.stocksense.database.DataManager;
 import com.CS360.stocksense.models.Item;
 
 import java.util.List;
@@ -42,13 +43,15 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
 
     private List<Item> itemsList;
     private RecyclerSearchViewAdapter.OnItemSelectListener listener;
+    private Context context;
     /**
      * Constructor for the adapter.
      *
      * @param itemsList List of Item objects to display.
      * @param listener   Context for launching activities.
      */
-    public RecyclerGridViewAdapter(List<Item> itemsList, RecyclerSearchViewAdapter.OnItemSelectListener listener) {
+    public RecyclerGridViewAdapter(Context context, List<Item> itemsList, RecyclerSearchViewAdapter.OnItemSelectListener listener) {
+        this.context = context;
         this.itemsList = itemsList;
         this.listener = listener;
     }
@@ -71,13 +74,13 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
 
         // Increment item quantity on button click
         holder.incrementButton.setOnClickListener(v -> {
-            item.updateQuantity(1);
+            DataManager.getInstance(context).updateItemQuantity(item.getDatabaseId(), item.getItemId(), 1);
             notifyItemChanged(position);
         });
 
         // Decrement item quantity on button click
         holder.decrementButton.setOnClickListener(v -> {
-            item.updateQuantity(-1);
+            DataManager.getInstance(context).updateItemQuantity(item.getDatabaseId(), item.getItemId(), -1);
             notifyItemChanged(position);
         });
 

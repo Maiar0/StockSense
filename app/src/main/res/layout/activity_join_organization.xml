@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Organization UUID Input -->
+    <EditText
+        android:id="@+id/etOrganizationUUID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Organization UUID"
+        android:inputType="text" />
+
+    <!-- Join Organization Button -->
+    <Button
+        android:id="@+id/btnJoinOrganization"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Join Organization"
+        android:layout_marginTop="8dp" />
+
+    <!-- Organization Name Input -->
+    <EditText
+        android:id="@+id/etOrganizationName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Organization Name"
+        android:inputType="text"
+        android:layout_marginTop="16dp" />
+
+    <!-- Create Organization Button -->
+    <Button
+        android:id="@+id/btnCreateOrganization"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Organization"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>

@@ -15,11 +15,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 
-import com.CS360.stocksense.Supabase.DataCallback;
-import com.CS360.stocksense.Supabase.SupabaseRepository;
+import com.CS360.stocksense.database.DataManager;
 import com.CS360.stocksense.models.Item;
 
-import java.util.List;
 /**
  * ItemDetailsActivity
  *
@@ -43,11 +41,11 @@ import java.util.List;
 
 public class ItemDetailsActivity extends AppCompatActivity {
 
-    private TextView itemHeader;
-    private EditText itemQuantity, itemLocation, itemAlertLevel, itemName, itemIdInput;
+    private TextView itemHeader, itemIdInput;
+    private EditText itemQuantity, itemLocation, itemAlertLevel, itemName;
     private Button saveButton, deleteButton;
     private String itemId;
-    private String organizationName;
+    private String organizationId;
     private String databaseId;
     private Item currentItem;
 
@@ -68,14 +66,14 @@ public class ItemDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-        organizationName = preferences.getString("KEY_ORGANIZATION", null);
+        organizationId = preferences.getString("KEY_ORGANIZATION", null);
         itemId = getIntent().getStringExtra("selected_item");
         databaseId = getIntent().getStringExtra("selected_database");
 
-        Log.d("OnInstantiate", "ItemDetailsView " + "Organization: " + organizationName + " ItemId: " + itemId);
+        Log.d("OnInstantiate", "ItemDetailsView " + "Organization: " + organizationId + " ItemId: " + itemId);
 
         if (!itemId.isEmpty()) {
-            loadItemDetails(organizationName, itemId); // Load item details if itemId is valid
+            loadItemDetails(itemId); // Load item details if itemId is valid
         }
 
         saveButton.setOnClickListener(v -> confirmationDialog("Edit", this::onEditButtonClick));
@@ -95,35 +93,19 @@ public class ItemDetailsActivity extends AppCompatActivity {
     /**
      * Loads and displays item details from the database.
      *
-     * @param organizationName The name of the organization the item belongs to.
      * @param itemId The ID of the item to retrieve from the database.
      */
-    private void loadItemDetails(String organizationName, String itemId) {
-        SupabaseRepository repository = new SupabaseRepository();
+    private void loadItemDetails(String itemId) {
+        Item item = DataManager.getInstance(ItemDetailsActivity.this).getItemById( databaseId, itemId);
+        // Display the fetched item details
+        itemHeader.setText(item.getItemName());
+        itemIdInput.setText(item.getItemId());
+        itemName.setText(item.getItemName());
+        itemQuantity.setText(String.valueOf(item.getQuantity()));
+        itemLocation.setText(item.getLocation());
+        itemAlertLevel.setText(String.valueOf(item.getAlertLevel()));
+        currentItem = item;
 
-        repository.readItem(organizationName, itemId, databaseId, new DataCallback<Item>() {
-            @Override
-            public void onSuccess(Item item) {
-                runOnUiThread(() -> {
-                    // Display the fetched item details
-                    itemHeader.setText(item.getItemName());
-                    itemIdInput.setText(item.getItemId());
-                    itemName.setText(item.getItemName());
-                    itemQuantity.setText(String.valueOf(item.getQuantity()));
-                    itemLocation.setText(item.getLocation());
-                    itemAlertLevel.setText(String.valueOf(item.getAlertLevel()));
-                    currentItem = item;
-                });
-            }
-
-            @Override
-            public void onError(Exception e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(ItemDetailsActivity.this, "Error loading item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e("ItemDetailsActivity", "Error: " + e.getMessage(), e);
-                });
-            }
-        });
     }
 
     /**
@@ -146,33 +128,21 @@ public class ItemDetailsActivity extends AppCompatActivity {
      * Retrieves updated values from the UI fields and sends an update request to the database.
      */
     private void onEditButtonClick() {
+        if(currentItem.getQuantity() != Integer.parseInt(itemQuantity.getText().toString().trim())){
+            Log.d(this.getClass().getSimpleName(), "onEditButtonClick: Item quanitty change");
+            int change = Integer.parseInt(itemQuantity.getText().toString().trim()) - currentItem.getQuantity();
+            DataManager.getInstance(this).updateItemQuantity(databaseId, itemId, change);
+        }
+
         currentItem.setItemId(itemId);  // Use existing item ID (Not editable)
         currentItem.setItemName(itemName.getText().toString().trim());
-        currentItem.setQuantity(Integer.parseInt(itemQuantity.getText().toString().trim()));
+        // Don' t Set quantity or we will override our quantity change
         currentItem.setLocation(itemLocation.getText().toString().trim());
         currentItem.setAlertLevel(Integer.parseInt(itemAlertLevel.getText().toString().trim()));
-        currentItem.setOrganizationName(organizationName);
+        currentItem.setOrganizationId(organizationId);
         currentItem.setDatabaseId(databaseId);
-
-        SupabaseRepository repository = new SupabaseRepository();
-
-        repository.updateItem(organizationName, currentItem, databaseId, new DataCallback<List<Item>>() {
-            @Override
-            public void onSuccess(List<Item> result) {
-                runOnUiThread(() -> {
-                    showToast("Item updated successfully!");
-                    finish();
-                });
-            }
-
-            @Override
-            public void onError(Exception e) {
-                runOnUiThread(() -> {
-                    showToast("Error updating item: " + e.getMessage());
-                    Log.e("ItemDetailsActivity", "Update Error: " + e.getMessage(), e);
-                });
-            }
-        });
+        DataManager.getInstance(ItemDetailsActivity.this).updateItem(currentItem);
+        finish();
     }
 
     /**
@@ -180,25 +150,8 @@ public class ItemDetailsActivity extends AppCompatActivity {
      * Sends a request to remove the item and closes the activity upon success.
      */
     private void onDeleteButtonClick() {
-        SupabaseRepository repository = new SupabaseRepository();
-
-        repository.deleteItem(organizationName, itemId, databaseId, new DataCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                runOnUiThread(() -> {
-                    showToast("Item deleted successfully!");
-                    finish();
-                });
-            }
-
-            @Override
-            public void onError(Exception e) {
-                runOnUiThread(() -> {
-                    showToast("Error deleting item: " + e.getMessage());
-                    Log.e("ItemDetailsActivity", "Delete Error: " + e.getMessage(), e);
-                });
-            }
-        });
+        DataManager.getInstance(this).deleteItem(databaseId, itemId);
+        finish();
     }
 
     /**
