@@ -1,7 +1,6 @@
 package com.CS360.stocksense.RecyclerAdapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.CS360.stocksense.ItemDetailsActivity;
 import com.CS360.stocksense.R;
 import com.CS360.stocksense.database.DataManager;
 import com.CS360.stocksense.models.Item;
@@ -18,19 +16,19 @@ import com.CS360.stocksense.models.Item;
 import java.util.List;
 /**
  * RecyclerGridViewAdapter
- *
+ * <p>
  * This adapter is responsible for managing and displaying a list of items
  * in a grid-based RecyclerView. It handles data binding, user interactions,
  * and navigation to detailed item views.
- *
+ * <p>
  * Features:
  * - Displays item details: name, quantity, and location.
  * - Allows users to increment or decrement item quantities.
  * - Supports navigation to an `ItemDetailsActivity` for detailed item information.
- *
+ * <p>
  * Usage:
  * - Attach this adapter to a RecyclerView to display a list of `Item` objects in a grid layout.
- *
+ * <p>
  * Dependencies:
  * - `ItemDetailsActivity` for item-specific navigation.
  * - `Item` model for managing item data.
@@ -42,15 +40,15 @@ import java.util.List;
 public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridViewAdapter.ViewHolder> {
 
     private List<Item> itemsList;
-    private RecyclerSearchViewAdapter.OnItemSelectListener listener;
-    private Context context;
+    private final OnItemSelectListener listener;
+    private final Context context;
     /**
      * Constructor for the adapter.
      *
      * @param itemsList List of Item objects to display.
      * @param listener   Context for launching activities.
      */
-    public RecyclerGridViewAdapter(Context context, List<Item> itemsList, RecyclerSearchViewAdapter.OnItemSelectListener listener) {
+    public RecyclerGridViewAdapter(Context context, List<Item> itemsList, OnItemSelectListener listener) {
         this.context = context;
         this.itemsList = itemsList;
         this.listener = listener;
@@ -71,6 +69,12 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
         holder.itemName.setText(item.getItemName());
         holder.itemQuantity.setText("Q: " + item.getQuantity());
         holder.itemLocation.setText(item.getLocation());
+
+        if(item.getAlertLevel() > item.getQuantity()){// TODO:: I do not like this color I need to learn more about color and theme
+            holder.itemView.setBackgroundColor(holder.itemView.getContext().getResources().getColor(R.color.red_700, null));
+        }else{
+            holder.itemView.setBackgroundColor(holder.itemView.getContext().getResources().getColor(android.R.color.transparent, null));
+        }
 
         // Increment item quantity on button click
         holder.incrementButton.setOnClickListener(v -> {

@@ -25,33 +25,33 @@
         android:theme="@style/Theme.StockSense"
         tools:targetApi="31">
         <activity
-            android:name=".JoinOrganization"
+            android:name=".JoinOrganizationView"
             android:exported="false" />
         <activity
-            android:name=".RegisterUserActivity"
+            android:name=".RegisterUserView"
             android:exported="false"
             android:label="@string/title_activity_register_user"
             android:theme="@style/Theme.StockSense" />
         <activity
-            android:name=".SearchViewActivity"
+            android:name=".SearchView"
             android:exported="false" />
         <activity
-            android:name=".DbSelectionViewActivity"
+            android:name=".DbSelectionView"
             android:exported="false" />
         <activity
-            android:name=".ItemDetailsActivity"
+            android:name=".ItemDetailsView"
             android:exported="false" />
         <activity
             android:name=".TableViewActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".MainView"
             android:exported="false" />
         <activity
-            android:name=".GridViewActivity"
+            android:name=".GridView"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".LoginView"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

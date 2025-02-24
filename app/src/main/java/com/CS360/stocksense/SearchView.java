@@ -23,23 +23,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * SearchViewActivity
- *
+ * <p>
  * This activity provides a search interface for users to browse and manage items
  * within a selected database in the StockSense application. It displays the search
  * results in a list using a RecyclerView and allows users to interact with individual items.
- *
+ * <p>
  * Inherits:
  * - Navigation functionality and shared UI components from `MainActivity`.
- *
+ * <p>
  * Features:
  * - Displays a list of items fetched from a selected database in a vertical RecyclerView.
  * - Allows users to search for specific items using a search box.
  * - Provides navigation to item details when an item is selected.
  * - Includes options for deleting an item by ID or exporting the database to a CSV file.
- *
+ * <p>
  * Key Methods:
  * - `initializeData()`: Fetches items from the selected database and populates the RecyclerView.
  * - `populateRecyclerView(List<Item>)`: Updates the RecyclerView with the fetched items.
@@ -47,15 +48,15 @@ import java.util.Map;
  * - `handleNavigationButtonClickLeft()`: Navigates to the GridViewActivity.
  * - `handleNavigationButtonClickCenter()`: Prompts the user to delete an item by ID.
  * - `handleNavigationButtonClickRight()`: Exports the database to a CSV file.
- *
+ * <p>
  * Example Usage:
  * - Invoked when a user selects a database and wishes to search and interact with its items.
- *
+ * <p>
  * Notes:
  * - Leverages `DataManager` to fetch data from the backend.
  * - RecyclerView is configured with a custom adapter (`RecyclerSearchViewAdapter`).
  * - Requires `databaseId` to be passed as an intent extra for proper functionality.
- *
+ * <p>
  * Dependencies:
  * - `DataManager` for backend data interactions.
  * - `RecyclerSearchViewAdapter` for displaying search results.
@@ -65,10 +66,9 @@ import java.util.Map;
  * @version 1.0
  * @since 01/20/2025
  */
-public class SearchViewActivity extends MainActivity {
+public class SearchView extends MainView {
     private RecyclerView recyclerView;
     private RecyclerSearchViewAdapter adapter;
-    private EditText searchBox;
     private String databaseId;
     private Map<String, Item> itemIdMap = new HashMap<>();
     private Map<String, Item> itemNameMap = new HashMap<>();
@@ -78,11 +78,11 @@ public class SearchViewActivity extends MainActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_view);
         initializeNavigationBar(getString(R.string.nav_button1_search), getString(R.string.nav_button2_search), getString(R.string.nav_button3_search));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         // Initialize RecyclerView and EditText
         recyclerView = findViewById(R.id.recycler_search_results);
-        searchBox = findViewById(R.id.search_box);
+        EditText searchBox = findViewById(R.id.search_box);
 
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override
@@ -105,14 +105,14 @@ public class SearchViewActivity extends MainActivity {
     @Override
     public boolean onSupportNavigateUp() {
         // Handle back navigate to Database Selection
-        Intent intent = new Intent(this, DbSelectionViewActivity.class);
+        Intent intent = new Intent(this, DbSelectionView.class);
         NavUtils.navigateUpTo(this, intent);
         return true;
     }
     @Override
     protected void handleNavigationButtonClickLeft() {
         // Handle navigate to grid view
-        Intent intent = new Intent(this, GridViewActivity.class);
+        Intent intent = new Intent(this, GridView.class);
         intent.putExtra("selected_database", databaseId);
         startActivity(intent);
     }
@@ -133,7 +133,7 @@ public class SearchViewActivity extends MainActivity {
     }
     @Override
     public void initializeData() {
-        List<Item> items = DataManager.getInstance(SearchViewActivity.this).getItemsByDatabaseId(databaseId);
+        List<Item> items = DataManager.getInstance(SearchView.this).getItemsByDatabaseId(databaseId);
         if(items.isEmpty()){
             Log.e(this.getClass().getSimpleName(), "InitData: Fetched: " + items.size() + " Adjusting to fetchedItems: " + fetchedItems.size());
             return;
@@ -145,11 +145,11 @@ public class SearchViewActivity extends MainActivity {
     }
     /**
      * Initializes HashMaps for fast lookups of items by ID and name.
-     *
+     * <p>
      * This method populates two HashMaps:
      * - `itemIdMap`: Maps item IDs to `Item` objects for quick retrieval.
      * - `itemNameMap`: Maps lowercase item names to `Item` objects for case-insensitive name-based searches.
-     *
+     * <p>
      * This improves search performance by avoiding repeated list iterations.
      */
     private void initializeHashMaps(){
@@ -184,7 +184,7 @@ public class SearchViewActivity extends MainActivity {
     }
     /**
      * Handles item selection from the RecyclerView.
-     *
+     * <p>
      * Displays a toast message with the selected item's name and navigates the user
      * to `ItemDetailsActivity` for more information.
      *
@@ -193,14 +193,14 @@ public class SearchViewActivity extends MainActivity {
     private void onItemSelected(Item item) {
         Toast.makeText(this, "Selected item: " + item.getItemName(), Toast.LENGTH_SHORT).show();
 
-        Intent intent = new Intent(this, ItemDetailsActivity.class);
+        Intent intent = new Intent(this, ItemDetailsView.class);
         intent.putExtra("selected_item", item.getItemId());
         intent.putExtra("selected_database", databaseId);
         startActivity(intent);
     }
     /**
      * Filters items based on the user's search query.
-     *
+     * <p>
      * - If the query matches an item ID exactly, it is retrieved from `itemIdMap`.
      * - If the query partially matches an item name, matching items are retrieved from `itemNameMap`.
      * - If the query is empty, the full list of fetched items is displayed.

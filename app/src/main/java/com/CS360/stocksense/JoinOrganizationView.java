@@ -6,12 +6,12 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.CS360.stocksense.auth.DataCallback;
 import com.CS360.stocksense.auth.SupabaseRepository;
 import com.CS360.stocksense.database.DataManager;
 
-public class JoinOrganization extends AppCompatActivity {
+public class JoinOrganizationView extends AppCompatActivity {
     private EditText joinOrganizationInput, organizationNameInput;
-    private Button joinButton, createButton;
     private DataManager dataManager;
     private SupabaseRepository repository;
     @Override
@@ -20,9 +20,9 @@ public class JoinOrganization extends AppCompatActivity {
         setContentView(R.layout.activity_join_organization);
 
         joinOrganizationInput = findViewById(R.id.etOrganizationUUID);
-        joinButton = findViewById(R.id.btnJoinOrganization);
+        Button joinButton = findViewById(R.id.btnJoinOrganization);
         organizationNameInput = findViewById(R.id.etOrganizationName);
-        createButton = findViewById(R.id.btnCreateOrganization);
+        Button createButton = findViewById(R.id.btnCreateOrganization);
 
         joinButton.setOnClickListener(v -> joinOrganization());
         createButton.setOnClickListener(v -> createOrganization());
@@ -36,7 +36,19 @@ public class JoinOrganization extends AppCompatActivity {
     }
 
     private void createOrganization() {
-        // TODO:: implement creating Organization
+        dataManager.createOrganization(organizationNameInput.getText().toString(), new DataCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                dataManager.updateOrganization(result);
+                repository.logout();
+                finish();
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
     }
 
 

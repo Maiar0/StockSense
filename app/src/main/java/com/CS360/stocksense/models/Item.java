@@ -6,19 +6,19 @@ import java.io.Serializable;
 
 /**
  * Represents an item in the StockSense database.
- *
+ * <p>
  * This model is used for querying and managing item data within the database.
  * It contains fields such as item ID, name, quantity, location, alert level,
  * and associated metadata like organization name, database ID, and database name.
- *
+ * <p>
  * Purpose:
  * - Provides a structure to encapsulate item data.
  * - Offers getters and setters for accessing and modifying item properties.
- *
+ * <p>
  * Note:
  * - Field names are designed to match database schema for compatibility.
  * - Validation logic ensures data integrity where applicable.
- *
+ * <p>
  * Example Usage:
  * ```java
  * Item item = new Item();

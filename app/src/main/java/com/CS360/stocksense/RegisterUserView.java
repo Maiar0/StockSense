@@ -12,10 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class RegisterUserActivity extends AppCompatActivity {
+public class RegisterUserView extends AppCompatActivity {
 
     private EditText emailInput, passwordInput, confirmPasswordInput;
-    private Button registerButton;
     private SupabaseRepository repository;
 
     @Override
@@ -26,7 +25,7 @@ public class RegisterUserActivity extends AppCompatActivity {
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
         confirmPasswordInput = findViewById(R.id.confirmPasswordInput);
-        registerButton = findViewById(R.id.registerButton);
+        Button registerButton = findViewById(R.id.registerButton);
 
         repository = new SupabaseRepository(this);
 
@@ -52,7 +51,7 @@ public class RegisterUserActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String message) {
                 if(repository.getOrganization().equals("00000000-0000-0000-0000-000000000000") ){
-                    Intent intent = new Intent(RegisterUserActivity.this, JoinOrganization.class);
+                    Intent intent = new Intent(RegisterUserView.this, JoinOrganizationView.class);
                     startActivity(intent);
                 }
                 finish();

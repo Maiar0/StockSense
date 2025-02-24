@@ -24,22 +24,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Objects;
+
 /**
  * DbSelectionViewActivity
- *
+ * <p>
  * This activity provides a user interface for managing databases in the StockSense application.
  * It allows users to view, create, delete, and import databases through a RecyclerView interface.
- *
+ * <p>
  * Inherits:
  * - Navigation functionality and shared UI components from `MainActivity`.
- *
+ * <p>
  * Features:
  * - Displays a list of available databases in a vertical RecyclerView.
  * - Supports creating new databases by prompting the user for a database name.
  * - Enables importing databases from a CSV file.
  * - Allows deleting a database by specifying its ID.
  * - Handles navigation to the `SearchViewActivity` when a database is selected.
- *
+ * <p>
  * Key Methods:
  * - `initializeData()`: Fetches the list of databases and populates the RecyclerView.
  * - `populateRecyclerView(List<DatabaseSelection>)`: Updates the UI with the fetched database data.
@@ -47,11 +49,11 @@ import java.util.List;
  * - `deleteDatabaseById(String)`: Deletes a specified database by ID and updates the view.
  * - `importDatabase(Uri, String)`: Imports a database from a CSV file and adds it to the list.
  * - `onDatabaseSelected(DatabaseSelection)`: Handles navigation when a database is selected.
- *
+ * <p>
  * Example Usage:
  * - When a user logs into their organization, this activity is invoked to display
  *   and manage databases associated with their account.
- *
+ * <p>
  * Notes:
  * - The activity leverages `DataManager` for all backend interactions.
  * - Error handling is included for network operations, file I/O, and user inputs.
@@ -60,7 +62,7 @@ import java.util.List;
  * @version 1.0
  * @since 01/20/2025
  */
-public class DbSelectionViewActivity extends MainActivity {
+public class DbSelectionView extends MainView {
 
     private RecyclerView recyclerView;
     private RecyclerDbSelectionAdapter adapter;
@@ -71,7 +73,7 @@ public class DbSelectionViewActivity extends MainActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_db_selection_view);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         initializeNavigationBar(
                 getString(R.string.nav_button1_dbselection),
@@ -86,7 +88,7 @@ public class DbSelectionViewActivity extends MainActivity {
     @Override
     public boolean onSupportNavigateUp() {
         // Handle back navigation to login screen
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(this, LoginView.class);
         NavUtils.navigateUpTo(this, intent);
         return true;
     }
@@ -121,7 +123,7 @@ public class DbSelectionViewActivity extends MainActivity {
      */
     @Override
     protected void initializeData() {
-        List<DatabaseSelection> databases = DataManager.getInstance(DbSelectionViewActivity.this).getDatabaseSelections();
+        List<DatabaseSelection> databases = DataManager.getInstance(DbSelectionView.this).getDatabaseSelections();
         Log.d("DbSelectionViewActivity", "Fetched " + databases.size() + " databases.");
         populateRecyclerView(databases);
     }
@@ -148,7 +150,7 @@ public class DbSelectionViewActivity extends MainActivity {
      * @param databaseName The name of the new database.
      */
     private void createDatabase(String databaseName) {
-        DataManager.getInstance(DbSelectionViewActivity.this).createNewDatabase(databaseName);
+        DataManager.getInstance(DbSelectionView.this).createNewDatabase(databaseName);
         initializeData();
     }
 
@@ -159,7 +161,7 @@ public class DbSelectionViewActivity extends MainActivity {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("text/csv");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(Intent.createChooser(intent, "Select CSV File"), PICK_CSV_FILE);
+        startActivityForResult(Intent.createChooser(intent, "Select CSV File"), PICK_CSV_FILE);// TODO:: this needs looked into
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -220,7 +222,7 @@ public class DbSelectionViewActivity extends MainActivity {
             // Parse CSV file
             List<Item> items = CSVUtils.importFromCSV(reader);
             Log.d("DbSelectionView", "Import Method: items: " + items);
-            DataManager.getInstance(DbSelectionViewActivity.this).importNewDatabase(dbName,items);
+            DataManager.getInstance(DbSelectionView.this).importNewDatabase(dbName,items);
 
 
 
@@ -254,7 +256,7 @@ public class DbSelectionViewActivity extends MainActivity {
      */
     private void onDatabaseSelected(DatabaseSelection database) {
         // Navigate to another activity with the selected database
-        Intent intent = new Intent(this, SearchViewActivity.class);
+        Intent intent = new Intent(this, SearchView.class);
         intent.putExtra("selected_database", database.getId());
         startActivity(intent);
     }

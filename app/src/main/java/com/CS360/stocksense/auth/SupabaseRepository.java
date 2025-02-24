@@ -243,7 +243,7 @@ public class SupabaseRepository {
         body.put("p_item_id", itemId);
         body.put("p_quantity_change", quantityChange);
 
-        authApi.updateItemQuantiity(API_KEY, authToken, body).enqueue(new Callback<Void>() {
+        authApi.updateItemQuantity(API_KEY, authToken, body).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Log.d("SupabaseRepository", "Change Quantity Response Code: " + response.code());// TODO:: Remove logging of sensitive data
@@ -273,7 +273,7 @@ public class SupabaseRepository {
                 Log.d("SupabaseRepository", "Change Organization Response Code: " + response.code());// TODO:: Remove logging of sensitive data
                 Log.d("SupabaseRepository", "Change Organization Raw Response: " + response.raw());
                 if (response.isSuccessful()) {
-                    callback.onSuccess(null);
+                    callback.onSuccess(response.body());
                 } else {
                     callback.onError(new Exception("Failed to Change Organization: " + response.message()));
                 }
@@ -290,14 +290,13 @@ public class SupabaseRepository {
         String authToken = "Bearer " + getAccessToken();
         Map<String, Object> body = new HashMap<>();
         body.put("org_name", organizationName);
-        //TODO:: this is untested complete implementation
         authApi.createOrganization(API_KEY, authToken, body).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.d("SupabaseRepository", "Create Organization Response Code: " + response.code());// TODO:: Remove logging of sensitive data
                 Log.d("SupabaseRepository", "Create Organization Raw Response: " + response.raw());
                 if (response.isSuccessful()) {
-                    callback.onSuccess(null);
+                    callback.onSuccess(response.body());
                 } else {
                     callback.onError(new Exception("Failed to Create Organization: " + response.message()));
                 }

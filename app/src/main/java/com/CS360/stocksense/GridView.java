@@ -18,25 +18,27 @@ import com.CS360.stocksense.database.DataManager;
 import com.CS360.stocksense.models.Item;
 
 import java.util.List;
+import java.util.Objects;
+
 /**
  * GridViewActivity
- *
+ * <p>
  * This activity provides a grid-based view to display items fetched from a specific database in the StockSense application.
  * It extends `MainActivity` to leverage shared navigation and functionality.
- *
+ * <p>
  * Features:
  * - Displays a grid layout of items using a RecyclerView.
  * - Fetches data from a database and populates the RecyclerView.
  * - Includes navigation buttons for transitioning between activities and exporting data to CSV.
- *
+ * <p>
  * Responsibilities:
  * - Fetches and displays items specific to the selected database.
  * - Provides navigation to other activities (e.g., SearchViewActivity, DbSelectionViewActivity).
  * - Handles user interactions such as item selection and export operations.
- *
+ * <p>
  * Example Usage:
  * - Invoked when the user selects a database to view its items in a grid format.
- *
+ * <p>
  * Notes:
  * - Uses `DataManager` to fetch data from the backend.
  * - RecyclerView layout is configured as a 2-column grid.
@@ -46,10 +48,9 @@ import java.util.List;
  * @version 1.0
  * @since 01/20/2025
  */
-public class GridViewActivity extends MainActivity {
+public class GridView extends MainView {
 
     private RecyclerView recyclerView;
-    private RecyclerGridViewAdapter adapter;
     private String databaseId;
 
     @Override
@@ -57,7 +58,7 @@ public class GridViewActivity extends MainActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grid_view);
         initializeNavigationBar(getString(R.string.nav_button1_grid), getString(R.string.nav_button2_grid), getString(R.string.nav_button3_search));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         recyclerView = findViewById(R.id.recycler_grid_view);
 
@@ -69,14 +70,14 @@ public class GridViewActivity extends MainActivity {
     @Override
     public boolean onSupportNavigateUp() {
         // Handle back navigation to Database Selection
-        Intent intent = new Intent(this, DbSelectionViewActivity.class);
+        Intent intent = new Intent(this, DbSelectionView.class);
         NavUtils.navigateUpTo(this, intent);
         return true;
     }
     @Override
     protected void handleNavigationButtonClickLeft(){
         // Navigate to SearchView
-        Intent intent = new Intent(this, SearchViewActivity.class);
+        Intent intent = new Intent(this, SearchView.class);
         intent.putExtra("selected_database", databaseId);
         startActivity(intent);
     }
@@ -92,7 +93,7 @@ public class GridViewActivity extends MainActivity {
     }
     @Override
     protected void initializeData() {
-        List<Item> items = DataManager.getInstance(GridViewActivity.this).getItemsByDatabaseId(databaseId);
+        List<Item> items = DataManager.getInstance(GridView.this).getItemsByDatabaseId(databaseId);
         fetchedItems = items;
         Log.d("GridViewActivity", "Fetched " + items.size() + " databases.");
         populateRecyclerView(items);
@@ -103,7 +104,7 @@ public class GridViewActivity extends MainActivity {
      * @param items List of Item objects to display.
      */
     private void populateRecyclerView(List<Item> items) {
-        adapter = new RecyclerGridViewAdapter(this, items, this::onItemSelected);
+        RecyclerGridViewAdapter adapter = new RecyclerGridViewAdapter(this, items, this::onItemSelected);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Grid layout with 2 columns
         recyclerView.setAdapter(adapter);
     }
@@ -182,7 +183,7 @@ public class GridViewActivity extends MainActivity {
 
     /**
      * Handles item selection from the RecyclerView.
-     *
+     * <p>
      * Displays a toast message with the selected item's name and navigates the user
      * to `ItemDetailsActivity` for more information.
      *
@@ -191,7 +192,7 @@ public class GridViewActivity extends MainActivity {
     private void onItemSelected(Item item) {
         Toast.makeText(this, "Selected item: " + item.getItemName(), Toast.LENGTH_SHORT).show();
 
-        Intent intent = new Intent(this, ItemDetailsActivity.class);
+        Intent intent = new Intent(this, ItemDetailsView.class);
         intent.putExtra("selected_item", item.getItemId());
         intent.putExtra("selected_database", databaseId);
         startActivity(intent);

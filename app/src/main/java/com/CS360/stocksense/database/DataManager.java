@@ -11,7 +11,6 @@ import com.CS360.stocksense.models.DatabaseSelection;
 import com.CS360.stocksense.models.Item;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -19,16 +18,12 @@ import java.util.Map;
 
 public class DataManager {
     private static DataManager instance;
-    private final Context appContext;
     private static DataUpdateListener updateListener;
     private final SupabaseRepository repository;
     private long lastFetch = -1;
-    private List<Item> toUpdate;
     private Map<String, List<Item>> itemsByDatabase = new HashMap<>();
 
     private DataManager(Context context){
-        this.appContext = context.getApplicationContext();
-        toUpdate = new ArrayList<>();
         repository = new SupabaseRepository(context);
         Log.d(this.getClass().getSimpleName(), "Initializing DataManager with organizationId: " + repository.getOrganization());
     }
@@ -78,6 +73,7 @@ public class DataManager {
 
         List<Item> itemList = itemsByDatabase.get(databaseId);
         boolean itemFound = false;
+        if(itemList == null){return;}
         for (int i = 0; i < itemList.size(); i++) {
             if (itemList.get(i).getItemId().equals(itemId)) {
                 itemList.set(i, updatedItem); // Replace the existing item
@@ -87,7 +83,7 @@ public class DataManager {
             }
         }
         if(!itemFound){
-            Log.e(this.getClass().getSimpleName(), "Item not found in local list itemdId: " + itemId);
+            Log.e(this.getClass().getSimpleName(), "Item not found in local list itemId: " + itemId);
             return;//TODO:: Should we return, add item, or fetch repository again?
         }
 
@@ -170,6 +166,7 @@ public class DataManager {
             return;
         }
         boolean itemFound = false;
+        if(items == null){return;}
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i).getItemId().equals(itemId)) {
                 Log.d(this.getClass().getSimpleName(), "Removed item Locally itemId: " + itemId + " Reason: ItemId was parsed and found");
@@ -225,12 +222,24 @@ public class DataManager {
 
             @Override
             public void onError(Exception e) {
-                Log.e(this.getClass().getSimpleName(), "Failed to update organization: " + e.getMessage());
+                Log.e(this.getClass().getSimpleName(), "Failed to updated organization: " + e.getMessage());
             }
         });
     }
-     public void createOrganization(){
-        // TODO:: Implement creating organization
+     public void createOrganization(String databaseName, DataCallback<String> callback){
+        repository.createOrganization(databaseName, new DataCallback<String>(){
+            @Override
+            public void onSuccess(String result) {
+                Log.d(this.getClass().getSimpleName(), "Successfully created organization: " + result);
+                callback.onSuccess(result);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e(this.getClass().getSimpleName(), "Failed to create organization: " + e.getMessage());
+                callback.onError(e);
+            }
+        });
      }
 
 
@@ -280,7 +289,7 @@ public class DataManager {
         if (itemList == null || itemList.isEmpty()) {
             return itemList; // Return as is if the list is null or empty
         }
-        Collections.sort(itemList, Comparator.comparing(Item::getItemName, String.CASE_INSENSITIVE_ORDER));
+        itemList.sort(Comparator.comparing(Item::getItemName, String.CASE_INSENSITIVE_ORDER));
         return itemList; // Sorted list
     }
     public List<DatabaseSelection> getDatabaseSelections() {
@@ -309,6 +318,7 @@ public class DataManager {
     public Item getItemById(String databaseId, String itemId) {
         if (itemsByDatabase.containsKey(databaseId)) {
             List<Item> itemList = itemsByDatabase.get(databaseId);
+            if(itemList== null ){return null;}
             for (Item item : itemList) {
                 if (item.getItemId().equals(itemId)) {
                     return item; // Found the item, return it

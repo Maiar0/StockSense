@@ -5,20 +5,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Provides a singleton instance of the Retrofit client configured for the Supabase REST API.
- *
+ * <p>
  * This class ensures that there is a single instance of Retrofit throughout the application,
  * configured with the base URL and the necessary converters for JSON serialization and deserialization.
- *
+ * <p>
  * Purpose:
  * - To centralize the configuration of Retrofit.
  * - To provide an easy and consistent way to access the Supabase API endpoints.
- *
+ * <p>
  * Example Usage:
  * ```java
  * Retrofit client = SupabaseClient.getInstance();
  * SupabaseApi api = client.create(SupabaseApi.class);
  * ```
- *
+ * <p>
  * Notes:
  * - The base URL is hardcoded but can be modified to fit different environments (e.g., staging or production).
  * - Uses Gson for JSON parsing.

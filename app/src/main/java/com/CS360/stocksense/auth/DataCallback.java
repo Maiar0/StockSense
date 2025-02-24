@@ -1,12 +1,12 @@
 package com.CS360.stocksense.auth;
 /**
  * DataCallback Interface
- *
+ * <p>
  * A generic callback interface for handling asynchronous operations in Supabase data retrieval.
  * This interface allows handling both success and error cases for API calls or database queries.
  *
  * @param <T> The type of result expected on a successful operation.
- *
+ * <p>
  * Usage Example:
  * ```java
  * DataCallback<List<Item>> callback = new DataCallback<>() {

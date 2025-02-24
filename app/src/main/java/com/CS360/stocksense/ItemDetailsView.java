@@ -1,6 +1,6 @@
 package com.CS360.stocksense;
 
-import static com.CS360.stocksense.MainActivity.PREFERENCES_FILE;
+import static com.CS360.stocksense.MainView.PREFERENCES_FILE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,18 +18,20 @@ import androidx.core.app.NavUtils;
 import com.CS360.stocksense.database.DataManager;
 import com.CS360.stocksense.models.Item;
 
+import java.util.Objects;
+
 /**
  * ItemDetailsActivity
- *
+ * <p>
  * This activity displays detailed information about a selected item and allows users to edit or delete it.
  * Users can modify item attributes such as name, quantity, location, and alert level, and update them in the database.
  * Additionally, users can delete the item with confirmation.
- *
+ * <p>
  * Features:
  * - Displays item details retrieved from the database.
  * - Allows users to edit and save item modifications.
  * - Provides a delete option with a confirmation dialog.
- *
+ * <p>
  * Dependencies:
  * - Uses `SupabaseRepository` to perform database operations.
  * - Requires `Item` model for representing item data.
@@ -39,11 +41,10 @@ import com.CS360.stocksense.models.Item;
  * @since 01/20/2025
  */
 
-public class ItemDetailsActivity extends AppCompatActivity {
+public class ItemDetailsView extends AppCompatActivity {
 
     private TextView itemHeader, itemIdInput;
     private EditText itemQuantity, itemLocation, itemAlertLevel, itemName;
-    private Button saveButton, deleteButton;
     private String itemId;
     private String organizationId;
     private String databaseId;
@@ -59,11 +60,11 @@ public class ItemDetailsActivity extends AppCompatActivity {
         itemName = findViewById(R.id.item_details_name);
         itemQuantity = findViewById(R.id.item_details_quantity);
         itemLocation = findViewById(R.id.item_details_location);
-        saveButton = findViewById(R.id.button_edit_item);
-        deleteButton = findViewById(R.id.button_delete_item);
+        Button saveButton = findViewById(R.id.button_edit_item);
+        Button deleteButton = findViewById(R.id.button_delete_item);
         itemAlertLevel = findViewById(R.id.item_details_alert_level);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
         organizationId = preferences.getString("KEY_ORGANIZATION", null);
@@ -84,7 +85,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         // Handle back navigate to SearchView
         Intent intent;
-        intent = new Intent(this, SearchViewActivity.class);
+        intent = new Intent(this, SearchView.class);
         intent.putExtra("selected_database", getIntent().getStringExtra("selected_database"));
         NavUtils.navigateUpTo(this, intent);
         return true;
@@ -96,7 +97,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
      * @param itemId The ID of the item to retrieve from the database.
      */
     private void loadItemDetails(String itemId) {
-        Item item = DataManager.getInstance(ItemDetailsActivity.this).getItemById( databaseId, itemId);
+        Item item = DataManager.getInstance(ItemDetailsView.this).getItemById( databaseId, itemId);
         // Display the fetched item details
         itemHeader.setText(item.getItemName());
         itemIdInput.setText(item.getItemId());
@@ -129,7 +130,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
      */
     private void onEditButtonClick() {
         if(currentItem.getQuantity() != Integer.parseInt(itemQuantity.getText().toString().trim())){
-            Log.d(this.getClass().getSimpleName(), "onEditButtonClick: Item quanitty change");
+            Log.d(this.getClass().getSimpleName(), "onEditButtonClick: Item quantity change");
             int change = Integer.parseInt(itemQuantity.getText().toString().trim()) - currentItem.getQuantity();
             DataManager.getInstance(this).updateItemQuantity(databaseId, itemId, change);
         }
@@ -141,7 +142,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
         currentItem.setAlertLevel(Integer.parseInt(itemAlertLevel.getText().toString().trim()));
         currentItem.setOrganizationId(organizationId);
         currentItem.setDatabaseId(databaseId);
-        DataManager.getInstance(ItemDetailsActivity.this).updateItem(currentItem);
+        DataManager.getInstance(ItemDetailsView.this).updateItem(currentItem);
         finish();
     }
 
@@ -160,6 +161,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
      * @param message The message to display.
      */
     private void showToast(String message) {
-        Toast.makeText(ItemDetailsActivity.this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(ItemDetailsView.this, message, Toast.LENGTH_SHORT).show();
     }
 }

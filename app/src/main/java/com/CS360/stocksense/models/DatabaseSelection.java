@@ -4,21 +4,21 @@ import androidx.annotation.NonNull;
 
 /**
  * Represents a database selection in the StockSense application.
- *
+ * <p>
  * This class is used to encapsulate the details of a database, including its unique identifier
  * (`database_id`) and its human-readable name (`database_name`). It provides getters and setters
  * for accessing and modifying these fields.
- *
+ * <p>
  * Purpose:
  * - To serve as a model for storing and transferring database selection information.
- *
+ * <p>
  * Example Usage:
  * ```java
  * DatabaseSelection dbSelection = new DatabaseSelection("db001", "InventoryDB");
  * System.out.println("Database ID: " + dbSelection.getId());
  * System.out.println("Database Name: " + dbSelection.getName());
  * ```
- *
+ * <p>
  * Notes:
  * - The field names match the database schema for compatibility.
  * - The class is primarily used in conjunction with database querying and selection features.

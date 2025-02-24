@@ -73,7 +73,7 @@ public interface SupabaseApi {
             "Content-Type: application/json",
             "Prefer: return=representation"
     })
-    Call<Void> updateItemQuantiity(
+    Call<Void> updateItemQuantity(
             @Header("apikey") String apiKey,
             @Header("Authorization") String accessToken,
             @Body Map<String, Object> body

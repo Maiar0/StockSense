@@ -1,36 +1,36 @@
 /**
  * CSVUtils
- *
+ * <p>
  * A utility class for handling CSV file operations, including exporting and importing `Item` objects.
  * This class leverages the OpenCSV library for efficient CSV parsing and writing.
- *
+ * <p>
  * Functionality:
  * - Export a list of items to a CSV file with a predefined structure.
  * - Import a list of items from a CSV file, ensuring data integrity and proper parsing.
- *
+ * <p>
  * Usage:
  * - Use `exportToCSV` to save a list of `Item` objects to a file.
  * - Use `importFromCSV` to read and parse items from a CSV file.
- *
+ * <p>
  * Dependencies:
  * - OpenCSV library for CSV file operations.
  * - `Item` model class for representing item data.
- *
+ * <p>
  * Error Handling:
  * - Provides detailed error messages for invalid input, file I/O issues, or CSV formatting errors.
- *
+ * <p>
  * Example:
  * ```java
  * // Exporting items to CSV
  * List<Item> items = fetchItems();
  * String filePath = "path/to/export.csv";
  * CSVUtils.exportToCSV(filePath, items);
- *
+ * <p>
  * // Importing items from CSV
  * Reader reader = new FileReader("path/to/import.csv");
  * List<Item> importedItems = CSVUtils.importFromCSV(reader);
  * ```
- *
+ * <p>
  * Notes:
  * - The exported CSV file includes a header row with column names.
  * - Ensure that the CSV file format matches the expected structure for successful imports.
@@ -56,7 +56,6 @@ import com.opencsv.exceptions.CsvValidationException;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -79,7 +78,7 @@ public class CSVUtils {
         }
 
         OutputStream outputStream = null;
-        Uri fileUri = null;
+        Uri fileUri;
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

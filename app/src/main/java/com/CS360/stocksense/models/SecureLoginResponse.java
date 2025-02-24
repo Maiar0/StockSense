@@ -2,7 +2,6 @@ package com.CS360.stocksense.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
 import java.util.Map;
 
 public class SecureLoginResponse {

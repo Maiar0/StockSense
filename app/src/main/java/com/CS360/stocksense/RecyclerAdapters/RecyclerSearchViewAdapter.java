@@ -1,6 +1,6 @@
 package com.CS360.stocksense.RecyclerAdapters;
 
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,24 +9,24 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.CS360.stocksense.R;
-import com.CS360.stocksense.models.DatabaseSelection;
+
 import com.CS360.stocksense.models.Item;
 import java.util.ArrayList;
 import java.util.List;
 /**
  * RecyclerSearchViewAdapter
- *
+ * <p>
  * This adapter manages and displays a list of `Item` objects in a RecyclerView for the search view.
  * It supports filtering the list based on a user query and handles item selection through a listener.
- *
+ * <p>
  * Features:
  * - Displays item details such as ID, name, and quantity.
  * - Filters the list of items dynamically based on user input.
  * - Supports click handling to notify listeners when an item is selected.
- *
+ * <p>
  * Usage:
  * - Attach this adapter to a RecyclerView for dynamic search and selection of items.
- *
+ * <p>
  * Dependencies:
  * - `Item` model for representing item data.
  * - `search_view_object.xml` layout for rendering individual items.
@@ -37,9 +37,8 @@ import java.util.List;
  */
 public class RecyclerSearchViewAdapter extends RecyclerView.Adapter<RecyclerSearchViewAdapter.ViewHolder> {
 
-    private List<Item> itemsList;
     private List<Item> filteredItemsList;
-    private OnItemSelectListener listener;
+    private final OnItemSelectListener listener;
 
     /**
      * Constructor for the adapter.
@@ -66,7 +65,11 @@ public class RecyclerSearchViewAdapter extends RecyclerView.Adapter<RecyclerSear
         holder.itemId.setText("ID: " + item.getItemId());
         holder.itemName.setText(item.getItemName());
         holder.quantity.setText("Q: " + item.getQuantity());
-
+        if(item.getAlertLevel() > item.getQuantity()){// TODO:: I do not like this color I need to learn more about color and theme
+            holder.itemView.setBackgroundColor(holder.itemView.getContext().getResources().getColor(R.color.red_700, null));
+        }else{
+            holder.itemView.setBackgroundColor(holder.itemView.getContext().getResources().getColor(android.R.color.transparent, null));
+        }
         // Handle item selection event
         holder.itemView.setOnClickListener(v -> listener.onItemSelected(item));
     }
@@ -100,6 +103,6 @@ public class RecyclerSearchViewAdapter extends RecyclerView.Adapter<RecyclerSear
     public void updateData(List<Item> newItemsList) {
         this.filteredItemsList.clear();
         this.filteredItemsList.addAll(newItemsList);
-        notifyDataSetChanged();
+        notifyDataSetChanged(); // TODO:: use more efficient method?
     }
 }

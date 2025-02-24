@@ -17,10 +17,10 @@ import com.CS360.stocksense.models.DatabaseSelection;
 import java.util.List;
 /**
  * RecyclerDbSelectionAdapter
- *
+ * <p>
  * Adapter for displaying a list of databases in a RecyclerView. Each item in the list represents
  * a database, showing its name and ID. Handles click events through the OnDatabaseClickListener interface.
- *
+ * <p>
  * Features:
  * - Inflates the layout for database items.
  * - Binds data (name and ID) to individual item views.
@@ -33,7 +33,7 @@ import java.util.List;
 public class RecyclerDbSelectionAdapter extends RecyclerView.Adapter<RecyclerDbSelectionAdapter.ViewHolder> {
 
     private List<DatabaseSelection> databases;
-    private OnDatabaseClickListener clickListener;
+    private final OnDatabaseClickListener clickListener;
     /**
      * Constructor for the adapter.
      *
@@ -60,9 +60,7 @@ public class RecyclerDbSelectionAdapter extends RecyclerView.Adapter<RecyclerDbS
         holder.databaseName.setText(database.getName());
         holder.databaseId.setText(database.getId());
         holder.itemView.setOnClickListener(v -> clickListener.onDatabaseClick(database));
-        holder.copyButton.setOnClickListener(v -> {
-            copyToClipboard(holder.itemView.getContext(), database.getId());
-        });
+        holder.copyButton.setOnClickListener(v -> copyToClipboard(holder.itemView.getContext(), database.getId()));
     }
     private void copyToClipboard(Context context, String text) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -100,6 +98,6 @@ public class RecyclerDbSelectionAdapter extends RecyclerView.Adapter<RecyclerDbS
     public void updateData(List<DatabaseSelection> newDatabases) {
         this.databases.clear();
         this.databases.addAll(newDatabases);
-        notifyDataSetChanged();
+        notifyDataSetChanged();//TODO:: Find more efficient method
     }
 }

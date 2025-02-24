@@ -2,9 +2,7 @@ package com.CS360.stocksense;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,41 +13,39 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.CS360.stocksense.database.DataManager;
 import com.CS360.stocksense.Utils.CSVUtils;
-import com.CS360.stocksense.models.DatabaseSelection;
 import com.CS360.stocksense.models.Item;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 /**
  * MainActivity
- *
+ * <p>
  * Serves as the base activity for the StockSense application, providing shared functionality
  * and features that are inherited by its child activities. This class includes core behaviors
  * such as navigation handling, shared data management, and reusable utility methods.
- *
+ * <p>
  * Key Features:
  * - Shared Navigation Bar: Provides navigation buttons that child activities can configure and handle.
  * - Data Management: Fetches and manages organization-related data, including databases and items.
  * - Reusable Utility Methods: Includes common methods such as showing input dialogs, exporting data
  *   to CSV, and deleting items.
- *
+ * <p>
  * Responsibilities:
  * - Acts as a parent class for child activities like `DbSelectionViewActivity`, `SearchViewActivity`, etc.
  * - Manages the logged-in organization and associated data (e.g., items and databases).
  * - Provides shared lifecycle methods like `initializeData` for data fetching.
  * - Exposes protected methods for child activities to implement custom behavior, such as navigation
  *   and UI actions.
- *
+ * <p>
  * Notes:
  * - The class uses `SharedPreferences` to store and retrieve the logged-in organization's details.
  * - Navigation buttons are dynamically configured and can be customized by child activities.
  * - Handles asynchronous data fetching and error handling through callbacks.
- *
+ * <p>
  * Example Usage:
  * - Extend `MainActivity` in a child activity to inherit navigation and data management features.
  * - Override `handleNavigationButtonClickLeft()` to define custom behavior for the left navigation button.
- *
+ * <p>
  * Dependencies:
  * - `DataManager` for backend interactions.
  * - `CSVUtils` for exporting data to CSV files.
@@ -59,13 +55,12 @@ import java.util.List;
  * @version 1.0
  * @since 01/20/2025
  */
-public class MainActivity extends AppCompatActivity implements DataManager.DataUpdateListener {
+public class MainView extends AppCompatActivity implements DataManager.DataUpdateListener {
 
 
     protected static final String PREFERENCES_FILE = "com.CS360.stocksense.PREFERENCES_FILE";
     protected String organizationId;
     protected List<Item> fetchedItems;
-    protected List<DatabaseSelection> availableDatabases;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements DataManager.DataU
 
     /**
      * Interface for handling dialog actions.
-     *
+     * <p>
      * This interface is used to define the behavior when the positive button in the dialog
      * is clicked and valid input is provided by the user.
      */
@@ -200,24 +195,24 @@ public class MainActivity extends AppCompatActivity implements DataManager.DataU
     }
     /**
      * Exports the current database items to a CSV file.
-     *
+     * <p>
      * This method generates a CSV file containing the data from the current list of items (`items`)
      * and saves it to the external files directory of the device. If the list is empty or null,
      * it displays an appropriate message to the user.
-     *
+     * <p>
      * The file is named `database_export.csv` and is saved in the app's external files directory.
      * The user is notified of the success or failure of the export operation via a Toast message.
-     *
+     * <p>
      * Precondition:
      * - The `items` list must be populated with valid data before calling this method.
-     *
-     * Postcondition:
+     * <p>
+     * Post-condition:
      * - If successful, a CSV file is created and saved to the external files directory.
      * - If an error occurs (e.g., I/O failure), the user is notified, and an error is logged.
-     *
+     * <p>
      * Example Usage:
      * - Call this method when the user clicks a "Export to CSV" button.
-     *
+     * <p>
      * Error Handling:
      * - If `items` is null or empty, a Toast message notifies the user that there is no data to export.
      * - IOException is caught, and an error message is displayed.
@@ -238,16 +233,6 @@ public class MainActivity extends AppCompatActivity implements DataManager.DataU
             Log.e("ExportDatabase", "Error exporting database", e);
         }
     }
-
-    public static String getDownloadsFilePath(Context context, String fileName) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            return "content://downloads/public_downloads/" + fileName; // Only usable with ContentResolver
-        } else {
-            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            return new File(downloadsDir, fileName).getAbsolutePath();
-        }
-    }
-
     /**
      * Deletes an item from the database by its ID.
      *
