@@ -14,22 +14,15 @@ import com.CS360.stocksense.models.Item;
 import java.util.ArrayList;
 import java.util.List;
 /**
- * RecyclerSearchViewAdapter
- * <p>
- * This adapter manages and displays a list of `Item` objects in a RecyclerView for the search view.
- * It supports filtering the list based on a user query and handles item selection through a listener.
+ * RecyclerSearchViewAdapter is an adapter for displaying a list of `Item` objects
+ * in a RecyclerView within the search view.
+ *
  * <p>
  * Features:
  * - Displays item details such as ID, name, and quantity.
- * - Filters the list of items dynamically based on user input.
- * - Supports click handling to notify listeners when an item is selected.
- * <p>
- * Usage:
- * - Attach this adapter to a RecyclerView for dynamic search and selection of items.
- * <p>
- * Dependencies:
- * - `Item` model for representing item data.
- * - `search_view_object.xml` layout for rendering individual items.
+ * - Dynamically filters the list based on user input.
+ * - Notifies listeners when an item is selected.
+ * </p>
  *
  * @author Dennis Ward II
  * @version 1.0
@@ -85,7 +78,11 @@ public class RecyclerSearchViewAdapter extends RecyclerView.Adapter<RecyclerSear
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView itemId, itemName, quantity;
-
+        /**
+         * Constructor for ViewHolder.
+         *
+         * @param itemView The view representing a single item.
+         */
         public ViewHolder(View itemView) {
             super(itemView);
             itemId = itemView.findViewById(R.id.item_id);
@@ -98,8 +95,18 @@ public class RecyclerSearchViewAdapter extends RecyclerView.Adapter<RecyclerSear
      * Interface for handling item selection events in search results.
      */
     public interface OnItemSelectListener {
+        /**
+         * Called when an item is selected.
+         *
+         * @param item The selected item.
+         */
         void onItemSelected(Item item);
     }
+    /**
+     * Updates the dataset and refreshes the RecyclerView.
+     *
+     * @param newItemsList The new list of items to display.
+     */
     public void updateData(List<Item> newItemsList) {
         this.filteredItemsList.clear();
         this.filteredItemsList.addAll(newItemsList);

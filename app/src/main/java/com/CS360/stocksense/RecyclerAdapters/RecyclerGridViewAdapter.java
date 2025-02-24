@@ -15,23 +15,17 @@ import com.CS360.stocksense.models.Item;
 
 import java.util.List;
 /**
- * RecyclerGridViewAdapter
- * <p>
- * This adapter is responsible for managing and displaying a list of items
- * in a grid-based RecyclerView. It handles data binding, user interactions,
- * and navigation to detailed item views.
+ * RecyclerGridViewAdapter is responsible for managing and displaying a list of items
+ * in a grid-based RecyclerView. It provides UI interactions for quantity modification
+ * and item selection.
+ *
  * <p>
  * Features:
  * - Displays item details: name, quantity, and location.
  * - Allows users to increment or decrement item quantities.
- * - Supports navigation to an `ItemDetailsActivity` for detailed item information.
- * <p>
- * Usage:
- * - Attach this adapter to a RecyclerView to display a list of `Item` objects in a grid layout.
- * <p>
- * Dependencies:
- * - `ItemDetailsActivity` for item-specific navigation.
- * - `Item` model for managing item data.
+ * - Highlights items when quantity is below the alert level.
+ * - Supports item selection via click events.
+ * </p>
  *
  * @author Dennis Ward II
  * @version 1.0
@@ -45,8 +39,9 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
     /**
      * Constructor for the adapter.
      *
+     * @param context   Application context.
      * @param itemsList List of Item objects to display.
-     * @param listener   Context for launching activities.
+     * @param listener  Listener for handling item selection.
      */
     public RecyclerGridViewAdapter(Context context, List<Item> itemsList, OnItemSelectListener listener) {
         this.context = context;
@@ -72,7 +67,7 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
 
         if(item.getAlertLevel() > item.getQuantity()){// TODO:: I do not like this color I need to learn more about color and theme
             holder.itemView.setBackgroundColor(holder.itemView.getContext().getResources().getColor(R.color.red_700, null));
-        }else{
+        }else{//TODO:: setting transparent is incorrect
             holder.itemView.setBackgroundColor(holder.itemView.getContext().getResources().getColor(android.R.color.transparent, null));
         }
 
@@ -95,6 +90,11 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
      * Interface for handling item selection events in the RecyclerView.
      */
     public interface OnItemSelectListener {
+        /**
+         * Called when an item is selected.
+         *
+         * @param item The selected item.
+         */
         void onItemSelected(Item item);
     }
     @Override
@@ -109,7 +109,11 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView itemName, itemQuantity, itemLocation; // Item details
         Button incrementButton, decrementButton; // Buttons for quantity control
-
+        /**
+         * Constructor for ViewHolder.
+         *
+         * @param itemView The view representing a single item.
+         */
         public ViewHolder(View itemView) {
             super(itemView);
             itemName = itemView.findViewById(R.id.item_name);
@@ -118,5 +122,15 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
             incrementButton = itemView.findViewById(R.id.increment_button);
             decrementButton = itemView.findViewById(R.id.decrement_button);
         }
+    }
+    /**
+     * Updates the dataset and refreshes the RecyclerView.
+     *
+     * @param newItemsList The new list of items to display.
+     */
+    public void updateData(List<Item> newItemsList) {//TODO:: Make sure this is working changed during review
+        this.itemsList.clear();
+        this.itemsList.addAll(newItemsList);
+        notifyDataSetChanged(); // TODO:: use more efficient method?
     }
 }

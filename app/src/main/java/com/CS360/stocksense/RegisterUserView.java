@@ -12,11 +12,33 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+/**
+ * RegisterUserView handles user registration in the StockSense application.
+ * It allows users to create an account, validate input, and navigate to the appropriate screen
+ * based on organization status after successful registration.
+ *
+ * <p>
+ * Features:
+ * - Allows users to input email and password for account creation.
+ * - Validates user input, including password confirmation.
+ * - Handles user authentication with Supabase.
+ * - Navigates to the next screen based on organization status.
+ * </p>
+ *
+ * @author Dennis Ward II
+ * @version 1.0
+ * @since 01/20/2025
+ */
 public class RegisterUserView extends AppCompatActivity {
 
     private EditText emailInput, passwordInput, confirmPasswordInput;
     private SupabaseRepository repository;
 
+    /**
+     * Initializes the activity, sets up UI components, and handles user input.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +54,9 @@ public class RegisterUserView extends AppCompatActivity {
         registerButton.setOnClickListener(v -> handleRegister());
     }
 
+    /**
+     * Handles user registration by validating input and creating a new account.
+     */
     private void handleRegister() {
         String email = emailInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
@@ -64,6 +89,11 @@ public class RegisterUserView extends AppCompatActivity {
         });
     }
 
+    /**
+     * Displays a toast message to the user.
+     *
+     * @param message The message to display.
+     */
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }

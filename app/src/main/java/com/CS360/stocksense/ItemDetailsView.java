@@ -21,20 +21,14 @@ import com.CS360.stocksense.models.Item;
 import java.util.Objects;
 
 /**
- * ItemDetailsActivity
- * <p>
- * This activity displays detailed information about a selected item and allows users to edit or delete it.
- * Users can modify item attributes such as name, quantity, location, and alert level, and update them in the database.
- * Additionally, users can delete the item with confirmation.
+ * ItemDetailsView provides a detailed view of a selected item, allowing users to edit or delete it.
+ *
  * <p>
  * Features:
  * - Displays item details retrieved from the database.
  * - Allows users to edit and save item modifications.
  * - Provides a delete option with a confirmation dialog.
- * <p>
- * Dependencies:
- * - Uses `SupabaseRepository` to perform database operations.
- * - Requires `Item` model for representing item data.
+ * </p>
  *
  * @author Dennis Ward II
  * @version 1.0
@@ -49,7 +43,11 @@ public class ItemDetailsView extends AppCompatActivity {
     private String organizationId;
     private String databaseId;
     private Item currentItem;
-
+    /**
+     * Initializes the activity and loads item details.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,7 +126,7 @@ public class ItemDetailsView extends AppCompatActivity {
      * Handles updating an item’s details in the database.
      * Retrieves updated values from the UI fields and sends an update request to the database.
      */
-    private void onEditButtonClick() {
+    private void onEditButtonClick() {//TODO:: Should make sure that we actually made a change.
         if(currentItem.getQuantity() != Integer.parseInt(itemQuantity.getText().toString().trim())){
             Log.d(this.getClass().getSimpleName(), "onEditButtonClick: Item quantity change");
             int change = Integer.parseInt(itemQuantity.getText().toString().trim()) - currentItem.getQuantity();

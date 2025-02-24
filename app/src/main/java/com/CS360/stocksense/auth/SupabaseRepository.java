@@ -16,7 +16,21 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+/**
+ * SupabaseRepository handles authentication and database interactions with the Supabase backend.
+ *
+ * <p>
+ * Features:
+ * - Manages authentication, including login, registration, and token refresh.
+ * - Provides methods for CRUD operations on inventory items.
+ * - Handles user organization management, including joining and creating organizations.
+ * - Stores authentication tokens securely using SharedPreferences.
+ * </p>
+ *
+ * @author Dennis Ward II
+ * @version 1.0
+ * @since 01/20/2025
+ */
 public class SupabaseRepository {
     private static final String API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2cXJzdXRzdm92bml6bWlwa3NkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc0MjMwNjAsImV4cCI6MjA1Mjk5OTA2MH0.Dr0fvzfUNaH3AdhGhsOP11kFW5t4KFL999Oetog0wWY"; // TODO:: Move to secure storage later
     private static final String PREFS_NAME = "com.CS360.stocksense.PREFERENCES_FILE";// TODO:: May want to move this somewhere else
@@ -25,12 +39,22 @@ public class SupabaseRepository {
     private static final String ORGANIZATION_KEY = "OrganizationId";
     private final SupabaseApi authApi;
     private final SharedPreferences prefs;
-
+    /**
+     * Initializes the repository with the given context.
+     *
+     * @param context The application context.
+     */
     public SupabaseRepository(Context context) {
         authApi = SupabaseClient.getInstance().create(SupabaseApi.class);
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
-
+    /**
+     * Authenticates a user using email and password.
+     *
+     * @param email    The user's email.
+     * @param password The user's password.
+     * @param callback The callback for handling authentication success or failure.
+     */
     public void loginUser(String email, String password, DataCallback<String> callback) {
         SecureLoginRequest request = new SecureLoginRequest(email, password);
 
@@ -58,7 +82,13 @@ public class SupabaseRepository {
             }
         });
     }
-
+    /**
+     * Registers a new user account.
+     *
+     * @param email    The user's email.
+     * @param password The user's password.
+     * @param callback The callback for handling success or failure.
+     */
     public void registerUser(String email, String password, DataCallback<String> callback) {
         SecureLoginRequest request = new SecureLoginRequest(email, password);
 
@@ -83,7 +113,11 @@ public class SupabaseRepository {
             }
         });
     }
-
+    /**
+     * Refreshes an authentication token using a stored refresh token.
+     *
+     * @param callback The callback for handling success or failure.
+     */
     public void refreshToken(DataCallback<String> callback) {
         String refreshToken = prefs.getString(REFRESH_KEY, null);
         if (refreshToken == null) {
@@ -113,7 +147,13 @@ public class SupabaseRepository {
             }
         });
     }
-
+    /**
+     * Saves authentication tokens and organization ID to SharedPreferences.
+     *
+     * @param accessToken    The access token.
+     * @param refreshToken   The refresh token.
+     * @param organizationId The organization ID.
+     */
     private void saveTokens(String accessToken, String refreshToken, String organizationId) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(TOKEN_KEY, accessToken);
@@ -121,17 +161,32 @@ public class SupabaseRepository {
         editor.putString(ORGANIZATION_KEY, organizationId);
         editor.apply();
     }
-
+    /**
+     * Retrieves the stored access token.
+     *
+     * @return The access token, or null if not found.
+     */
     public String getAccessToken() {
         return prefs.getString(TOKEN_KEY, null);
     }
+    /**
+     * Retrieves the stored organization ID.
+     *
+     * @return The organization ID, or null if not found.
+     */
     public String getOrganization(){return prefs.getString(ORGANIZATION_KEY, null);}
-
+    /**
+     * Logs out the user by clearing stored authentication data.
+     */
     public void logout() {// Removes Authentication Data from Device
         prefs.edit().clear().apply();
     }
 
-
+    /**
+     * Fetches all items associated with the current organization.
+     *
+     * @param callback The callback for handling the retrieved items or errors.
+     */
     public void getOrganizationItems( DataCallback<List<Item>> callback) {
         String accessToken = getAccessToken();
         //Log.d("SupabaseRepository", "Access Token: " + accessToken);
@@ -158,7 +213,14 @@ public class SupabaseRepository {
             }
         });
     }
-
+    /**
+     * Updates an item in the database.
+     *
+     * @param databaseId  The database ID.
+     * @param itemId      The ID of the item to update.
+     * @param updatedItem The updated item object.
+     * @param callback    The callback for handling success or failure.
+     */
     public void updateItem(String databaseId, String itemId, Item updatedItem, DataCallback<Void> callback) {
         String authToken = "Bearer " + getAccessToken();
 
@@ -186,6 +248,12 @@ public class SupabaseRepository {
                     }
                 });
     }
+    /**
+     * Inserts a new item into the database.
+     *
+     * @param insertItem The item to insert.
+     * @param callback   Callback to handle success or failure.
+     */
     public void insertItem(Item insertItem, DataCallback<List<Item>> callback){
         String authToken = "Bearer " + getAccessToken();
 
@@ -211,6 +279,13 @@ public class SupabaseRepository {
 
                 );
     }
+    /**
+     * Deletes an item from the database.
+     *
+     * @param databaseId The database ID where the item is stored.
+     * @param itemId     The ID of the item to delete.
+     * @param callback   Callback to handle success or failure.
+     */
     public void deleteItem(String databaseId, String itemId, DataCallback<List<Item>> callback){
         String authToken = "Bearer " + getAccessToken();
         if(itemId  != null ){
@@ -236,6 +311,14 @@ public class SupabaseRepository {
                     }
                 });
     }
+    /**
+     * Updates the quantity of an item in the database.
+     *
+     * @param databaseId    The database ID.
+     * @param itemId        The ID of the item.
+     * @param quantityChange The change in quantity.
+     * @param callback      Callback to handle success or failure.
+     */
     public void updateItemQuantity(String databaseId, String itemId, int quantityChange, DataCallback<Void> callback){
         String authToken = "Bearer " + getAccessToken();
         Map<String, Object> body = new HashMap<>();
@@ -262,6 +345,12 @@ public class SupabaseRepository {
             }
         });
     }
+    /**
+     * Updates the organization ID for a user.
+     *
+     * @param joinOrganization The new organization ID.
+     * @param callback         Callback to handle success or failure.
+     */
     public void updateOrganization(String joinOrganization, DataCallback<Void> callback){
         String authToken = "Bearer " + getAccessToken();
         JsonObject body = new JsonObject();
@@ -286,6 +375,12 @@ public class SupabaseRepository {
             }
         });
     }
+    /**
+     * Creates a new organization in the database.
+     *
+     * @param organizationName The name of the new organization.
+     * @param callback         Callback to handle success or failure.
+     */
     public void createOrganization(String organizationName, DataCallback<String> callback){
         String authToken = "Bearer " + getAccessToken();
         Map<String, Object> body = new HashMap<>();

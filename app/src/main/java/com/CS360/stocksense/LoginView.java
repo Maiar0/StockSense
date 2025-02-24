@@ -1,8 +1,3 @@
-/**
- * LoginViewActivity handles the login screen of the StockSense app.
- * It manages user input for organization details and navigates to the
- * next activity upon successful login and network verification.
- */
 package com.CS360.stocksense;
 
 import android.content.Context;
@@ -22,33 +17,18 @@ import com.CS360.stocksense.auth.SupabaseRepository;
 import com.CS360.stocksense.models.Item;
 
 import java.util.List;
-
 /**
- * LoginViewActivity
+ * LoginView handles the login screen of the StockSense application.
+ * It manages user authentication, input validation, and navigation to the next screen
+ * based on successful login and organization status.
+ *
  * <p>
- * This activity represents the login screen of the StockSense application. It handles
- * user input for organization details, validates the input, checks for network connectivity,
- * and navigates to the next activity upon successful login.
- * <p>
- * Key Features:
- * - Allows users to enter their organization name.
- * - Saves and retrieves the organization name using SharedPreferences for convenience.
- * - Validates user input and ensures a valid network connection before proceeding.
- * - Navigates to the `DbSelectionViewActivity` upon successful login.
- * <p>
- * Responsibilities:
- * - Manages UI interactions for the login screen.
- * - Validates user input for the organization name.
- * - Ensures network availability before progressing further.
- * - Provides user feedback through toast messages for errors such as invalid input or network issues.
- * <p>
- * Notes:
- * - The activity relies on SharedPreferences to store and retrieve the organization name.
- * - Network connectivity is checked using the `ConnectivityManager` system service.
- * - Future extensions could include user authentication or additional input validation.
- * <p>
- * Example Usage:
- * - The application launches this activity as the entry point for users to log in to their organization.
+ * Features:
+ * - Allows users to enter email and password for authentication.
+ * - Saves and retrieves email using SharedPreferences.
+ * - Validates user input before making login requests.
+ * - Navigates to the appropriate screen based on user authentication and organization status.
+ * </p>
  *
  * @author Dennis Ward II
  * @version 1.0
@@ -60,6 +40,11 @@ public class LoginView extends AppCompatActivity {
     private static final String PREFERENCES_FILE = "com.CS360.stocksense.PREFERENCES_FILE";
     private static final String KEY_EMAIL = "KEY_EMAIL";
 
+    /**
+     * Initializes the activity, sets up UI components, and loads saved credentials.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,12 +62,13 @@ public class LoginView extends AppCompatActivity {
             startActivity(intent);
         });
 
-
         Log.d("OnInstantiate", "LoginView ");
         populateSavedCredentials();
-
     }
 
+    /**
+     * Handles login button click event. Validates user input and initiates authentication.
+     */
     private void handleLoginClick() {
         String email = emailInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
@@ -92,12 +78,12 @@ public class LoginView extends AppCompatActivity {
             return;
         }
 
-        SupabaseRepository auth = new SupabaseRepository(this);
-        auth.loginUser(email, password, new DataCallback<String>() {
+        SupabaseRepository repository = new SupabaseRepository(this);
+        repository.loginUser(email, password, new DataCallback<String>() {
             @Override
             public void onSuccess(String accessToken) {
                 showToast("Login successful!");
-                saveCredentials(email, accessToken);
+                saveCredentials(email);
                 Log.d(this.getClass().getSimpleName(), "saveCredentials");
                 navigateToNextActivity();
             }
@@ -109,27 +95,33 @@ public class LoginView extends AppCompatActivity {
         });
     }
 
-    private void saveCredentials(String email, String accessToken) {
+    /**
+     * Saves user credentials in SharedPreferences.
+     *
+     * @param email       The user's email.
+     */
+    private void saveCredentials(String email) {
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(KEY_EMAIL, email);
-        editor.putString("ACCESS_TOKEN", accessToken); // Store access token
         editor.apply();
     }
+
     /**
-     * Loads saved credentials (if available).
+     * Loads saved credentials (if available) and populates the email input field.
      */
     private void populateSavedCredentials() {
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
         String savedEmail = preferences.getString(KEY_EMAIL, null);
         if (savedEmail != null) emailInput.setText(savedEmail);
     }
+
     /**
-     * Navigates to the database selection screen and finishes the current activity.
+     * Navigates to the appropriate activity based on organization status.
      */
     private void navigateToNextActivity() {
-        Log.d("LoginActivityStuff", "Navigate to next");
-        // Initialize DataManager and clear data
+        Log.d(this.getClass().getSimpleName(), "Navigate to next");
+        // Initialize DataManager and clear cached data
         DataManager dataManager = DataManager.getInstance(LoginView.this);
         dataManager.clearCache();
         dataManager.fetchOrganizationItems(new DataCallback<List<Item>>() {
@@ -138,13 +130,12 @@ public class LoginView extends AppCompatActivity {
                 SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
                 String organizationId = preferences.getString("OrganizationId", null);
                 Intent intent;
-                if(organizationId != null && organizationId.equals("00000000-0000-0000-0000-000000000000")){
+                if (organizationId != null && organizationId.equals("00000000-0000-0000-0000-000000000000")) {
                     intent = new Intent(LoginView.this, JoinOrganizationView.class);
-                }else{
+                } else {
                     intent = new Intent(LoginView.this, DbSelectionView.class);
                 }
                 startActivity(intent);
-
             }
 
             @Override
@@ -154,10 +145,8 @@ public class LoginView extends AppCompatActivity {
         });
     }
 
-
-
     /**
-     * Displays a toast message on the screen.
+     * Displays a toast message.
      *
      * @param message The message to display.
      */

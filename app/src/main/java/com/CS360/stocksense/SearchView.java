@@ -26,41 +26,16 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * SearchViewActivity
- * <p>
- * This activity provides a search interface for users to browse and manage items
- * within a selected database in the StockSense application. It displays the search
- * results in a list using a RecyclerView and allows users to interact with individual items.
- * <p>
- * Inherits:
- * - Navigation functionality and shared UI components from `MainActivity`.
+ * SearchView provides a search interface for users to browse and manage items
+ * within a selected database in the StockSense application.
+ *
  * <p>
  * Features:
- * - Displays a list of items fetched from a selected database in a vertical RecyclerView.
- * - Allows users to search for specific items using a search box.
- * - Provides navigation to item details when an item is selected.
- * - Includes options for deleting an item by ID or exporting the database to a CSV file.
- * <p>
- * Key Methods:
- * - `initializeData()`: Fetches items from the selected database and populates the RecyclerView.
- * - `populateRecyclerView(List<Item>)`: Updates the RecyclerView with the fetched items.
- * - `onItemSelected(Item)`: Handles item selection and navigates to the item details screen.
- * - `handleNavigationButtonClickLeft()`: Navigates to the GridViewActivity.
- * - `handleNavigationButtonClickCenter()`: Prompts the user to delete an item by ID.
- * - `handleNavigationButtonClickRight()`: Exports the database to a CSV file.
- * <p>
- * Example Usage:
- * - Invoked when a user selects a database and wishes to search and interact with its items.
- * <p>
- * Notes:
- * - Leverages `DataManager` to fetch data from the backend.
- * - RecyclerView is configured with a custom adapter (`RecyclerSearchViewAdapter`).
- * - Requires `databaseId` to be passed as an intent extra for proper functionality.
- * <p>
- * Dependencies:
- * - `DataManager` for backend data interactions.
- * - `RecyclerSearchViewAdapter` for displaying search results.
- * - Android's `SharedPreferences` for storing session data.
+ * - Displays a list of items from a selected database in a RecyclerView.
+ * - Allows users to search for items using a search box.
+ * - Navigates to item details when an item is selected.
+ * - Supports deleting an item by ID or exporting the database to a CSV file.
+ * </p>
  *
  * @author Dennis Ward II
  * @version 1.0
@@ -72,7 +47,11 @@ public class SearchView extends MainView {
     private String databaseId;
     private Map<String, Item> itemIdMap = new HashMap<>();
     private Map<String, Item> itemNameMap = new HashMap<>();
-
+    /**
+     * Initializes the activity, search functionality, and RecyclerView.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,6 +110,9 @@ public class SearchView extends MainView {
         // Navigate to export work flow
         exportDatabaseToCSV();
     }
+    /**
+     * Fetches and displays the list of items from the selected database.
+     */
     @Override
     public void initializeData() {
         List<Item> items = DataManager.getInstance(SearchView.this).getItemsByDatabaseId(databaseId);
@@ -164,8 +146,9 @@ public class SearchView extends MainView {
     }
 
     /**
-     * Populates the RecyclerView with the given list of items.
+     * Updates the RecyclerView with the given items list.
      *
+     * @param items List of items to display.
      */
     private void populateRecyclerView(List<Item> items) {
         if(items.isEmpty()){
@@ -183,12 +166,9 @@ public class SearchView extends MainView {
         }
     }
     /**
-     * Handles item selection from the RecyclerView.
-     * <p>
-     * Displays a toast message with the selected item's name and navigates the user
-     * to `ItemDetailsActivity` for more information.
+     * Handles item selection and navigates to the item details screen.
      *
-     * @param item The selected `Item` object.
+     * @param item The selected item.
      */
     private void onItemSelected(Item item) {
         Toast.makeText(this, "Selected item: " + item.getItemName(), Toast.LENGTH_SHORT).show();
@@ -231,5 +211,4 @@ public class SearchView extends MainView {
             populateRecyclerView(filteredList);
         }
     }
-
 }

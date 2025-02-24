@@ -6,27 +6,19 @@ import java.io.Serializable;
 
 /**
  * Represents an item in the StockSense database.
+ *
  * <p>
  * This model is used for querying and managing item data within the database.
  * It contains fields such as item ID, name, quantity, location, alert level,
- * and associated metadata like organization name, database ID, and database name.
+ * and associated metadata like organization ID, database ID, and database name.
+ * </p>
+ *
  * <p>
- * Purpose:
- * - Provides a structure to encapsulate item data.
- * - Offers getters and setters for accessing and modifying item properties.
- * <p>
- * Note:
- * - Field names are designed to match database schema for compatibility.
- * - Validation logic ensures data integrity where applicable.
- * <p>
- * Example Usage:
- * ```java
- * Item item = new Item();
- * item.setItemId("12345");
- * item.setItemName("Widget");
- * item.setQuantity(10);
- * System.out.println(item);
- * ```
+ * Features:
+ * - Provides structured access to item properties.
+ * - Includes validation for quantity and alert level.
+ * - Implements serialization for easy data transfer.
+ * </p>
  *
  * @author Dennis Ward II
  * @version 1.0
@@ -193,15 +185,5 @@ public class Item implements Serializable {
                 ", database_name='" + database_name + '\'' +
                 '}';
     }
-    /**
-     *  Allows for increment or decrement of quantity
-     * May reduce quantity but not below zero
-     * @param change The value to change quantity by.
-     */
-    public void updateQuantity(int change) {
-        change += quantity;
-        if(change >= 0) {
-            this.quantity = change;
-        }
-    }
+
 }

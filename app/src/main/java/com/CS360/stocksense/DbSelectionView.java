@@ -27,36 +27,16 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * DbSelectionViewActivity
- * <p>
- * This activity provides a user interface for managing databases in the StockSense application.
- * It allows users to view, create, delete, and import databases through a RecyclerView interface.
- * <p>
- * Inherits:
- * - Navigation functionality and shared UI components from `MainActivity`.
+ * DbSelectionView provides an interface for users to manage databases in the StockSense application.
+ * It allows viewing, creating, deleting, and importing databases via a RecyclerView.
+ *
  * <p>
  * Features:
- * - Displays a list of available databases in a vertical RecyclerView.
- * - Supports creating new databases by prompting the user for a database name.
- * - Enables importing databases from a CSV file.
- * - Allows deleting a database by specifying its ID.
- * - Handles navigation to the `SearchViewActivity` when a database is selected.
- * <p>
- * Key Methods:
- * - `initializeData()`: Fetches the list of databases and populates the RecyclerView.
- * - `populateRecyclerView(List<DatabaseSelection>)`: Updates the UI with the fetched database data.
- * - `createDatabase(String)`: Creates a new database and refreshes the view.
- * - `deleteDatabaseById(String)`: Deletes a specified database by ID and updates the view.
- * - `importDatabase(Uri, String)`: Imports a database from a CSV file and adds it to the list.
- * - `onDatabaseSelected(DatabaseSelection)`: Handles navigation when a database is selected.
- * <p>
- * Example Usage:
- * - When a user logs into their organization, this activity is invoked to display
- *   and manage databases associated with their account.
- * <p>
- * Notes:
- * - The activity leverages `DataManager` for all backend interactions.
- * - Error handling is included for network operations, file I/O, and user inputs.
+ * - Displays available databases in a RecyclerView.
+ * - Allows users to create and delete databases.
+ * - Supports importing databases from CSV files.
+ * - Navigates to `SearchViewActivity` when a database is selected.
+ * </p>
  *
  * @author Dennis Ward II
  * @version 1.0
@@ -68,7 +48,11 @@ public class DbSelectionView extends MainView {
     private RecyclerDbSelectionAdapter adapter;
 
     private static final int PICK_CSV_FILE = 1;
-
+    /**
+     * Initializes the activity and sets up navigation and data display.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,9 +113,9 @@ public class DbSelectionView extends MainView {
     }
 
     /**
-     * Populates the RecyclerView with the given list of databases.
+     * Updates the RecyclerView with the given database list.
      *
-     * @param databases List of DatabaseSelection objects to display.
+     * @param databases List of databases to display.
      */
     private void populateRecyclerView(List<DatabaseSelection> databases) {
         if(adapter != null){
@@ -203,10 +187,10 @@ public class DbSelectionView extends MainView {
 
 
     /**
-     * Parses and imports a database from the selected CSV file.
+     * Imports database records from a CSV file.
      *
-     * @param fileUri The URI of the CSV file containing database data.
-     * @param dbName The database name of the new database.
+     * @param fileUri The URI of the CSV file.
+     * @param dbName The name of the database to create.
      */
     private void importDatabase(Uri fileUri, String dbName) {
         InputStream inputStream = null;
@@ -255,7 +239,6 @@ public class DbSelectionView extends MainView {
      * @param database The selected database.
      */
     private void onDatabaseSelected(DatabaseSelection database) {
-        // Navigate to another activity with the selected database
         Intent intent = new Intent(this, SearchView.class);
         intent.putExtra("selected_database", database.getId());
         startActivity(intent);

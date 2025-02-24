@@ -21,28 +21,15 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * GridViewActivity
- * <p>
- * This activity provides a grid-based view to display items fetched from a specific database in the StockSense application.
- * It extends `MainActivity` to leverage shared navigation and functionality.
+ * GridView provides a grid-based view to display items fetched from a selected database
+ * in the StockSense application.
+ *
  * <p>
  * Features:
  * - Displays a grid layout of items using a RecyclerView.
  * - Fetches data from a database and populates the RecyclerView.
- * - Includes navigation buttons for transitioning between activities and exporting data to CSV.
- * <p>
- * Responsibilities:
- * - Fetches and displays items specific to the selected database.
- * - Provides navigation to other activities (e.g., SearchViewActivity, DbSelectionViewActivity).
- * - Handles user interactions such as item selection and export operations.
- * <p>
- * Example Usage:
- * - Invoked when the user selects a database to view its items in a grid format.
- * <p>
- * Notes:
- * - Uses `DataManager` to fetch data from the backend.
- * - RecyclerView layout is configured as a 2-column grid.
- * - Pending functionalities include item creation and advanced sorting.
+ * - Includes navigation for transitioning between views and exporting data.
+ * </p>
  *
  * @author Dennis Ward II
  * @version 1.0
@@ -52,7 +39,12 @@ public class GridView extends MainView {
 
     private RecyclerView recyclerView;
     private String databaseId;
-
+    private RecyclerGridViewAdapter adapter;
+    /**
+     * Initializes the activity, navigation bar, and RecyclerView.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +83,9 @@ public class GridView extends MainView {
         //Export database workflow
         exportDatabaseToCSV();
     }
+    /**
+     * Fetches and displays the list of items from the selected database.
+     */
     @Override
     protected void initializeData() {
         List<Item> items = DataManager.getInstance(GridView.this).getItemsByDatabaseId(databaseId);
@@ -99,14 +94,19 @@ public class GridView extends MainView {
         populateRecyclerView(items);
     }
     /**
-     * Populates the RecyclerView with the given list of items.
+     * Updates the RecyclerView with the given items list.
      *
-     * @param items List of Item objects to display.
+     * @param items List of items to display.
      */
-    private void populateRecyclerView(List<Item> items) {
-        RecyclerGridViewAdapter adapter = new RecyclerGridViewAdapter(this, items, this::onItemSelected);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Grid layout with 2 columns
-        recyclerView.setAdapter(adapter);
+    private void populateRecyclerView(List<Item> items) {//TODO:: Make sure this is working changed during review
+        if(adapter != null){
+            adapter.updateData(items);
+        }else{
+            RecyclerGridViewAdapter adapter = new RecyclerGridViewAdapter(this, items, this::onItemSelected);
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Grid layout with 2 columns
+            recyclerView.setAdapter(adapter);
+        }
+
     }
 
     /**
@@ -182,12 +182,9 @@ public class GridView extends MainView {
     }
 
     /**
-     * Handles item selection from the RecyclerView.
-     * <p>
-     * Displays a toast message with the selected item's name and navigates the user
-     * to `ItemDetailsActivity` for more information.
+     * Handles item selection and navigates to item details.
      *
-     * @param item The selected `Item` object.
+     * @param item The selected item.
      */
     private void onItemSelected(Item item) {
         Toast.makeText(this, "Selected item: " + item.getItemName(), Toast.LENGTH_SHORT).show();

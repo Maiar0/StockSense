@@ -62,15 +62,28 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * CSVUtils is a utility class for handling CSV file operations, including exporting and importing `Item` objects.
+ *
+ * <p>
+ * Features:
+ * - Export a list of items to a CSV file with a predefined structure.
+ * - Import a list of items from a CSV file, ensuring data integrity and proper parsing.
+ * </p>
+ *
+ * @author Dennis Ward II
+ * @version 1.0
+ * @since 01/20/2025
+ */
 public class CSVUtils {
 
     /**
      * Exports a list of items to a CSV file.
-     * TODO I used AI to do this
-     * @param fileName The file path where the CSV file will be created.
+     *
+     * @param context  The application context.
+     * @param fileName The name of the CSV file to create.
      * @param items    The list of Item objects to export.
-     * @throws IOException If an I/O error occurs while writing to the file.
+     * @throws IOException If an error occurs while writing to the file.
      */
     public static void exportToCSV(Context context, String fileName, List<Item> items) throws IOException {
         if (items == null || items.isEmpty()) {
@@ -142,9 +155,8 @@ public class CSVUtils {
      * Imports a list of items from a CSV file.
      *
      * @param reader The Reader object to read the CSV file.
-     * @return A list of Item objects read from the CSV file.
-     * @throws IOException If an I/O error occurs while reading the file.
-     * @throws IllegalArgumentException If the reader is null.
+     * @return A list of Item objects parsed from the CSV file.
+     * @throws IOException If an error occurs while reading the file.
      */
     public static List<Item> importFromCSV(Reader reader) throws IOException {
         if (reader == null) {
