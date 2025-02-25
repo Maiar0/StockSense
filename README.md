@@ -261,18 +261,11 @@ StockSense leverages **Supabase Auth** for managing users:
 
 ## 📌 TODOs Before Completion
 
-1️⃣ **Implement Organization Creation:**
-   - Complete `createOrganization` functionality in **SupabaseRepository.java**.
-   - Ensure users can create and assign organizations properly.
-
-2️⃣ **Client-side Sensitive Data:**
+1️⃣  **Client-side Sensitive Data:**
    - Eliminate debug logs printing API keys, access tokens, or sensitive data.
    - Clean up logs in `SupabaseRepository.java` and `SupabaseApi.java`.
    - Ensure sensitive data is stored appropriatley. 
 
-3️⃣ **Comment All Code Files Appropriately:**
-   - Add clear and meaningful Javadoc comments to **all major classes and methods**.
-   - Ensure explanations cover **method functionality, parameters, and return values**.
 
 ---
 
