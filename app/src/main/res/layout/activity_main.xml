@@ -23,7 +23,7 @@
             android:name="com.CS360.stocksense.fragments.DatabaseSelectionFragment"
             tools:layout="@layout/fragment_database_selection" />
 
-        <include layout="@layout/nav_buttons_object"/>
+        <include layout="@layout/object_nav_buttons"/>
     </LinearLayout>
 
 

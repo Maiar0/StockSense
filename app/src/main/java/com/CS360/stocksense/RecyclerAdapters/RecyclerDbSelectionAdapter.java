@@ -51,7 +51,7 @@ public class RecyclerDbSelectionAdapter extends RecyclerView.Adapter<RecyclerDbS
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Inflate and return a new ViewHolder
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.db_selection_object, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.object_database_selection, parent, false);
         return new ViewHolder(view);
     }
 

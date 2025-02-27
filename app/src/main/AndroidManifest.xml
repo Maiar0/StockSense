@@ -33,19 +33,10 @@
             android:label="@string/title_activity_register_user"
             android:theme="@style/Theme.StockSense" />
         <activity
-            android:name=".SearchView"
-            android:exported="false" />
-        <activity
-            android:name=".DbSelectionView"
-            android:exported="false" />
-        <activity
             android:name=".ItemDetailsView"
             android:exported="false" />
         <activity
             android:name=".MainView"
-            android:exported="false" />
-        <activity
-            android:name=".GridView"
             android:exported="false" />
         <activity
             android:name=".LoginView"

@@ -1,7 +1,6 @@
 package com.CS360.stocksense.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -15,25 +14,20 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.NavUtils;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.CS360.stocksense.DbSelectionView;
-import com.CS360.stocksense.ItemDetailsView;
 import com.CS360.stocksense.MainView;
 import com.CS360.stocksense.R;
 import com.CS360.stocksense.RecyclerAdapters.RecyclerGridViewAdapter;
-import com.CS360.stocksense.SearchView;
 import com.CS360.stocksense.auth.SupabaseRepository;
 import com.CS360.stocksense.database.DataManager;
 import com.CS360.stocksense.models.Item;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * GridView provides a grid-based view to display items fetched from a selected database

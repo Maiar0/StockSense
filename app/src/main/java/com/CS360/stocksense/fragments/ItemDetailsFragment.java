@@ -74,7 +74,7 @@ public class ItemDetailsFragment extends Fragment {
         }
         repository = new SupabaseRepository(requireContext());
         organizationId = repository.getOrganization();
-        Log.d("OnInstantiate", "ItemDetailsView " + "Organization: " + organizationId + " ItemId: " + itemId);
+        Log.d("OnInstantiate", "ItemDetailsFragment " + "Organization: " + organizationId + " ItemId: " + itemId);
 
         if (!itemId.isEmpty()) {
             loadItemDetails(itemId); // Load item details if itemId is valid

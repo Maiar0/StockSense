@@ -47,7 +47,7 @@ public class RecyclerSearchViewAdapter extends RecyclerView.Adapter<RecyclerSear
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Inflate the layout for individual items
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_view_object, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.object_search_view, parent, false);
         return new ViewHolder(view);
     }
 

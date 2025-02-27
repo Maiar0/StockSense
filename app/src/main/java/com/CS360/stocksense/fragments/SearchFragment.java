@@ -1,6 +1,5 @@
 package com.CS360.stocksense.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -14,14 +13,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.NavUtils;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.CS360.stocksense.DbSelectionView;
-import com.CS360.stocksense.GridView;
-import com.CS360.stocksense.ItemDetailsView;
 import com.CS360.stocksense.MainView;
 import com.CS360.stocksense.R;
 import com.CS360.stocksense.RecyclerAdapters.RecyclerSearchViewAdapter;
@@ -32,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * SearchView provides a search interface for users to browse and manage items

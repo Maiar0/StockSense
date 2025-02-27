@@ -53,7 +53,7 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Inflate the item layout and create the ViewHolder
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_view_object, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.object_grid_view, parent, false);
         return new ViewHolder(view);
     }
 
