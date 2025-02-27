@@ -110,6 +110,6 @@ public class RecyclerSearchViewAdapter extends RecyclerView.Adapter<RecyclerSear
     public void updateData(List<Item> newItemsList) {
         this.filteredItemsList.clear();
         this.filteredItemsList.addAll(newItemsList);
-        notifyDataSetChanged(); // TODO:: use more efficient method?
+        notifyDataSetChanged();
     }
 }

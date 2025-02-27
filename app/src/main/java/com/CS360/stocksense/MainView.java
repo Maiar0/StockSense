@@ -220,7 +220,7 @@ public class MainView extends AppCompatActivity implements DataManager.DataUpdat
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("text/csv");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(Intent.createChooser(intent, "Select CSV File"), PICK_CSV_FILE);// TODO:: this needs looked into
+        startActivityForResult(Intent.createChooser(intent, "Select CSV File"), PICK_CSV_FILE);
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

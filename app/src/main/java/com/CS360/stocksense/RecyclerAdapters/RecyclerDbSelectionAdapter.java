@@ -120,6 +120,6 @@ public class RecyclerDbSelectionAdapter extends RecyclerView.Adapter<RecyclerDbS
     public void updateData(List<DatabaseSelection> newDatabases) {
         this.databases.clear();
         this.databases.addAll(newDatabases);
-        notifyDataSetChanged();//TODO:: Find more efficient method
+        notifyDataSetChanged();
     }
 }

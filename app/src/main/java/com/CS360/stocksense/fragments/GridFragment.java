@@ -92,7 +92,7 @@ public class GridFragment extends Fragment {
      *
      * @param items List of items to display.
      */
-    private void populateRecyclerView(List<Item> items) {//TODO:: Make sure this is working changed during review
+    private void populateRecyclerView(List<Item> items) {
         if(adapter != null){
             adapter.updateData(items);
         }else{

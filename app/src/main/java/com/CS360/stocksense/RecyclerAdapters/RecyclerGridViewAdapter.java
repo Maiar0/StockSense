@@ -128,9 +128,9 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
      *
      * @param newItemsList The new list of items to display.
      */
-    public void updateData(List<Item> newItemsList) {//TODO:: Make sure this is working changed during review
+    public void updateData(List<Item> newItemsList) {
         this.itemsList.clear();
         this.itemsList.addAll(newItemsList);
-        notifyDataSetChanged(); // TODO:: use more efficient method?
+        notifyDataSetChanged();
     }
 }

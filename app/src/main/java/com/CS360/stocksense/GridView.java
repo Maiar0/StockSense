@@ -98,12 +98,12 @@ public class GridView extends MainActivity {
      *
      * @param items List of items to display.
      */
-    private void populateRecyclerView(List<Item> items) {//TODO:: Make sure this is working changed during review
+    private void populateRecyclerView(List<Item> items) {
         if(adapter != null){
             adapter.updateData(items);
         }else{
             RecyclerGridViewAdapter adapter = new RecyclerGridViewAdapter(this, items, this::onItemSelected);
-            recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Grid layout with 2 columns
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
             recyclerView.setAdapter(adapter);
         }
 

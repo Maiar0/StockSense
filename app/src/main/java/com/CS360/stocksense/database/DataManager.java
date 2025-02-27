@@ -116,7 +116,7 @@ public class DataManager {
         }
         if(!itemFound){
             Log.e(this.getClass().getSimpleName(), "Item not found in local list itemId: " + itemId);
-            return;//TODO:: Should we return, add item, or fetch repository again?
+            return;
         }
 
         repository.updateItem(databaseId, itemId, updatedItem, new DataCallback<Void>() {

@@ -126,7 +126,7 @@ public class ItemDetailsView extends AppCompatActivity {
      * Handles updating an item’s details in the database.
      * Retrieves updated values from the UI fields and sends an update request to the database.
      */
-    private void onEditButtonClick() {//TODO:: Should make sure that we actually made a change.
+    private void onEditButtonClick() {
         if(currentItem.getQuantity() != Integer.parseInt(itemQuantity.getText().toString().trim())){
             Log.d(this.getClass().getSimpleName(), "onEditButtonClick: Item quantity change");
             int change = Integer.parseInt(itemQuantity.getText().toString().trim()) - currentItem.getQuantity();
