@@ -41,7 +41,7 @@ import java.util.Objects;
  * @version 1.0
  * @since 01/20/2025
  */
-public class SearchView extends MainView {
+public class SearchView extends MainActivity {
     private RecyclerView recyclerView;
     private RecyclerSearchViewAdapter adapter;
     private String databaseId;

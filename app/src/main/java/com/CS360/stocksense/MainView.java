@@ -3,26 +3,36 @@ package com.CS360.stocksense;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 
 import com.CS360.stocksense.database.DataManager;
 import com.CS360.stocksense.Utils.CSVUtils;
 import com.CS360.stocksense.fragments.DatabaseSelectionFragment;
+import com.CS360.stocksense.fragments.GridFragment;
+import com.CS360.stocksense.fragments.ItemDetailsFragment;
 import com.CS360.stocksense.fragments.SearchFragment;
+import com.CS360.stocksense.fragments.SettingsFragment;
+import com.CS360.stocksense.models.DatabaseSelection;
 import com.CS360.stocksense.models.Item;
 import com.google.android.material.navigation.NavigationView;
 
@@ -51,9 +61,12 @@ public class MainView extends AppCompatActivity implements DataManager.DataUpdat
     protected static final String PREFERENCES_FILE = "com.CS360.stocksense.PREFERENCES_FILE";
     protected String organizationId;
     protected List<Item> fetchedItems;
-    private String currentDatabaseId;
+    private String currentDatabaseId;// This is set in DatabaseSelectionsFragment
+    private Button navButtonLeft, navButtonCenter, navButtonRight;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
+    private List<DatabaseSelection> databases;
+    private static final int PICK_CSV_FILE = 1;
     /**
      * Initializes the activity, sets up the navigation bar, and fetches stored preferences.
      *
@@ -77,11 +90,15 @@ public class MainView extends AppCompatActivity implements DataManager.DataUpdat
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        // Initialize Bottom Navigation Buttons
+        navButtonLeft = findViewById(R.id.nav_button1);
+        navButtonCenter = findViewById(R.id.nav_button2);
+        navButtonRight = findViewById(R.id.nav_button3);
+
         //Loads default fragment
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new DatabaseSelectionFragment())
-                    .commit();
+            switchFragment( new DatabaseSelectionFragment());
+            navigationView.setCheckedItem(R.id.nav_database);
         }
 
         //initializeNavigationBar("nav1","nav2","nav3");
@@ -91,6 +108,14 @@ public class MainView extends AppCompatActivity implements DataManager.DataUpdat
 
         Log.d("MainActivityLifecycle", "Organization " + organizationId);
 
+    }
+    public void switchFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
+
+        updateBottomNavigation(fragment);
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -106,13 +131,11 @@ public class MainView extends AppCompatActivity implements DataManager.DataUpdat
         int id = item.getItemId();
 
         if (id == R.id.nav_database) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new DatabaseSelectionFragment())
-                    .commit();
+            switchFragment( new DatabaseSelectionFragment());
         } else if (id == R.id.nav_search) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new SearchFragment())
-                    .commit();
+            switchFragment( new SearchFragment());
+        } else if(id == R.id.nav_settings){
+            switchFragment(new SettingsFragment());
         } else if (id == R.id.nav_logout) {
             logoutUser();
         }
@@ -138,6 +161,81 @@ public class MainView extends AppCompatActivity implements DataManager.DataUpdat
             super.onBackPressed();
         }
     }
+    private void updateBottomNavigation(Fragment fragment) {
+        if(fragment instanceof ItemDetailsFragment){
+            findViewById(R.id.nav_button1).setVisibility(View.GONE);
+            findViewById(R.id.nav_button2).setVisibility(View.GONE);
+            findViewById(R.id.nav_button3).setVisibility(View.GONE);
+        }else{
+            findViewById(R.id.nav_button1).setVisibility(View.VISIBLE);
+            findViewById(R.id.nav_button2).setVisibility(View.VISIBLE);
+            findViewById(R.id.nav_button3).setVisibility(View.VISIBLE);
+        }
+        if (fragment instanceof DatabaseSelectionFragment) {
+            setBottomNavButtons("Create", "Delete", "Import",
+                    () -> showInputDialog(
+                            "Create New Database",
+                            "Enter Database Name",
+                            "Create",
+                            input -> DataManager.getInstance(this).createNewDatabase(input) // Pass the createNewDatabase method as the action
+                    ),
+                    () -> showInputDialog(
+                            "Delete Database",
+                            "Enter Database ID",
+                            "Delete",
+                            input -> deleteItemById(input, null) // Pass null for itemId for "Select All"
+                    ),
+                    () -> openFilePicker());
+        } else if (fragment instanceof SearchFragment) {
+            setBottomNavButtons("Grid", "Delete", "Export",
+                    () -> switchFragment(new GridFragment()),
+                    () -> showInputDialog(
+                            "Delete Item",
+                            "Enter Item ID",
+                            "Delete",
+                            input -> deleteItemById(currentDatabaseId,input) // Pass the deleteDatabaseById method as the action
+                    ),
+                    () -> exportDatabaseToCSV());
+        } else if (fragment instanceof GridFragment) {
+            setBottomNavButtons("Search", "Add", "Export",
+                    () -> switchFragment(new SearchFragment()),
+                    () -> showCreateItemDialog(),
+                    () -> exportDatabaseToCSV());
+        }
+    }
+    private void setBottomNavButtons(String leftText, String centerText, String rightText,
+                                     Runnable leftAction, Runnable centerAction, Runnable rightAction) {
+        navButtonLeft.setText(leftText);
+        navButtonCenter.setText(centerText);
+        navButtonRight.setText(rightText);
+
+        navButtonLeft.setOnClickListener(v -> leftAction.run());
+        navButtonCenter.setOnClickListener(v -> centerAction.run());
+        navButtonRight.setOnClickListener(v -> rightAction.run());
+    }
+    /**
+     * Opens a file picker to allow the user to select a CSV file for database import.
+     */
+    private void openFilePicker() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("text/csv");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(intent, "Select CSV File"), PICK_CSV_FILE);// TODO:: this needs looked into
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_CSV_FILE && resultCode == RESULT_OK && data != null) {
+            Uri uri = data.getData();
+            if (uri != null) {
+                showInputDialog(
+                        "Import New Database",
+                        "Enter Database Name",
+                        "Import",
+                        input -> DataManager.getInstance(this).createNewDatabase(input));
+            }
+        }
+    }
 
     public String getCurrentDatabaseId(){
         return currentDatabaseId;
@@ -147,68 +245,28 @@ public class MainView extends AppCompatActivity implements DataManager.DataUpdat
     }
     @Override
     public void onDataUpdated() {
-        runOnUiThread(() -> {
-            Log.d("DataManager", "Data updated, refreshing UI. Activity: " + this.getClass().getSimpleName() );
-            initializeData();
-        });
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if(currentFragment == null){
+            Log.e("DataManager", "No active fragment to update");
+            return;
+        }
+        if(currentFragment instanceof DatabaseSelectionFragment){
+            ((DatabaseSelectionFragment) currentFragment).initializeData();
+        }else if( currentFragment instanceof  SearchFragment){
+            ((SearchFragment) currentFragment).initializeData();
+        }
+        Log.d("DataManager", "Data updated, refreshing UI. Activity: " + currentFragment.getClass().getSimpleName() );
     }
     @Override
     protected void onResume() {
-
         super.onResume();
         Log.d(this.getClass().getSimpleName(), "OnResume Called");
-    }
-    /**
-     * Handles clicks on navigation buttons. Child activities can override this to implement
-     * specific navigation behavior.
-     *
-     */
-    protected void handleNavigationButtonClickLeft() {
-        // This method can be overridden in child activities
-    }
-    /**
-     * Handles clicks on navigation buttons. Child activities can override this to implement
-     * specific navigation behavior.
-     *
-     */
-    protected void handleNavigationButtonClickCenter() {
-        // This method can be overridden in child activities
-    }
-    /**
-     * Handles clicks on navigation buttons. Child activities can override this to implement
-     * specific navigation behavior.
-     *
-     */
-    protected void handleNavigationButtonClickRight() {
-        // This method can be overridden in child activities
-    }
-    /**
-     * Initializes the navigation bar with the given button titles.
-     *
-     * @param nav1 Title of the first navigation button.
-     * @param nav2 Title of the second navigation button.
-     * @param nav3 Title of the third navigation button.
-     */
-    protected void initializeNavigationBar(String nav1, String nav2, String nav3){
-        Button navButton1 = findViewById(R.id.nav_button1);
-        Button navButton2 = findViewById(R.id.nav_button2);
-        Button navButton3 = findViewById(R.id.nav_button3);
-
-        navButton1.setOnClickListener(v -> handleNavigationButtonClickLeft()); // Set click listener for button 1
-        navButton2.setOnClickListener(v -> handleNavigationButtonClickCenter()); // Set click listener for button 2
-        navButton3.setOnClickListener(v -> handleNavigationButtonClickRight()); // Set click listener for button 3
-
-        runOnUiThread(() -> {
-            navButton1.setText(nav1);
-            navButton2.setText(nav2);
-            navButton3.setText(nav3);
-        });
-        Log.d("MainActivity", "navButton1 text: " + navButton1.getText().toString());
     }
     /**
      * Initializes data required for the activity. Child activities can override for specific data needs.
      */
     protected void initializeData() {
+        databases = DataManager.getInstance(this).getDatabaseSelections();
         Log.d("InitData", "InitData");
     }
 
@@ -285,6 +343,77 @@ public class MainView extends AppCompatActivity implements DataManager.DataUpdat
     public void deleteItemById(String databaseId, String itemId) {
         DataManager.getInstance(this).deleteItem(databaseId, itemId);
         initializeData();
+    }
+    /**
+     * Displays a dialog to create a new item with input fields for item details.
+     * The user enters values for item name, ID, quantity, location, and alert level.
+     * After validation, the item is created and saved in the database.
+     */
+    private void showCreateItemDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Create Item");
+
+        // Layout for input fields
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(20, 20, 20, 20);
+
+        // Set input fields
+        EditText itemName_input = new EditText(this);
+        itemName_input.setHint("Enter Item Name");
+        itemName_input.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(itemName_input);
+
+        EditText ItemId_input = new EditText(this);
+        ItemId_input.setHint("Enter item Id");
+        ItemId_input.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(ItemId_input);
+
+        EditText quantity_input = new EditText(this);
+        quantity_input.setHint("Enter Quantity");
+        quantity_input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        layout.addView(quantity_input);
+
+        EditText location_input = new EditText(this);
+        location_input.setHint("Enter Location");
+        location_input.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(location_input);
+
+        EditText alertLevel_input = new EditText(this);
+        alertLevel_input.setHint("Enter Alert level");
+        alertLevel_input.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(alertLevel_input);
+
+        builder.setView(layout);
+
+        // Set dialog buttons
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String itemName = itemName_input.getText().toString().trim();
+            String itemId = ItemId_input.getText().toString().trim();
+            String quantity = quantity_input.getText().toString().trim();//this a number
+            String location = location_input.getText().toString().trim();
+            String alertLevel = alertLevel_input.getText().toString().trim();
+
+            if (itemName.isEmpty() || itemId.isEmpty() || quantity.isEmpty() || location.isEmpty() || alertLevel.isEmpty()) {
+                showToast("All fields are required.");
+                return;
+            }
+
+            Item item = new Item();
+            item.setItemId(itemId);
+            item.setItemName(itemName);
+            item.setQuantity(Integer.parseInt(quantity));
+            item.setLocation(location);
+            item.setAlertLevel(Integer.parseInt(alertLevel));
+            item.setOrganizationId(organizationId);
+            item.setDatabaseId(currentDatabaseId);
+            DataManager.getInstance(this).insertItem(item);//Creates Item
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        // Show the dialog
+        builder.show();
     }
 
     /**

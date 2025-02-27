@@ -42,7 +42,7 @@ import java.util.Objects;
  * @version 1.0
  * @since 01/20/2025
  */
-public class DbSelectionView extends MainView {
+public class DbSelectionView extends MainActivity {
 
     private RecyclerView recyclerView;
     private RecyclerDbSelectionAdapter adapter;

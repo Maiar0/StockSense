@@ -5,6 +5,16 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <TextView
+        android:id="@+id/currentOrganization"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Placeholder"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
     <!-- Organization UUID Input -->
     <EditText
         android:id="@+id/etOrganizationUUID"

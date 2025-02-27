@@ -2,6 +2,7 @@
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -18,8 +19,13 @@
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:name="com.CS360.stocksense.fragments.DatabaseSelectionFragment"
+            tools:layout="@layout/fragment_database_selection" />
+
+        <include layout="@layout/nav_buttons_object"/>
     </LinearLayout>
+
 
     <!-- Navigation Drawer Menu -->
     <com.google.android.material.navigation.NavigationView

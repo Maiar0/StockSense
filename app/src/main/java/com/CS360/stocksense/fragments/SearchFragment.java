@@ -104,7 +104,10 @@ public class SearchFragment extends Fragment {
     public void initializeData() {
         List<Item> items = DataManager.getInstance(requireContext()).getItemsByDatabaseId(databaseId);
         if(items.isEmpty() ){
-            Log.e(this.getClass().getSimpleName(), "InitData: Fetched: " + items.size() + " Adjusting to fetchedItems: " + "fetcheditemssize");
+            Log.e(this.getClass().getSimpleName(), "InitData: Fetched: " + items.size() + "redirecting....");
+
+            MainView mainView = (MainView) requireActivity();
+            mainView.switchFragment(new DatabaseSelectionFragment());
             return;
         }
         fetchedItems = items;
@@ -167,10 +170,8 @@ public class SearchFragment extends Fragment {
         args.putString("selected_database", item.getDatabaseId());
         args.putString("selected_item", item.getItemId());
         itemDetails.setArguments(args);
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, itemDetails)
-                .addToBackStack(null)
-                .commit();
+        MainView mainView = (MainView) requireActivity();
+        mainView.switchFragment(itemDetails);
     }
     /**
      * Filters items based on the user's search query.

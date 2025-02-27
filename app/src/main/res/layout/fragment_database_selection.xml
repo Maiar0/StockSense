@@ -14,7 +14,5 @@
         android:layout_weight="1"
         android:padding="8dp" />
 
-    <!-- Navigation Buttons Layout (Reused from Old Layout) -->
-    <include layout="@layout/nav_buttons_object"/>
 
 </LinearLayout>

@@ -83,9 +83,11 @@ public class DatabaseSelectionFragment extends Fragment {
     /**
      * Fetches databases and populates the RecyclerView.
      */
-    private void initializeData() {
+    public void initializeData() {
         List<DatabaseSelection> databases = DataManager.getInstance(requireContext()).getDatabaseSelections();
         Log.d("DatabaseSelectionFragment", "Fetched " + databases.size() + " databases.");
+        MainView mainView = (MainView) requireActivity();
+        mainView.setCurrentDatabaseId(databases.get(0).getId());
         populateRecyclerView(databases);
     }
 
@@ -115,75 +117,7 @@ public class DatabaseSelectionFragment extends Fragment {
         MainView mainView = (MainView) requireActivity();
         mainView.setCurrentDatabaseId(database.getId());
 
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, searchFragment)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    /**
-     * Opens a file picker to allow the user to select a CSV file for database import.
-     */
-    private void openFilePicker() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("text/csv");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(Intent.createChooser(intent, "Select CSV File"), PICK_CSV_FILE);
-    }
-
-    /**
-     * Handles the result from file picker.
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_CSV_FILE && resultCode == requireActivity().RESULT_OK && data != null) {
-            Uri uri = data.getData();
-            if (uri != null) {
-                showImportDatabaseDialog(uri);
-            }
-        }
-    }
-
-    /**
-     * Displays a dialog to prompt the user for the new database name.
-     */
-    private void showImportDatabaseDialog(Uri fileUri) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Enter Database Name");
-
-        EditText input = new EditText(requireContext());
-        input.setHint("Database Name");
-        builder.setView(input);
-
-        builder.setPositiveButton("Import", (dialog, which) -> {
-            String dbName = input.getText().toString().trim();
-            if (!dbName.isEmpty()) {
-                importDatabase(fileUri, dbName);
-            } else {
-                showToast("Database name cannot be empty");
-            }
-        });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-        builder.show();
-    }
-
-    /**
-     * Imports database records from a CSV file.
-     */
-    private void importDatabase(Uri fileUri, String dbName) {
-        try (InputStream inputStream = requireActivity().getContentResolver().openInputStream(fileUri);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-
-            List<Item> items = CSVUtils.importFromCSV(reader);
-            Log.d("DatabaseSelectionFragment", "Import Method: items: " + items);
-            DataManager.getInstance(requireContext()).importNewDatabase(dbName, items);
-
-        } catch (IOException e) {
-            showToast("Error reading CSV file: " + e.getMessage());
-            Log.e("DatabaseSelectionFragment", "IOException: " + e.getMessage(), e);
-        }
+        mainView.switchFragment(searchFragment);
     }
 
     /**

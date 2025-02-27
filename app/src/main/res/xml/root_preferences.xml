@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreferenceCompat
+        android:key="enable_notifications"
+        android:title="Enable Notifications"
+        android:summary="Turn on/off app notifications"
+        android:defaultValue="true"/>
+
+    <ListPreference
+        android:key="theme_preference"
+        android:title="Select Theme"
+        android:summary="Choose Light, Dark, or System Default"
+        android:entries="@array/theme_options"
+        android:entryValues="@array/theme_values"
+        android:defaultValue="system"/>
+
+    <Preference
+        android:key="change_organization"
+        android:title="Change Organization ID"
+        android:summary="Set your preferred Organization ID"/>
+
+</PreferenceScreen>

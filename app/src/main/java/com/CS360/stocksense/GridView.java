@@ -35,7 +35,7 @@ import java.util.Objects;
  * @version 1.0
  * @since 01/20/2025
  */
-public class GridView extends MainView {
+public class GridView extends MainActivity {
 
     private RecyclerView recyclerView;
     private String databaseId;

@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.CS360.stocksense.MainView;
 import com.CS360.stocksense.R;
 import com.CS360.stocksense.auth.SupabaseRepository;
 import com.CS360.stocksense.database.DataManager;
@@ -138,8 +139,11 @@ public class ItemDetailsFragment extends Fragment {
             DataManager.getInstance(requireContext()).updateItemQuantity(databaseId, itemId, change);
         }
         DataManager.getInstance(requireContext()).updateItem(currentItem);
-        requireActivity().getSupportFragmentManager().popBackStack();
-        //TODO:: We finished before now what?
+        // switch to searchFragment
+        SearchFragment searchFragment = new SearchFragment();
+        MainView mainView = (MainView) requireActivity();
+        mainView.setCurrentDatabaseId(databaseId);
+        mainView.switchFragment(searchFragment);
     }
 
     /**
@@ -148,7 +152,11 @@ public class ItemDetailsFragment extends Fragment {
      */
     private void onDeleteButtonClick() {
         DataManager.getInstance(requireContext()).deleteItem(databaseId, itemId);
-        //TODO:: We finished before now what?
+        // switch to searchFragment
+        SearchFragment searchFragment = new SearchFragment();
+        MainView mainView = (MainView) requireActivity();
+        mainView.setCurrentDatabaseId(databaseId);
+        mainView.switchFragment(searchFragment);
     }
 
     /**

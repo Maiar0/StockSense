@@ -306,7 +306,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/content_paste_search/baseline_content_paste_search_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/not_interested/baseline_not_interested_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -317,7 +317,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="bd1a1a" />
-                            <entry key="outputName" value="ic_search" />
+                            <entry key="outputName" value="ic_settings" />
                             <entry key="sourceFile" value="C:\Users\denni\Downloads\magnifying-glass-1093183.svg" />
                           </map>
                         </option>
