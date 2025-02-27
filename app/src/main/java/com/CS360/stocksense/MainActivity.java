@@ -1,33 +1,23 @@
 package com.CS360.stocksense;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.widget.Toolbar;
 
-
-import com.CS360.stocksense.database.DataManager;
 import com.CS360.stocksense.Utils.CSVUtils;
-import com.CS360.stocksense.fragments.DatabaseSelectionFragment;
-import com.CS360.stocksense.fragments.SearchFragment;
+import com.CS360.stocksense.database.DataManager;
 import com.CS360.stocksense.models.Item;
-import com.google.android.material.navigation.NavigationView;
 
 import java.io.IOException;
 import java.util.List;
+
 /**
  * MainView serves as the primary activity for StockSense, providing essential
  * navigation and data management functionalities. It manages user interactions,
@@ -45,15 +35,12 @@ import java.util.List;
  * @version 1.0
  * @since 01/20/2025
  */
-public class MainView extends AppCompatActivity implements DataManager.DataUpdateListener, NavigationView.OnNavigationItemSelectedListener  {
+public class MainActivity extends AppCompatActivity implements DataManager.DataUpdateListener {
 
 
     protected static final String PREFERENCES_FILE = "com.CS360.stocksense.PREFERENCES_FILE";
     protected String organizationId;
     protected List<Item> fetchedItems;
-    private String currentDatabaseId;
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle toggle;
     /**
      * Initializes the activity, sets up the navigation bar, and fetches stored preferences.
      *
@@ -63,87 +50,14 @@ public class MainView extends AppCompatActivity implements DataManager.DataUpdat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //init Drawer Layout and Navigation View
-        drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.navigation_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        // Set up the drawer toggle button
-        toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, R.string.nav_open, R.string.nav_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        //Loads default fragment
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new DatabaseSelectionFragment())
-                    .commit();
-        }
-
-        //initializeNavigationBar("nav1","nav2","nav3");
+        initializeNavigationBar("nav1","nav2","nav3");
         DataManager.setUpdateListener(this);
+
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
         organizationId = preferences.getString("OrganizationId", null);
 
         Log.d("MainActivityLifecycle", "Organization " + organizationId);
 
-    }
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        // Handle the drawer toggle click
-        if (toggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.nav_database) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new DatabaseSelectionFragment())
-                    .commit();
-        } else if (id == R.id.nav_search) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new SearchFragment())
-                    .commit();
-        } else if (id == R.id.nav_logout) {
-            logoutUser();
-        }
-
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-    private void logoutUser() {
-        // Clear user session and navigate to LoginView
-        SharedPreferences preferences = getSharedPreferences("com.CS360.stocksense.PREFERENCES_FILE", MODE_PRIVATE);
-        preferences.edit().clear().apply();
-
-        Intent intent = new Intent(this, LoginView.class);
-        startActivity(intent);
-        finish();
-    }
-    @Override
-    public void onBackPressed() {
-        // Close drawer if open, otherwise do default back action
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    public String getCurrentDatabaseId(){
-        return currentDatabaseId;
-    }
-    public void setCurrentDatabaseId(String currentDatabaseId){
-        this.currentDatabaseId = currentDatabaseId;
     }
     @Override
     public void onDataUpdated() {

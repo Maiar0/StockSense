@@ -42,9 +42,6 @@
             android:name=".ItemDetailsView"
             android:exported="false" />
         <activity
-            android:name=".TableViewActivity"
-            android:exported="false" />
-        <activity
             android:name=".MainView"
             android:exported="false" />
         <activity

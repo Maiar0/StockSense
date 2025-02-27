@@ -133,7 +133,7 @@ public class LoginView extends AppCompatActivity {
                 if (organizationId != null && organizationId.equals("00000000-0000-0000-0000-000000000000")) {
                     intent = new Intent(LoginView.this, JoinOrganizationView.class);
                 } else {
-                    intent = new Intent(LoginView.this, DbSelectionView.class);
+                    intent = new Intent(LoginView.this, MainView.class);
                 }
                 startActivity(intent);
             }

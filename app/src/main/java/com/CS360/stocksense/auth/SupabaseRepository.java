@@ -232,8 +232,8 @@ public class SupabaseRepository {
                 .enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
-                        Log.d("SupabaseRepository", "Get Items Response Code: " + response.code());// TODO:: Remove logging of sensitive data
-                        Log.d("SupabaseRepository", "Get items Raw Response: " + response.raw());
+                        Log.d("SupabaseRepository", "Update Items Response Code: " + response.code());// TODO:: Remove logging of sensitive data
+                        Log.d("SupabaseRepository", "Update items Raw Response: " + response.raw());
                         if (response.isSuccessful()) {
                             callback.onSuccess(null);
                         } else {

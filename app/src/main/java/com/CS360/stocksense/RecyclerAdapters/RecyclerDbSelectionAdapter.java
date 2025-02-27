@@ -46,6 +46,7 @@ public class RecyclerDbSelectionAdapter extends RecyclerView.Adapter<RecyclerDbS
         this.clickListener = clickListener;
     }
 
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

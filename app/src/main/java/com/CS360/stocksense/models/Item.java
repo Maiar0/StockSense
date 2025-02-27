@@ -1,6 +1,7 @@
 package com.CS360.stocksense.models;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.Serializable;
 
@@ -28,6 +29,7 @@ import java.io.Serializable;
 public class Item implements Serializable {
     private String item_id;
     private String item_name;
+    @Nullable
     private int quantity;
     private String location;
     private int alert_level;
