@@ -86,6 +86,7 @@ public class ItemDetailsFragment extends Fragment {
     }
 
 
+
     /**
      * Loads and displays item details from the database.
      *

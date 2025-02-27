@@ -157,7 +157,10 @@ public class MainView extends AppCompatActivity implements DataManager.DataUpdat
         // Close drawer if open, otherwise do default back action
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        if(getSupportFragmentManager().findFragmentById(R.id.fragment_container) instanceof ItemDetailsFragment){
+            switchFragment(new SearchFragment());// TODO:: fix for missing navigation bar sends user into loop
+        }else {
             super.onBackPressed();
         }
     }

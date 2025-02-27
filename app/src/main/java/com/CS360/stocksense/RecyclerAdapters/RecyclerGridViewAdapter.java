@@ -71,7 +71,7 @@ public class RecyclerGridViewAdapter extends RecyclerView.Adapter<RecyclerGridVi
             holder.itemView.setBackgroundColor(holder.itemView.getContext().getResources().getColor(android.R.color.transparent, null));
         }
 
-        // Increment item quantity on button click
+        // Increment item quantity on button click TODO:: Not efficient to make a call every time its clicked
         holder.incrementButton.setOnClickListener(v -> {
             DataManager.getInstance(context).updateItemQuantity(item.getDatabaseId(), item.getItemId(), 1);
             notifyItemChanged(position);
