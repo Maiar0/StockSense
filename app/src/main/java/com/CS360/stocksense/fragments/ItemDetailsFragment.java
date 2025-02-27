@@ -123,8 +123,8 @@ public class ItemDetailsFragment extends Fragment {
      * Handles updating an item’s details in the database.
      * Retrieves updated values from the UI fields and sends an update request to the database.
      */
-    private void onEditButtonClick() {//TODO:: we are changing the quantity twice here.
-
+    private void onEditButtonClick() {//TODO:: there is potential to change quantity twice here.
+        Item previousItem = currentItem.copy();
 
         currentItem.setItemId(itemId);  // Use existing item ID (Not editable)
         currentItem.setItemName(itemName.getText().toString().trim());
@@ -138,7 +138,10 @@ public class ItemDetailsFragment extends Fragment {
             int change = Integer.parseInt(itemQuantity.getText().toString().trim()) - currentItem.getQuantity();
             DataManager.getInstance(requireContext()).updateItemQuantity(databaseId, itemId, change);
         }
-        DataManager.getInstance(requireContext()).updateItem(currentItem);
+        if(previousItem.isDifferent(currentItem)){
+            Log.d(this.getClass().getSimpleName(), "EditButtonClick: Sending second Call to change item: "+ itemId);
+            DataManager.getInstance(requireContext()).updateItem(currentItem);
+        }
         // switch to searchFragment
         SearchFragment searchFragment = new SearchFragment();
         MainView mainView = (MainView) requireActivity();

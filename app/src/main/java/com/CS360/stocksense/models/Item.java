@@ -1,9 +1,12 @@
 package com.CS360.stocksense.models;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Represents an item in the StockSense database.
@@ -29,7 +32,6 @@ import java.io.Serializable;
 public class Item implements Serializable {
     private String item_id;
     private String item_name;
-    @Nullable
     private int quantity;
     private String location;
     private int alert_level;
@@ -168,6 +170,49 @@ public class Item implements Serializable {
     public void setDatabaseId(String database_id) {
         this.database_id = database_id;
     }
+    /**
+     * @return true if items are different(quantity is not implicated here).
+     *
+     * @param otherItem item to compare.
+     */
+    public boolean isDifferent(Item otherItem) {
+        if (otherItem == null) {
+            return true; // If the other item is null, consider it different
+        }
+        Log.d(this.getClass().getSimpleName(), this + " : "+ otherItem);
+        // Compare all fields EXCEPT quantity
+        boolean result = !Objects.equals(this.getItemId(), otherItem.getItemId()) ||
+                !Objects.equals(this.getItemName(), otherItem.getItemName()) ||
+                !Objects.equals(this.getLocation(), otherItem.getLocation()) ||
+                !Objects.equals(this.getAlertLevel(), otherItem.getAlertLevel()) ||
+                !Objects.equals(this.getOrganizationId(), otherItem.getOrganizationId()) ||
+                !Objects.equals(this.getDatabaseId(), otherItem.getDatabaseId()) ||
+                !Objects.equals(this.getDatabaseName(), otherItem.getDatabaseName());
+
+        Log.d(this.getClass().getSimpleName(), "Items compared result: "+ result);
+
+        return result;
+    }
+    /**
+     * Returns a new Item with same values
+     *
+     * @return A new Item() with same values.
+     */
+    public Item copy() {
+        Item item = new Item();
+        item.setItemId(this.item_id);
+        item.setItemName(this.item_name);
+        item.setQuantity(this.quantity);
+        item.setLocation(this.location);
+        item.setAlertLevel(this.alert_level);
+        item.setDatabaseId(this.database_id);
+        item.setDatabaseName(this.database_name);
+        item.setOrganizationId(this.organization_id);
+        return item;
+    }
+
+
+
     /**
      * Returns a string representation of the item.
      *

@@ -263,7 +263,7 @@ public class MainView extends AppCompatActivity implements DataManager.DataUpdat
         Log.d(this.getClass().getSimpleName(), "OnResume Called");
     }
     /**
-     * Initializes data required for the activity. Child activities can override for specific data needs.
+     * Initializes data required for the activity start.
      */
     protected void initializeData() {
         databases = DataManager.getInstance(this).getDatabaseSelections();
@@ -349,7 +349,7 @@ public class MainView extends AppCompatActivity implements DataManager.DataUpdat
      * The user enters values for item name, ID, quantity, location, and alert level.
      * After validation, the item is created and saved in the database.
      */
-    private void showCreateItemDialog() {
+    private void showCreateItemDialog() {// TODO:: Maybe this should be its own fragment or activity?
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Create Item");
 
