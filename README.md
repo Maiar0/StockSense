@@ -30,7 +30,7 @@ The frontend consists of several key **activities (views)**, each responsible fo
 ---
 
 ### 🔹 **RegisterUserActivity** (User Registration)
-📌 **File:** [`RegisterUserActivity.java`](20)
+ **File:** [`RegisterUserView.java`](app/src/main/java/com/CS360/stocksense/RegisterUserView.java)
 
 #### **Functionality:**
 - Allows new users to register an account.
@@ -46,7 +46,7 @@ The frontend consists of several key **activities (views)**, each responsible fo
 ---
 
 ### 🔹 **JoinOrganization** (Organization Management)
-📌 **File:** [`JoinOrganization.java`](17)
+📌 **File:** [`JoinOrganizationView.java`](app/src/main/java/com/CS360/stocksense/JoinOrganizationView.java)
 
 #### **Functionality:**
 - Allows users to **join an existing organization** by entering a UUID.
@@ -61,7 +61,7 @@ The frontend consists of several key **activities (views)**, each responsible fo
 ---
 
 ### 🔹 **DbSelectionViewActivity** (Database Selection)
-📌 **File:** [`DbSelectionViewActivity.java`](14)
+📌 **File:** [`DbSelectionView.java`](app/src/main/java/com/CS360/stocksense/DbSelectionView.java)
 
 #### **Functionality:**
 - Displays a **list of available databases** in a **RecyclerView**.
@@ -79,7 +79,7 @@ The frontend consists of several key **activities (views)**, each responsible fo
 ---
 
 ### 🔹 **SearchViewActivity** (Item Search)
-📌 **File:** [`SearchViewActivity.java`](21)
+📌 **File:** [`SearchView.java`](app/src/main/java/com/CS360/stocksense/SearchView.java)
 
 #### **Functionality:**
 - Provides a **search interface** to browse and manage items within a database.
@@ -98,7 +98,7 @@ The frontend consists of several key **activities (views)**, each responsible fo
 ---
 
 ### 🔹 **GridViewActivity** (Grid View for Items)
-📌 **File:** [`GridViewActivity.java`](15)
+📌 **File:** [`GridView.java`](app/src/main/java/com/CS360/stocksense/GridView.java)
 
 #### **Functionality:**
 - Displays items in a **grid format** using a **RecyclerView**.
@@ -118,7 +118,7 @@ The frontend consists of several key **activities (views)**, each responsible fo
 ---
 
 ### 🔹 **ItemDetailsActivity** (Item Management)
-📌 **File:** [`ItemDetailsActivity.java`](16)
+📌 **File:** [`ItemDetailsView.java`](app/src/main/java/com/CS360/stocksense/ItemDetailsView.java)
 
 #### **Functionality:**
 - Displays **detailed information** about a selected item.
@@ -176,7 +176,7 @@ The StockSense backend utilizes **Supabase PostgreSQL** with the following key t
 ---
 
 ### 🔹 **DataManager** (Data Handling)
-📌 **File:** [`DataManager.java`](41)
+📌 **File:** [`DataManager.java`](app/src/main/java/com/CS360/stocksense/database/DataManager.java)
 
 #### **Functionality:**
 - Acts as the **primary data handler** in the app.
@@ -193,7 +193,7 @@ The StockSense backend utilizes **Supabase PostgreSQL** with the following key t
 ---
 
 ### 🔹 **SupabaseRepository** (Supabase API Manager)
-📌 **File:** [`SupabaseRepository.java`](42)
+📌 **File:** [`SupabaseRepository.java`](app/src/main/java/com/CS360/stocksense/auth/SupabaseRepository.java)
 
 #### **Functionality:**
 - Handles **authentication, data storage, and API interactions**.
@@ -209,7 +209,7 @@ The StockSense backend utilizes **Supabase PostgreSQL** with the following key t
 ---
 
 ### 🔹 **SupabaseApi** (API Endpoints & RPC Calls)
-📌 **File:** [`SupabaseApi.java`](63)
+📌 **File:** [`SupabaseApi.java`](app/src/main/java/com/CS360/stocksense/auth/SupabaseApi.java)
 
 #### **Functionality:**
 - Defines **Retrofit endpoints** for Supabase API interactions.
