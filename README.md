@@ -1,26 +1,25 @@
-## 📌 StockSense – README
+# 📌 StockSense
 
-### Overview
-StockSense is a mobile application designed for inventory and stock management. It allows users to manage their organization's databases, track items, and navigate through various views efficiently.
+## Overview
+StockSense is a mobile application designed for **inventory and stock management**. It allows users to manage their organization's databases, track items, and navigate efficiently through various fragments.
 
-This document details the **frontend structure**, explaining each **activity (view)**, its workflow, and key features.
+This document details the **frontend structure**, explaining each **fragment** and its functionality.
 
 ---
 
 ## 🔷 Frontend Structure
 
-The frontend consists of several key **activities (views)**, each responsible for handling specific user interactions.
+The frontend now follows a **fragment-based** architecture within a **single activity** (`MainView`). The following fragments are used:
 
----
-### 🔹 **LoginActivity** (Login Screen)
+### 🔹 **LoginView (Login Screen)**
 📌 **File:** [`LoginView.java`](app/src/main/java/com/CS360/stocksense/LoginView.java)
 
 #### **Functionality:**
 - Allows users to **log in** using their email and password.
 - Saves credentials using **SharedPreferences**.
 - On successful login:
-  - Navigates to `JoinOrganization` if the user has no assigned organization.
-  - Otherwise, navigates to `DbSelectionViewActivity`.
+  - Navigates to `JoinOrganizationView` if the user has no assigned organization.
+  - Otherwise, navigates to `MainView`.
 
 #### **Key Features:**
 ✔ Email & Password authentication.  
@@ -29,14 +28,14 @@ The frontend consists of several key **activities (views)**, each responsible fo
 
 ---
 
-### 🔹 **RegisterUserActivity** (User Registration)
- **File:** [`RegisterUserView.java`](app/src/main/java/com/CS360/stocksense/RegisterUserView.java)
+### 🔹 **RegisterUserView (User Registration)**
+📌 **File:** [`RegisterUserView.java`](app/src/main/java/com/CS360/stocksense/RegisterUserView.java)
 
 #### **Functionality:**
 - Allows new users to register an account.
 - Requires email, password, and confirmation.
 - Upon successful registration:
-  - If no organization is assigned, the user is taken to `JoinOrganization`.
+  - If no organization is assigned, the user is taken to `JoinOrganizationView`.
 
 #### **Key Features:**
 ✔ Password validation.  
@@ -45,12 +44,12 @@ The frontend consists of several key **activities (views)**, each responsible fo
 
 ---
 
-### 🔹 **JoinOrganization** (Organization Management)
+### 🔹 **JoinOrganizationView (Organization Management)**
 📌 **File:** [`JoinOrganizationView.java`](app/src/main/java/com/CS360/stocksense/JoinOrganizationView.java)
 
 #### **Functionality:**
 - Allows users to **join an existing organization** by entering a UUID.
-- Provides an option to create a new organization (pending implementation).
+- Provides an option to create a new organization.
 - Logs out the user after joining an organization to refresh session data.
 
 #### **Key Features:**
@@ -60,8 +59,25 @@ The frontend consists of several key **activities (views)**, each responsible fo
 
 ---
 
-### 🔹 **DbSelectionViewActivity** (Database Selection)
-📌 **File:** [`DbSelectionView.java`](app/src/main/java/com/CS360/stocksense/DbSelectionView.java)
+### 🔹 **MainView (Primary Activity)**
+📌 **File:** [`MainView.java`](app/src/main/java/com/CS360/stocksense/MainView.java)
+
+#### **Functionality:**
+- Manages **navigation drawer** for fragment switching.
+- Handles **database and item selection**.
+- Provides **data export functionality**.
+- Supports fragment switching dynamically.
+
+#### **Key Features:**
+✔ Central hub for navigation.  
+✔ Uses **fragments** for modular design.  
+✔ Handles **session management and logout**.  
+✔ Manages database and inventory operations.  
+
+---
+
+### 🔹 **DatabaseSelectionFragment (Database Management)**
+📌 **File:** [`DatabaseSelectionFragment.java`](app/src/main/java/com/CS360/stocksense/fragments/DatabaseSelectionFragment.java)
 
 #### **Functionality:**
 - Displays a **list of available databases** in a **RecyclerView**.
@@ -69,7 +85,7 @@ The frontend consists of several key **activities (views)**, each responsible fo
   - **Create** a new database.
   - **Delete** a database by ID.
   - **Import** a database using a CSV file.
-  - **Select** a database to navigate to `SearchViewActivity`.
+  - **Select** a database to navigate to `SearchFragment`.
 
 #### **Key Features:**
 ✔ Database creation & deletion.  
@@ -78,15 +94,15 @@ The frontend consists of several key **activities (views)**, each responsible fo
 
 ---
 
-### 🔹 **SearchViewActivity** (Item Search)
-📌 **File:** [`SearchView.java`](app/src/main/java/com/CS360/stocksense/SearchView.java)
+### 🔹 **SearchFragment (Item Search)**
+📌 **File:** [`SearchFragment.java`](app/src/main/java/com/CS360/stocksense/fragments/SearchFragment.java)
 
 #### **Functionality:**
 - Provides a **search interface** to browse and manage items within a database.
 - Displays search results in a **RecyclerView**.
 - Users can:
   - **Search for items** by name or ID.
-  - **Navigate to item details** (`ItemDetailsActivity`).
+  - **Navigate to item details** (`ItemDetailsFragment`).
   - **Delete items**.
   - **Export data** to a CSV file.
 
@@ -97,15 +113,15 @@ The frontend consists of several key **activities (views)**, each responsible fo
 
 ---
 
-### 🔹 **GridViewActivity** (Grid View for Items)
-📌 **File:** [`GridView.java`](app/src/main/java/com/CS360/stocksense/GridView.java)
+### 🔹 **GridFragment (Grid View for Items)**
+📌 **File:** [`GridFragment.java`](app/src/main/java/com/CS360/stocksense/fragments/GridFragment.java)
 
 #### **Functionality:**
 - Displays items in a **grid format** using a **RecyclerView**.
 - Users can:
   - View inventory in a **2-column grid layout**.
   - **Create new items**.
-  - **Navigate to `ItemDetailsActivity`** for item management.
+  - **Navigate to `ItemDetailsFragment`** for item management.
   - **Export** the database.
   - **Increase or decrease item quantity** using `+` and `-` buttons.
 
@@ -117,8 +133,8 @@ The frontend consists of several key **activities (views)**, each responsible fo
 
 ---
 
-### 🔹 **ItemDetailsActivity** (Item Management)
-📌 **File:** [`ItemDetailsView.java`](app/src/main/java/com/CS360/stocksense/ItemDetailsView.java)
+### 🔹 **ItemDetailsFragment (Item Management)**
+📌 **File:** [`ItemDetailsFragment.java`](app/src/main/java/com/CS360/stocksense/fragments/ItemDetailsFragment.java)
 
 #### **Functionality:**
 - Displays **detailed information** about a selected item.
@@ -133,13 +149,30 @@ The frontend consists of several key **activities (views)**, each responsible fo
 
 ---
 
+### 🔹 **SettingsFragment (User Preferences)**
+📌 **File:** [`SettingsFragment.java`](app/src/main/java/com/CS360/stocksense/fragments/SettingsFragment.java)
+
+#### **Functionality:**
+- Allows users to change **application settings**.
+- Supports **changing organizations** from the settings menu.
+- Logs users out for changes to take effect.
+
+#### **Key Features:**
+✔ Preference-based user settings.  
+✔ Organization switching functionality.  
+✔ Integrated with `JoinOrganizationView`.
+
+---
+
 ## 🔷 Navigation & Workflow Summary
 
-1⃣ **Login/Register →**  
-2⃣ **JoinOrganization →**  
-3⃣ **DbSelectionViewActivity (Database Selection) →**  
-4⃣ **SearchViewActivity / GridViewActivity (Browse Inventory) →**  
-5⃣ **ItemDetailsActivity (Manage Specific Item)**
+1️⃣ **Login/Register →**  
+2️⃣ **JoinOrganization →**  
+3️⃣ **MainView (Fragment Navigation) →**  
+4️⃣ **DatabaseSelectionFragment →**  
+5️⃣ **SearchFragment/GridFragment (Browse Inventory) →**  
+6️⃣ **ItemDetailsFragment (Manage Specific Item)**
+
 
 ---
 
