@@ -14,7 +14,7 @@ The frontend consists of several key **activities (views)**, each responsible fo
 ---
 
 ### 🔹 **LoginActivity** (Login Screen)
-📌 **File:** [`LoginActivity.java`](18)
+📌 **File:** [`app/src/main/java/com/CS360/stocksense/LoginView.java`](18)
 
 #### **Functionality:**
 - Allows users to **log in** using their email and password.
