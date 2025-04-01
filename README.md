@@ -1,4 +1,5 @@
 # StockSense
+The different branches within this repository are various updates, disconected for the purpose of showing a learning and implementation process.
 
 StockSense is an inventory management application designed to streamline the process of tracking stock levels, managing low inventory alerts, and providing a seamless user experience with an intuitive UI.
 
